@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+  "appName": "GoaNest",
+  "languageEnglish": "English",
+  "languageMarathi": "Marathi",
+  "languageHindi": "Hindi",
+  "tryAgain": "Try Again",
+  "noInternet": "No Internet",
+  "requestTimedOut": "Request Timed Out",
+  "sessionExpired": "Session Expired",
+  "accessDenied": "Access Denied",
+  "unauthorized": "Unauthorized",
+  "notFoundError": "Not Found Error",
+  "serverError": "Server Error",
+  "badRequestError": "Bad Request Error",
+  "serviceUnavailableError": "Service Unavailable Error",
+  "methodNotAllowedError": "Method Not Allowed Error",
+  "tooManyRequestsError": "Too Many Requests Error",
+  "badGatewayError": "Bad Gateway Error",
+  "httpVersionNotSupportedError": "HTTP Version Not Supported Error",
+  "unknownError": "Unknown Error"
+}

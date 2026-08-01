@@ -1,0 +1,22 @@
+{
+  "@@locale": "mr",
+  "appName": "GoaNest",
+  "languageEnglish": "इंग्रजी",
+  "languageMarathi": "मराठी",
+  "languageHindi": "हिंदी",
+  "tryAgain": "पुन्हा प्रयत्न करा",
+  "noInternet": "इंटरनेट उपलब्ध नाही",
+  "requestTimedOut": "विनंतीची वेळ संपली",
+  "sessionExpired": "सत्र संपले",
+  "accessDenied": "प्रवेश नाकारला",
+  "unauthorized": "अनधिकृत",
+  "notFoundError": "सापडले नाही",
+  "serverError": "सर्व्हर त्रुटी",
+  "badRequestError": "चुकीची विनंती",
+  "serviceUnavailableError": "सेवा उपलब्ध नाही",
+  "methodNotAllowedError": "ही पद्धत अनुमत नाही",
+  "tooManyRequestsError": "खूप जास्त विनंत्या",
+  "badGatewayError": "खराब गेटवे",
+  "httpVersionNotSupportedError": "HTTP आवृत्ती समर्थित नाही",
+  "unknownError": "अज्ञात त्रुटी"
+}

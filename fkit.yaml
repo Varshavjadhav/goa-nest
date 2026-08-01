@@ -1,0 +1,39 @@
+project_name: goanest
+
+tooling:
+  use_fvm: false
+
+platforms:
+  android: true
+  ios: true
+  web: true
+
+build:
+  debug_info: ./debug-info
+  obfuscate: true
+
+entry:
+  main: lib/main.dart
+
+flavoring:
+  enabled: false
+
+flavors:
+  default: main
+
+  main:
+    env: 
+
+    firebase:
+      app_distribution_id: 
+
+      options:
+        android: 
+        ios: 
+        web: 
+
+firebase:
+  tester_group: internal-testers
+
+generator:
+  default_template: bloc_clean

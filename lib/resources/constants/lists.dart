@@ -1,0 +1,3 @@
+class Lists {
+  Lists._();
+}
