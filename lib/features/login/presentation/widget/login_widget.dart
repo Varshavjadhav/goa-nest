@@ -1,9 +1,10 @@
-import 'package:goanest/core.dart';
 import 'package:goanest/app/router/route_name.dart';
+import 'package:goanest/core.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/widgets/app_scaffold.dart';
 
 import '../../../../utilities/extensions/extensions.dart';
+import '../../../../widgets/app_text_widget.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -26,10 +27,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isWide ? 40 : 22,
-              vertical: 24,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: isWide ? 40 : 22, vertical: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1040),
               child: isWide
@@ -42,11 +40,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const _MobileHero(),
-                        const SizedBox(height: 28),
-                        _buildForm(context, compact: true),
-                      ],
+                      children: [const _MobileHero(), const SizedBox(height: 28), _buildForm(context, compact: true)],
                     ),
             ),
           ),
@@ -64,13 +58,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         color: AppColor.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColor.primaryLight),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.primaryDark.withValues(alpha: 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 18),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: AppColor.primaryDark.withValues(alpha: 0.08), blurRadius: 30, offset: const Offset(0, 18))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,40 +69,34 @@ class _LoginWidgetState extends State<LoginWidget> {
               Container(
                 width: 46,
                 height: 46,
-                decoration: BoxDecoration(
-                  color: AppColor.primary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.holiday_village_rounded,
-                  color: AppColor.white,
-                ),
+                decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.holiday_village_rounded, color: AppColor.white),
               ),
               const SizedBox(width: 12),
-              Text(
-                'GoaNest',
-                style: textTheme.headlineMedium?.copyWith(
-                  color: AppColor.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
+              AppTextWidget(
+                text: 'GoaNest',
+                // style: textTheme.headlineMedium?.copyWith(
+                color: AppColor.textPrimary,
+                fontWeight: FontWeight.w800,
               ),
+              // ),
             ],
           ),
-          const SizedBox(height: 34),
-          Text(
-            'Welcome back',
-            style: textTheme.displaySmall?.copyWith(
-              color: AppColor.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
+          Gap(34.h),
+          AppTextWidget(
+            text: 'Welcome back',
+            // style: textTheme.displaySmall?.copyWith(
+            color: AppColor.textPrimary,
+            fontWeight: FontWeight.w800,
+            // ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Sign in to manage bookings, stays, and guest requests.',
-            style: textTheme.bodyMedium?.copyWith(
-              color: AppColor.textSecondary,
-              height: 1.45,
-            ),
+          Gap(8.h),
+          AppTextWidget(
+            text: 'Sign in to manage bookings, stays, and guest requests.',
+            // style: textTheme.bodyMedium?.copyWith(
+            color: AppColor.textSecondary,
+            height: 1.45,
+            // ),
           ),
           Gap(28.h),
           const _FieldLabel(text: 'Email address'),
@@ -128,19 +110,16 @@ class _LoginWidgetState extends State<LoginWidget> {
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.next,
             maxLength: 10,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(10),
-            ],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
             decoration: const InputDecoration(
               hintText: 'Enter mobile number',
               prefixIcon: Icon(Icons.phone_android_rounded),
               counterText: '',
             ),
           ),
-          const SizedBox(height: 18),
+          Gap(18.h),
           const _FieldLabel(text: 'Password'),
-          const SizedBox(height: 8),
+          Gap(8.h),
           TextFormField(
             obscureText: _obscurePassword,
             textInputAction: TextInputAction.done,
@@ -154,15 +133,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                     _obscurePassword = !_obscurePassword;
                   });
                 },
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                ),
+                icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
               ),
             ),
           ),
-          const SizedBox(height: 14),
+          Gap(14.h),
           Row(
             children: [
               SizedBox(
@@ -171,9 +146,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 child: Checkbox(
                   value: _rememberMe,
                   activeColor: AppColor.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   onChanged: (value) {
                     setState(() {
                       _rememberMe = value ?? false;
@@ -181,22 +154,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                   },
                 ),
               ),
-              const SizedBox(width: 10),
+              Gap(10.w),
               Expanded(
-                child: Text(
-                  'Remember me',
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: AppColor.textSecondary,
-                  ),
-                ),
+                child: Text('Remember me', style: textTheme.bodyMedium?.copyWith(color: AppColor.textSecondary)),
               ),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Forgot password?'),
-              ),
+              TextButton(onPressed: () {}, child: const Text('Forgot password?')),
             ],
           ),
-          const SizedBox(height: 24),
+          Gap(24.h),
           SizedBox(
             width: double.infinity,
             height: 54,
@@ -205,10 +170,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Sign in',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                  ),
+                  Text('Sign in', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                   SizedBox(width: 10),
                   Icon(Icons.arrow_forward_rounded, size: 20),
                 ],
@@ -257,12 +219,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Text(
-                  "Don't have an account?",
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: AppColor.textSecondary,
-                  ),
-                ),
+                Text("Don't have an account?", style: textTheme.bodyMedium?.copyWith(color: AppColor.textSecondary)),
                 TextButton(
                   onPressed: () {
                     context.push(RouteName.registerView);
@@ -296,19 +253,11 @@ class _MobileHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColor.black.withValues(alpha: 0.12),
-                    AppColor.black.withValues(alpha: 0.62),
-                  ],
+                  colors: [AppColor.black.withValues(alpha: 0.12), AppColor.black.withValues(alpha: 0.62)],
                 ),
               ),
             ),
-            const Positioned(
-              left: 18,
-              right: 18,
-              bottom: 18,
-              child: _HeroCopy(),
-            ),
+            const Positioned(left: 18, right: 18, bottom: 18, child: _HeroCopy()),
           ],
         ),
       ),
@@ -334,10 +283,7 @@ class _StayPreviewPanel extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColor.black.withValues(alpha: 0.05),
-                    AppColor.black.withValues(alpha: 0.72),
-                  ],
+                  colors: [AppColor.black.withValues(alpha: 0.05), AppColor.black.withValues(alpha: 0.72)],
                 ),
               ),
             ),
@@ -347,26 +293,13 @@ class _StayPreviewPanel extends StatelessWidget {
               top: 30,
               child: Row(
                 children: [
-                  _MetricPill(
-                    icon: Icons.verified_rounded,
-                    value: '300+',
-                    label: 'verified stays',
-                  ),
+                  _MetricPill(icon: Icons.verified_rounded, value: '300+', label: 'verified stays'),
                   const SizedBox(width: 12),
-                  _MetricPill(
-                    icon: Icons.location_on_rounded,
-                    value: 'Goa',
-                    label: 'north to south',
-                  ),
+                  _MetricPill(icon: Icons.location_on_rounded, value: 'Goa', label: 'north to south'),
                 ],
               ),
             ),
-            const Positioned(
-              left: 34,
-              right: 34,
-              bottom: 34,
-              child: _HeroCopy(),
-            ),
+            const Positioned(left: 34, right: 34, bottom: 34, child: _HeroCopy()),
           ],
         ),
       ),
@@ -385,33 +318,29 @@ class _HeroCopy extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          "Discover Goa's best stays",
-          style: textTheme.displaySmall?.copyWith(
-            color: AppColor.white,
-            fontWeight: FontWeight.w800,
-            height: 1.15,
-          ),
+        AppTextWidget(
+          text: "Discover Goa's best stays",
+          // style: textTheme.displaySmall?.copyWith(
+          color: AppColor.white,
+          fontWeight: FontWeight.w800,
+          height: 1.15,
         ),
-        const SizedBox(height: 10),
-        Text(
-          'Book villas, resorts, homestays, and beach escapes from one simple dashboard.',
-          style: textTheme.bodyLarge?.copyWith(
-            color: AppColor.white.withValues(alpha: 0.88),
-            height: 1.45,
-          ),
+        // ),
+        Gap(10.h),
+        AppTextWidget(
+          text: 'Book villas, resorts, homestays, and beach escapes from one simple dashboard.',
+          // style: textTheme.bodyLarge?.copyWith(
+          color: AppColor.white.withValues(alpha: 0.88),
+          height: 1.45,
         ),
+        // ),
       ],
     );
   }
 }
 
 class _MetricPill extends StatelessWidget {
-  const _MetricPill({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
+  const _MetricPill({required this.icon, required this.value, required this.label});
 
   final IconData icon;
   final String value;
@@ -438,23 +367,23 @@ class _MetricPill extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    value,
+                  AppTextWidget(
+                    text: value,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: AppColor.white,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    textOverflow: TextOverflow.ellipsis,
+                    // style: textTheme.titleMedium?.copyWith(
+                    color: AppColor.white,
+                    fontWeight: FontWeight.w800,
                   ),
-                  Text(
-                    label,
+                  // ),
+                  AppTextWidget(
+                    text: label,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.labelMedium?.copyWith(
-                      color: AppColor.white.withValues(alpha: 0.78),
-                    ),
+                    textOverflow: TextOverflow.ellipsis,
+                    // style: textTheme.labelMedium?.copyWith(
+                    color: AppColor.white.withValues(alpha: 0.78),
                   ),
+                  // ),
                 ],
               ),
             ),
@@ -472,12 +401,12 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-        color: AppColor.textPrimary,
-        fontWeight: FontWeight.w700,
-      ),
+    return AppTextWidget(
+      text: text,
+      // style: Theme.of(context).textTheme.labelLarge?.copyWith(
+      color: AppColor.textPrimary,
+      fontWeight: FontWeight.w700,
     );
+    // );
   }
 }

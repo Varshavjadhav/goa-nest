@@ -2,6 +2,7 @@ import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/core.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/widgets/app_scaffold.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../../../utilities/extensions/extensions.dart';
 
@@ -27,10 +28,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isWide ? 40 : 22,
-              vertical: 24,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: isWide ? 40 : 22, vertical: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1100),
               child: isWide
@@ -43,11 +41,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                     )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const _MobileHeader(),
-                        const SizedBox(height: 24),
-                        _buildForm(context, compact: true),
-                      ],
+                      children: [const _MobileHeader(), const SizedBox(height: 24), _buildForm(context, compact: true)],
                     ),
             ),
           ),
@@ -65,13 +59,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
         color: AppColor.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColor.primaryLight),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.primaryDark.withValues(alpha: 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 18),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: AppColor.primaryDark.withValues(alpha: 0.08), blurRadius: 30, offset: const Offset(0, 18))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,40 +78,34 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               Container(
                 width: 46,
                 height: 46,
-                decoration: BoxDecoration(
-                  color: AppColor.primary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.holiday_village_rounded,
-                  color: AppColor.white,
-                ),
+                decoration: BoxDecoration(color: AppColor.primary, borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.holiday_village_rounded, color: AppColor.white),
               ),
-              const SizedBox(width: 12),
-              Text(
-                'GoaNest',
-                style: textTheme.headlineMedium?.copyWith(
-                  color: AppColor.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
+              Gap(12.h),
+              AppTextWidget(
+                text: 'GoaNest',
+                // style: textTheme.headlineMedium?.copyWith(
+                color: AppColor.textPrimary,
+                fontWeight: FontWeight.w800,
+                // ),
               ),
             ],
           ),
-          const SizedBox(height: 28),
-          Text(
-            'Create account',
-            style: textTheme.displaySmall?.copyWith(
-              color: AppColor.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
+          Gap(28.h),
+          AppTextWidget(
+            text: 'Create account',
+            // style: textTheme.displaySmall?.copyWith(
+            color: AppColor.textPrimary,
+            fontWeight: FontWeight.w800,
+            // ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Set up your profile to book stays, save favorites, and manage trips.',
-            style: textTheme.bodyMedium?.copyWith(
-              color: AppColor.textSecondary,
-              height: 1.45,
-            ),
+          Gap(8.h),
+          AppTextWidget(
+            text: 'Set up your profile to book stays, save favorites, and manage trips.',
+            // style: textTheme.bodyMedium?.copyWith(
+            color: AppColor.textSecondary,
+            height: 1.45,
+            // ),
           ),
           Gap(28.h),
           const _FieldLabel(text: 'Full name'),
@@ -131,10 +113,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           TextFormField(
             textInputAction: TextInputAction.next,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              hintText: 'Enter your full name',
-              prefixIcon: Icon(Icons.person_outline_rounded),
-            ),
+            decoration: const InputDecoration(hintText: 'Enter your full name', prefixIcon: Icon(Icons.person_outline_rounded)),
           ),
           const SizedBox(height: 18),
           const _FieldLabel(text: 'Mobile number'),
@@ -143,10 +122,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.next,
             maxLength: 10,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(10),
-            ],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
             decoration: const InputDecoration(
               hintText: 'Enter mobile number',
               prefixIcon: Icon(Icons.phone_android_rounded),
@@ -159,10 +135,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
           TextFormField(
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              hintText: 'you@example.com',
-              prefixIcon: Icon(Icons.mail_outline_rounded),
-            ),
+            decoration: const InputDecoration(hintText: 'you@example.com', prefixIcon: Icon(Icons.mail_outline_rounded)),
           ),
           const SizedBox(height: 18),
           Row(
@@ -221,9 +194,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
                 child: Checkbox(
                   value: _acceptTerms,
                   activeColor: AppColor.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   onChanged: (value) {
                     setState(() {
                       _acceptTerms = value ?? false;
@@ -235,10 +206,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               Expanded(
                 child: Text(
                   'I agree to receive booking updates and accept the terms of service.',
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: AppColor.textSecondary,
-                    height: 1.4,
-                  ),
+                  style: textTheme.bodyMedium?.copyWith(color: AppColor.textSecondary, height: 1.4),
                 ),
               ),
             ],
@@ -252,10 +220,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Create account',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                  ),
+                  Text('Create account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                   SizedBox(width: 10),
                   Icon(Icons.arrow_forward_rounded, size: 20),
                 ],
@@ -268,12 +233,7 @@ class _RegistrationWidgetState extends State<RegistrationWidget> {
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Text(
-                  'Already have an account?',
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: AppColor.textSecondary,
-                  ),
-                ),
+                Text('Already have an account?', style: textTheme.bodyMedium?.copyWith(color: AppColor.textSecondary)),
                 TextButton(
                   onPressed: () {
                     context.go(RouteName.loginView);
@@ -320,11 +280,7 @@ class _PasswordField extends StatelessWidget {
             suffixIcon: IconButton(
               tooltip: obscureText ? 'Show password' : 'Hide password',
               onPressed: onToggle,
-              icon: Icon(
-                obscureText
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-              ),
+              icon: Icon(obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined),
             ),
           ),
         ),
@@ -351,19 +307,11 @@ class _MobileHeader extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColor.black.withValues(alpha: 0.10),
-                    AppColor.black.withValues(alpha: 0.66),
-                  ],
+                  colors: [AppColor.black.withValues(alpha: 0.10), AppColor.black.withValues(alpha: 0.66)],
                 ),
               ),
             ),
-            const Positioned(
-              left: 18,
-              right: 18,
-              bottom: 18,
-              child: _HeroCopy(),
-            ),
+            const Positioned(left: 18, right: 18, bottom: 18, child: _HeroCopy()),
           ],
         ),
       ),
@@ -389,10 +337,7 @@ class _RegistrationPreviewPanel extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColor.black.withValues(alpha: 0.04),
-                    AppColor.black.withValues(alpha: 0.74),
-                  ],
+                  colors: [AppColor.black.withValues(alpha: 0.04), AppColor.black.withValues(alpha: 0.74)],
                 ),
               ),
             ),
@@ -402,24 +347,13 @@ class _RegistrationPreviewPanel extends StatelessWidget {
               top: 30,
               child: Row(
                 children: const [
-                  _BenefitPill(
-                    icon: Icons.favorite_rounded,
-                    label: 'Save favorite stays',
-                  ),
+                  _BenefitPill(icon: Icons.favorite_rounded, label: 'Save favorite stays'),
                   SizedBox(width: 12),
-                  _BenefitPill(
-                    icon: Icons.support_agent_rounded,
-                    label: 'Trip support',
-                  ),
+                  _BenefitPill(icon: Icons.support_agent_rounded, label: 'Trip support'),
                 ],
               ),
             ),
-            const Positioned(
-              left: 34,
-              right: 34,
-              bottom: 34,
-              child: _HeroCopy(),
-            ),
+            const Positioned(left: 34, right: 34, bottom: 34, child: _HeroCopy()),
           ],
         ),
       ),
@@ -440,19 +374,12 @@ class _HeroCopy extends StatelessWidget {
       children: [
         Text(
           'Start planning your Goa escape',
-          style: textTheme.displaySmall?.copyWith(
-            color: AppColor.white,
-            fontWeight: FontWeight.w800,
-            height: 1.15,
-          ),
+          style: textTheme.displaySmall?.copyWith(color: AppColor.white, fontWeight: FontWeight.w800, height: 1.15),
         ),
         const SizedBox(height: 10),
         Text(
           'Create a GoaNest profile for faster bookings, saved homes, and personalized stay recommendations.',
-          style: textTheme.bodyLarge?.copyWith(
-            color: AppColor.white.withValues(alpha: 0.88),
-            height: 1.45,
-          ),
+          style: textTheme.bodyLarge?.copyWith(color: AppColor.white.withValues(alpha: 0.88), height: 1.45),
         ),
       ],
     );
@@ -486,10 +413,7 @@ class _BenefitPill extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: textTheme.labelLarge?.copyWith(
-                  color: AppColor.white,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: textTheme.labelLarge?.copyWith(color: AppColor.white, fontWeight: FontWeight.w800),
               ),
             ),
           ],
@@ -508,10 +432,7 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-        color: AppColor.textPrimary,
-        fontWeight: FontWeight.w700,
-      ),
+      style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColor.textPrimary, fontWeight: FontWeight.w700),
     );
   }
 }
