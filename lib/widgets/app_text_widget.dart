@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utilities/extensions/provide_theme_extension.dart';
+
 class AppTextWidget extends StatelessWidget {
   final String? text;
   final double? fontSize;
@@ -16,6 +18,8 @@ class AppTextWidget extends StatelessWidget {
   final FontStyle? fontStyle;
   final VoidCallback? onTap;
   final String? fontFamily;
+
+  static const String defaultFontFamily = 'NotoSans';
 
   const AppTextWidget({
     super.key,
@@ -44,16 +48,14 @@ class AppTextWidget extends StatelessWidget {
       overflow: textOverflow,
       maxLines: maxLines,
       softWrap: softWrap ?? true,
-      // style: TextSizeHelper.size14().copyWith(
       style: TextStyle(
         fontWeight: fontWeight,
         fontStyle: fontStyle,
-        fontFamily: fontFamily,
+        fontFamily: fontFamily ?? defaultFontFamily,
         decoration: textDecoration,
         decorationColor: textDecorationColor,
         fontSize: fontSize ?? 12,
-        // color: color ?? context.themeExt.textPrimary,
-        color: Colors.black,
+        color: color ?? context.themeExt.textPrimary,
         height: height,
         letterSpacing: letterSpacing,
       ),

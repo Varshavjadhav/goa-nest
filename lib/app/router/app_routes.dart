@@ -1,4 +1,6 @@
 import 'package:goanest/app/router/route_name.dart';
+import 'package:goanest/features/home/presentation/view/filter_screen.dart';
+import 'package:goanest/features/home/presentation/view/home_screen.dart';
 import 'package:goanest/features/login/presentation/view/login_screen.dart';
 import 'package:goanest/features/login/presentation/view/registration_screen.dart';
 import 'package:goanest/features/splash/presentaion/screens/splash_screen.dart';
@@ -42,11 +44,21 @@ class AppRouter {
           child: const RegistrationScreen(),
         ),
       ),
-      // GoRoute(
-      //   name: RouteName.homeView.removeFirstChar(),
-      //   path: RouteName.homeView,
-      //   pageBuilder: (context, state) => appCustomTransitionPage(state: state, child: const HomeView()),
-      // ),
+      GoRoute(
+        name: RouteName.homeView.removeFirstChar(),
+        path: RouteName.homeView,
+        pageBuilder: (context, state) =>
+            appCustomTransitionPage(state: state, child: const HomeScreen()),
+      ),
+      GoRoute(
+        name: RouteName.filterView.removeFirstChar(),
+        path: RouteName.filterView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: const FilterScreen(),
+        ),
+      ),
     ],
     errorBuilder: (context, state) => const AppPageNotFound(),
   );

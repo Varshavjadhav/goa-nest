@@ -3,34 +3,58 @@ import 'package:flutter/material.dart';
 class AppColor {
   AppColor._();
 
-  /* -------------------------------------------------------------------------- */
-  /*                                Brand Colors                                */
-  /* -------------------------------------------------------------------------- */
 
-  static const Color primary = Color(0xFFF27C35);
-  static const Color secondary = Color(0xFFF4A778);
-  static const Color tertiary = Color(0xFFFFEDE2);
+  static const Color primary = Color(0xFFDE3151);
+  static const Color secondary = Color(0xFFE9788E);
+  static const Color tertiary = Color(0xFFFFECEF);
 
-  static const Color primaryLight = Color(0xFFFFE1CF);
-  static const Color primaryDark = Color(0xFFD9651F);
-  static const Color primaryDisabled = Color(0xFFF8B68E);
+  static const Color primaryLight = Color(0xFFFFCCD5);
+  static const Color primaryDark = Color(0xFFB51F3B);
+  static const Color primaryDisabled = Color(0xFFEAA0AE);
 
-  /* -------------------------------------------------------------------------- */
-  /*                              Primary Swatch                                */
-  /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                              Primary Swatch                                */
+/* -------------------------------------------------------------------------- */
 
-  static const MaterialColor primarySwatch = MaterialColor(0xFFF27C35, <int, Color>{
-    50: Color(0xFFFFF3EC),
-    100: Color(0xFFFFE1CF),
-    200: Color(0xFFFCC6A5),
-    300: Color(0xFFF9AB7B),
-    400: Color(0xFFF59255),
-    500: Color(0xFFF27C35), // primary
-    600: Color(0xFFE36F2F),
-    700: Color(0xFFD9651F),
-    800: Color(0xFFBF5718),
-    900: Color(0xFF9E4511),
+  static const MaterialColor primarySwatch =
+  MaterialColor(0xFFDE3151, <int, Color>{
+    50: Color(0xFFFFF0F2),
+    100: Color(0xFFFFD9DF),
+    200: Color(0xFFFFB8C3),
+    300: Color(0xFFF58A9D),
+    400: Color(0xFFE95B74),
+    500: Color(0xFFDE3151), // primary
+    600: Color(0xFFCC2947),
+    700: Color(0xFFB51F3B),
+    800: Color(0xFF96182F),
+    900: Color(0xFF741020),
   });
+
+//   static const Color primary = Color(0xFFDB5E8A);
+//   static const Color secondary = Color(0xFFF29AB5);
+//   static const Color tertiary = Color(0xFFFFF0F4);
+//
+//   static const Color primaryLight = Color(0xFFFFD9E4);
+//   static const Color primaryDark = Color(0xFFB63F68);
+//   static const Color primaryDisabled = Color(0xFFEFB2C5);
+//
+// /* -------------------------------------------------------------------------- */
+// /*                              Primary Swatch                                */
+// /* -------------------------------------------------------------------------- */
+//
+//   static const MaterialColor primarySwatch =
+//   MaterialColor(0xFFDB5E8A, <int, Color>{
+//     50: Color(0xFFFFF5F8),
+//     100: Color(0xFFFFD9E4),
+//     200: Color(0xFFFFB8CC),
+//     300: Color(0xFFF29AB5),
+//     400: Color(0xFFE8789F),
+//     500: Color(0xFFDB5E8A), // Primary
+//     600: Color(0xFFC94C78),
+//     700: Color(0xFFB63F68),
+//     800: Color(0xFF963354),
+//     900: Color(0xFF762640),
+//   });
 
   /* -------------------------------------------------------------------------- */
   /*                                Text Colors                                 */
@@ -170,4 +194,53 @@ class AppColor {
     Color(0xFFD4B9F5),
     Color(0xFFF5DEB9),
   ];
+
+  /* -------------------------------------------------------------------------- */
+  /*                             Filter / Terracotta                            */
+  /* -------------------------------------------------------------------------- */
+
+  static const Color filterBackground = Color(0xFFFBF9F8);
+  static const Color filterText = Color(0xFF1B1C1C);
+  static const Color filterTextMuted = Color(0xFF56423C);
+  static const Color filterAccent = Color(0xFF9B3C1E);
+  static const Color filterAccentLight = Color(0xFFD5ADA1);
+  static const Color filterAccentSoft = Color(0xFFFBF3F1);
+  static const Color filterTrackEmpty = Color(0xFFE9E8E7);
+  static const Color filterToggleOff = Color(0xFFEFEDED);
+  static const Color filterDivider = Color(0xFFF7F2F0);
+
+  /* -------------------------------------------------------------------------- */
+  /*                     Home Screen (Airbnb inspired palette)                   */
+  /* -------------------------------------------------------------------------- */
+
+  static const Color homeScreenBackground = Color(0xFFFFFFFF);
+  static const Color homeTitleText = Color(0xFF181818);
+  static const Color homeSubtitleText = Color(0xFF717171);
+  static const Color homeIcon = Color(0xFF202020);
+  static const Color homeDivider = Color(0xFFE8E8E8);
+
+  static const Color searchFieldBorder = Color(0xFFE4E4E4);
+  static const Color searchFieldHint = Color(0xFF202020);
+  static const Color searchFieldIcon = Color(0xFF202020);
+
+  static const Color tabSelectedBackground = Color(0xFFE4E4E4);
+  static const Color tabSelectedForeground = Color(0xFF202020);
+  static const Color tabBackground = Color(0xFFFFFFFF);
+  static const Color tabBorder = Color(0xFFE4E4E4);
+  static const Color tabForeground = Color(0xFF202020);
+
+  static const Color guestFavBadgeBackground = Color(0xFFE8E8E8);
+  static const Color guestFavBadgeText = Color(0xFF202020);
+
+  /* -------------------------------------------------------------------------- */
+  /*                              Login Screen Palette                           */
+  /* -------------------------------------------------------------------------- */
+
+  static const Color loginBackgroundTop = Color(0xFFFFF1F5);
+  static const Color loginBackgroundBottom = Color(0xFFFFFFFF);
+  static const Color loginAccentSoft = Color(0xFFFFCCD5);
+  static const Color loginCardBorder = Color(0xFFFFCCD5);
+  static const Color loginInputFill = Color(0xFFFFF8FA);
+  static const Color loginInputBorder = Color(0xFFE8ECF4);
+  static const Color loginBadgeBackground = Color(0xFFFFCCD5);
 }

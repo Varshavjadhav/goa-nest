@@ -70,6 +70,29 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
   final Color shimmerHighlight;
   final Color shimmerBlock;
 
+  /* -------------------------------------------------------------------------- */
+  /*                             Home Screen Palette                             */
+  /* -------------------------------------------------------------------------- */
+
+  final Color homeBackground;
+  final Color homeTitleText;
+  final Color homeSubtitleText;
+  final Color homeIcon;
+  final Color homeDivider;
+
+  final Color searchFieldBorder;
+  final Color searchFieldHint;
+  final Color searchFieldIcon;
+
+  final Color tabSelectedBackground;
+  final Color tabSelectedForeground;
+  final Color tabBackground;
+  final Color tabBorder;
+  final Color tabForeground;
+
+  final Color guestFavBadgeBackground;
+  final Color guestFavBadgeText;
+
   const ProvideThemeExtension({
     required this.brightness,
     required this.brandPrimary,
@@ -99,6 +122,21 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
     required this.shimmerBase,
     required this.shimmerHighlight,
     required this.shimmerBlock,
+    required this.homeBackground,
+    required this.homeTitleText,
+    required this.homeSubtitleText,
+    required this.homeIcon,
+    required this.homeDivider,
+    required this.searchFieldBorder,
+    required this.searchFieldHint,
+    required this.searchFieldIcon,
+    required this.tabSelectedBackground,
+    required this.tabSelectedForeground,
+    required this.tabBackground,
+    required this.tabBorder,
+    required this.tabForeground,
+    required this.guestFavBadgeBackground,
+    required this.guestFavBadgeText,
     required this.manualPaymentContainerColor,
     required this.manualPaymentCopyContainerColor,
     required this.payWithContainerColor,
@@ -136,6 +174,21 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
     Color? shimmerBase,
     Color? shimmerHighlight,
     Color? shimmerBlock,
+    Color? homeBackground,
+    Color? homeTitleText,
+    Color? homeSubtitleText,
+    Color? homeIcon,
+    Color? homeDivider,
+    Color? searchFieldBorder,
+    Color? searchFieldHint,
+    Color? searchFieldIcon,
+    Color? tabSelectedBackground,
+    Color? tabSelectedForeground,
+    Color? tabBackground,
+    Color? tabBorder,
+    Color? tabForeground,
+    Color? guestFavBadgeBackground,
+    Color? guestFavBadgeText,
     Color? manualPaymentContainerColor,
     Color? manualPaymentCopyContainerColor,
     Color? payWithContainerColor,
@@ -171,6 +224,21 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
       shimmerBase: shimmerBase ?? this.shimmerBase,
       shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
       shimmerBlock: shimmerBlock ?? this.shimmerBlock,
+      homeBackground: homeBackground ?? this.homeBackground,
+      homeTitleText: homeTitleText ?? this.homeTitleText,
+      homeSubtitleText: homeSubtitleText ?? this.homeSubtitleText,
+      homeIcon: homeIcon ?? this.homeIcon,
+      homeDivider: homeDivider ?? this.homeDivider,
+      searchFieldBorder: searchFieldBorder ?? this.searchFieldBorder,
+      searchFieldHint: searchFieldHint ?? this.searchFieldHint,
+      searchFieldIcon: searchFieldIcon ?? this.searchFieldIcon,
+      tabSelectedBackground: tabSelectedBackground ?? this.tabSelectedBackground,
+      tabSelectedForeground: tabSelectedForeground ?? this.tabSelectedForeground,
+      tabBackground: tabBackground ?? this.tabBackground,
+      tabBorder: tabBorder ?? this.tabBorder,
+      tabForeground: tabForeground ?? this.tabForeground,
+      guestFavBadgeBackground: guestFavBadgeBackground ?? this.guestFavBadgeBackground,
+      guestFavBadgeText: guestFavBadgeText ?? this.guestFavBadgeText,
       manualPaymentContainerColor: manualPaymentContainerColor ?? this.manualPaymentContainerColor,
       manualPaymentCopyContainerColor: manualPaymentCopyContainerColor ?? this.manualPaymentCopyContainerColor,
       payWithContainerColor: payWithContainerColor ?? this.payWithContainerColor,
@@ -212,6 +280,21 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
       shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
       shimmerHighlight: Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
       shimmerBlock: Color.lerp(shimmerBlock, other.shimmerBlock, t)!,
+      homeBackground: Color.lerp(homeBackground, other.homeBackground, t)!,
+      homeTitleText: Color.lerp(homeTitleText, other.homeTitleText, t)!,
+      homeSubtitleText: Color.lerp(homeSubtitleText, other.homeSubtitleText, t)!,
+      homeIcon: Color.lerp(homeIcon, other.homeIcon, t)!,
+      homeDivider: Color.lerp(homeDivider, other.homeDivider, t)!,
+      searchFieldBorder: Color.lerp(searchFieldBorder, other.searchFieldBorder, t)!,
+      searchFieldHint: Color.lerp(searchFieldHint, other.searchFieldHint, t)!,
+      searchFieldIcon: Color.lerp(searchFieldIcon, other.searchFieldIcon, t)!,
+      tabSelectedBackground: Color.lerp(tabSelectedBackground, other.tabSelectedBackground, t)!,
+      tabSelectedForeground: Color.lerp(tabSelectedForeground, other.tabSelectedForeground, t)!,
+      tabBackground: Color.lerp(tabBackground, other.tabBackground, t)!,
+      tabBorder: Color.lerp(tabBorder, other.tabBorder, t)!,
+      tabForeground: Color.lerp(tabForeground, other.tabForeground, t)!,
+      guestFavBadgeBackground: Color.lerp(guestFavBadgeBackground, other.guestFavBadgeBackground, t)!,
+      guestFavBadgeText: Color.lerp(guestFavBadgeText, other.guestFavBadgeText, t)!,
       manualPaymentContainerColor: Color.lerp(manualPaymentContainerColor, other.manualPaymentContainerColor, t)!,
       manualPaymentCopyContainerColor: Color.lerp(manualPaymentCopyContainerColor, other.manualPaymentCopyContainerColor, t)!,
       payWithContainerColor: Color.lerp(payWithContainerColor, other.payWithContainerColor, t)!,
@@ -260,6 +343,21 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
     shimmerBase: AppColor.greySoft,
     shimmerHighlight: AppColor.white,
     shimmerBlock: AppColor.white,
+    homeBackground: AppColor.homeScreenBackground,
+    homeTitleText: AppColor.homeTitleText,
+    homeSubtitleText: AppColor.homeSubtitleText,
+    homeIcon: AppColor.homeIcon,
+    homeDivider: AppColor.homeDivider,
+    searchFieldBorder: AppColor.searchFieldBorder,
+    searchFieldHint: AppColor.searchFieldHint,
+    searchFieldIcon: AppColor.searchFieldIcon,
+    tabSelectedBackground: AppColor.tabSelectedBackground,
+    tabSelectedForeground: AppColor.tabSelectedForeground,
+    tabBackground: AppColor.tabBackground,
+    tabBorder: AppColor.tabBorder,
+    tabForeground: AppColor.tabForeground,
+    guestFavBadgeBackground: AppColor.guestFavBadgeBackground,
+    guestFavBadgeText: AppColor.guestFavBadgeText,
     manualPaymentContainerColor: AppColor.white,
     manualPaymentCopyContainerColor: AppColor.white,
     payWithContainerColor: const Color(0xFFFDF9F6),
@@ -301,6 +399,21 @@ class ProvideThemeExtension extends ThemeExtension<ProvideThemeExtension> {
     shimmerBase: AppColor.greyDark,
     shimmerHighlight: AppColor.black,
     shimmerBlock: AppColor.black,
+    homeBackground: AppColor.black,
+    homeTitleText: AppColor.white,
+    homeSubtitleText: AppColor.grey,
+    homeIcon: AppColor.white,
+    homeDivider: AppColor.greyExtraDark,
+    searchFieldBorder: AppColor.greyExtraDark,
+    searchFieldHint: AppColor.grey,
+    searchFieldIcon: AppColor.white,
+    tabSelectedBackground: AppColor.greyExtraDark,
+    tabSelectedForeground: AppColor.white,
+    tabBackground: AppColor.textFieldBgColor,
+    tabBorder: AppColor.greyExtraDark,
+    tabForeground: AppColor.white,
+    guestFavBadgeBackground: AppColor.greyExtraDark,
+    guestFavBadgeText: AppColor.white,
     manualPaymentContainerColor: AppColor.manualPaymentContainer,
     manualPaymentCopyContainerColor: AppColor.manualPaymentCopyContainer,
     payWithContainerColor: AppColor.payWithContainer,
