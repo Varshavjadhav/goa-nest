@@ -1,6 +1,10 @@
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/features/home/presentation/view/filter_screen.dart';
+import 'package:goanest/features/home/presentation/widget/search_widget.dart';
 import 'package:goanest/features/home/presentation/view/home_screen.dart';
+import 'package:goanest/features/home/presentation/view/property_detail_screen.dart';
+import 'package:goanest/features/home/presentation/view/checkout_screen.dart';
+import 'package:goanest/features/home/presentation/view/booking_confirmation_screen.dart';
 import 'package:goanest/features/login/presentation/view/login_screen.dart';
 import 'package:goanest/features/login/presentation/view/registration_screen.dart';
 import 'package:goanest/features/splash/presentaion/screens/splash_screen.dart';
@@ -57,6 +61,42 @@ class AppRouter {
           state: state,
           transitionBuilder: slideInOutTransition,
           child: const FilterScreen(),
+        ),
+      ),
+      GoRoute(
+        name: 'search',
+        path: RouteName.searchView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: const SearchWidget(),
+        ),
+      ),
+      GoRoute(
+        name: 'property',
+        path: RouteName.propertyView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: const PropertyDetailScreen(),
+        ),
+      ),
+      GoRoute(
+        name: 'checkout',
+        path: RouteName.checkoutView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: const CheckoutScreen(),
+        ),
+      ),
+      GoRoute(
+        name: 'booking-confirmation',
+        path: RouteName.bookingConfirmationView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: const BookingConfirmationScreen(),
         ),
       ),
     ],

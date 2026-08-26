@@ -5,6 +5,11 @@ class RouteName {
   static const String registerView = '/register';
   static const String homeView = '/homeView';
   static const String filterView = '/filter';
+  static const String searchView = '/search';
+  static const String propertyView = '/property/:propertyId';
+  static const String checkoutView = '/checkout/:propertyId';
+  static const String bookingConfirmationView =
+      '/booking-confirmation/:propertyId';
 
   static const String appError = '/appError';
 }

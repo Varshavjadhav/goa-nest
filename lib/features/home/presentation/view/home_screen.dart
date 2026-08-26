@@ -6,7 +6,6 @@ import 'package:goanest/widgets/app_scaffold.dart';
 import '../widget/bookings_widget.dart';
 import '../widget/home_widget.dart';
 import '../widget/profile_widget.dart';
-import '../widget/search_widget.dart';
 import '../widget/wishlist_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,11 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: Icons.explore_outlined,
       activeIcon: Icons.explore_rounded,
       label: 'Explore',
-    ),
-    AppMainNavItem(
-      icon: Icons.search_outlined,
-      activeIcon: Icons.search_rounded,
-      label: 'Search',
     ),
     AppMainNavItem(
       icon: Icons.favorite_border_rounded,
@@ -56,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _currentIndex,
         children: const [
           HomeWidget(),
-          SearchWidget(),
           WishlistWidget(),
           BookingsWidget(),
           ProfileWidget(),

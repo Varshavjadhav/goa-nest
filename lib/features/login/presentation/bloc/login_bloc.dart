@@ -64,11 +64,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   String? _validateIdentifier(String identifier) {
     if (identifier.trim().isEmpty) {
-      return 'Please enter your mobile number';
+      return 'Please enter your email address';
     }
-    final digitsOnly = identifier.trim().replaceAll(RegExp(r'\D'), '');
-    if (digitsOnly.length != 10) {
-      return 'Enter a valid 10-digit mobile number';
+    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(identifier.trim())) {
+      return 'Enter a valid email address';
     }
     return null;
   }
