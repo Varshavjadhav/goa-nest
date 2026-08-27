@@ -46,14 +46,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppScaffold(
       backgroundColor: context.themeExt.homeScaffold,
       extendBody: true,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: const [
-          HomeWidget(),
-          WishlistWidget(),
-          BookingsWidget(),
-          ProfileWidget(),
-        ],
+      body: SafeArea(
+        bottom: false,
+        child: IndexedStack(
+          index: _currentIndex,
+          children: const [
+            HomeWidget(),
+            WishlistWidget(),
+            BookingsWidget(),
+            ProfileWidget(),
+          ],
+        ),
       ),
       bottomNavigationBar: AppMainNavBar(
         currentIndex: _currentIndex,

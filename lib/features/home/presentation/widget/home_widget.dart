@@ -7,496 +7,959 @@ import 'package:goanest/widgets/app_text_widget.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
+
   @override
   State<HomeWidget> createState() => _HomeWidgetState();
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  int category = 0;
-  final categories = const ['All', 'Beach', 'Pool', 'Budget', 'Design'];
-  final categoryIcons = const [
-    Icons.apps_rounded,
-    Icons.beach_access_rounded,
-    Icons.pool_rounded,
-    Icons.sell_outlined,
-    Icons.auto_awesome_rounded,
-  ];
-  final homes = const [
-    _HomeData(
-      'Azure Bay Retreat',
-      'Anjuna, North Goa',
-      '₹18,500',
-      '4.9',
-      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
-    ),
-    _HomeData(
-      'Casa Verde Manor',
-      'Assagao, Goa',
-      '₹12,200',
-      '4.8',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
-    ),
-    _HomeData(
-      'The Canopy Nest',
-      'Agonda, South Goa',
-      '₹9,800',
-      '5.0',
-      'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900',
-    ),
+  int _selectedCategory = 0;
+
+  static const _categories = [
+    ('All', Icons.auto_awesome),
+    ('Homes', Icons.home_outlined),
+    ('Experiences', Icons.camera_alt_outlined),
+    ('Services', Icons.build_outlined),
   ];
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: AppColor.surface,
-    child: CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        SliverPadding(
-          padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 105.h),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              const _HomeHeader(),
-              SizedBox(height: 20.h),
-              GestureDetector(
-                onTap: () => context.push(RouteName.searchView),
-                child: const _HomeSearch(),
-              ),
-              SizedBox(height: 19.h),
-              SizedBox(
-                height: 46.h,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categories.length,
-                  separatorBuilder: (_, __) => SizedBox(width: 10.w),
-                  itemBuilder: (_, index) => _CategoryChip(
-                    label: categories[index],
-                    icon: categoryIcons[index],
-                    selected: index == category,
-                    onTap: () => setState(() => category = index),
-                  ),
-                ),
-              ),
-              SizedBox(height: 30.h),
-              AppTextWidget.headlineMedium(
-                text: 'Featured Escapes',
-                color: AppColor.textPrimary,
-              ),
-              SizedBox(height: 4.h),
-              AppTextWidget.bodySmall(
-                text: 'Curated collection for your next stay',
-                color: AppColor.textSecondary,
-              ),
-              SizedBox(height: 17.h),
-              for (final home in homes) _PropertyCard(home: home),
-              SizedBox(height: 2.h),
-              AppTextWidget.headlineMedium(
-                text: 'Discover More',
-                color: AppColor.textPrimary,
-              ),
-              SizedBox(height: 15.h),
-              const _DiscoverCard(),
-              SizedBox(height: 12.h),
-              Row(
-                children: [
-                  const Expanded(
-                    child: _SmallDiscover(
-                      icon: Icons.sailing_rounded,
-                      title: 'Yacht Rentals',
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  const Expanded(
-                    child: _SmallDiscover(
-                      icon: Icons.restaurant_rounded,
-                      title: "Chef's Table",
-                    ),
-                  ),
-                ],
-              ),
-            ]),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _HomeHeader extends StatelessWidget {
-  const _HomeHeader();
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      AppTextWidget(
-        text: 'GoaNest',
-        fontSize: 24,
-        fontWeight: FontWeight.w800,
-        color: AppColor.primary,
-      ),
-      const Spacer(),
-      IconButton(
-        onPressed: () {},
-        icon: Icon(
-          Icons.notifications_none_rounded,
-          color: AppColor.textPrimary,
-        ),
-      ),
-      Icon(
-        Icons.tune_rounded,
-        size: 21.sp,
-        color: AppColor.textPrimary,
-      ),
-    ],
-  );
-}
-
-class _HomeSearch extends StatelessWidget {
-  const _HomeSearch();
-  @override
-  Widget build(BuildContext context) => Container(
-    height: 54.h,
-    padding: EdgeInsets.symmetric(horizontal: 17.w),
-    decoration: BoxDecoration(
+  Widget build(BuildContext context) {
+    return ColoredBox(
       color: AppColor.white,
-      borderRadius: BorderRadius.circular(28.r),
-      border: Border.all(color: AppColor.homeDivider),
-      boxShadow: const [
-        BoxShadow(
-          color: AppColor.shadow,
-          blurRadius: 8,
-          offset: Offset(0, 3),
-        ),
-      ],
-    ),
-    child: Row(
-      children: [
-        Icon(
-          Icons.search_rounded,
-          size: 21.sp,
-          color: AppColor.textSecondary,
-        ),
-        SizedBox(width: 12.w),
-        AppTextWidget.bodyLarge(
-          text: 'Where in Goa?',
-          color: AppColor.textSecondary,
-        ),
-        const Spacer(),
-        Icon(
-          Icons.tune_rounded,
-          size: 19.sp,
-          color: AppColor.textSecondary,
-        ),
-      ],
-    ),
-  );
-}
-
-class _CategoryChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _CategoryChip({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Material(
-    color: selected ? AppColor.primary : AppColor.white,
-    elevation: selected ? 3 : 0,
-    shadowColor: AppColor.primary.withValues(alpha: .25),
-    borderRadius: BorderRadius.circular(24.r),
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24.r),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(
-            color: selected ? AppColor.primary : AppColor.homeDivider,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 17.sp,
-              color: selected ? AppColor.white : AppColor.primary,
-            ),
-            SizedBox(width: 7.w),
-            AppTextWidget(
-              text: label,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: selected ? AppColor.white : AppColor.textPrimary,
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-class _HomeData {
-  final String title, location, price, rating, image;
-  const _HomeData(
-    this.title,
-    this.location,
-    this.price,
-    this.rating,
-    this.image,
-  );
-}
-
-class _PropertyCard extends StatelessWidget {
-  final _HomeData home;
-  const _PropertyCard({required this.home});
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: () => context.push(
-      RouteName.propertyView.replaceFirst(':propertyId', 'modern-villa'),
-    ),
-    borderRadius: BorderRadius.circular(14.r),
-    child: Padding(
-      padding: EdgeInsets.only(bottom: 25.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14.r),
-                child: AspectRatio(
-                  aspectRatio: 1.12,
-                  child: Image.network(
-                    home.image,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: AppColor.greyExtraLight,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColor.primary,
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      debugPrint('IMAGE_ERROR: ${error.toString()}');
-                      debugPrint('IMAGE_ERROR_URL: ${home.image}');
-                      return Container(
-                        color: AppColor.greyExtraLight,
-                        child: Icon(
-                          Icons.home_outlined,
-                          size: 42.sp,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 12.h,
-                right: 12.w,
-                child: Container(
-                  width: 38.w,
-                  height: 38.w,
-                  decoration: BoxDecoration(
-                    color: AppColor.white.withValues(alpha: .93),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.favorite_border_rounded,
-                    size: 21.sp,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 12.h,
-                left: 12.w,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColor.primary,
-                    borderRadius: BorderRadius.all(Radius.circular(4.r)),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 9.w,
-                      vertical: 5.h,
-                    ),
-                    child: AppTextWidget(
-                      text: 'PREMIER',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.white,
-                      letterSpacing: .5,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          Row(
-            children: [
-              Expanded(
-                child: AppTextWidget.titleLarge(
-                  text: home.title,
-                  color: AppColor.textPrimary,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 7.w,
-                  vertical: 4.h,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColor.greyExtraLight,
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.star_rounded,
-                      size: 14.sp,
-                      color: AppColor.primary,
-                    ),
-                    SizedBox(width: 3.w),
-                    AppTextWidget(
-                      text: home.rating,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 5.h),
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 14.sp,
-                color: AppColor.textSecondary,
-              ),
-              SizedBox(width: 3.w),
-              AppTextWidget.bodySmall(
-                text: home.location,
-                color: AppColor.textSecondary,
-              ),
-            ],
-          ),
-          SizedBox(height: 7.h),
-          RichText(
-            text: TextSpan(
-              style: TextStyle(
-                color: AppColor.textPrimary,
-                fontSize: 13.sp,
-              ),
-              children: [
-                TextSpan(
-                  text: home.price,
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColor.primary,
-                  ),
-                ),
-                TextSpan(
-                  text: ' / night',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13.sp,
-                  ),
-                ),
-              ],
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(child: _buildSearchBar()),
+          SliverToBoxAdapter(child: _buildCategoryTabs()),
+          SliverPadding(
+            padding: EdgeInsets.only(bottom: 100.h),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _buildContinueSearching(),
+                _buildRecentlyViewed(),
+                _buildBasedOnSearch(),
+                _buildInspiration(),
+                _buildExploreMore(),
+                _buildExperiences(),
+              ]),
             ),
           ),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
-class _DiscoverCard extends StatelessWidget {
-  const _DiscoverCard();
-  @override
-  Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(14.r),
-    child: Stack(
-      children: [
-        AspectRatio(
-          aspectRatio: 1.5,
-          child: Image.network(
-            'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=900',
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(color: AppColor.primary),
+  // ═══════════════════════════════════════════════════════════════════
+  // SEARCH BAR
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+      child: GestureDetector(
+        onTap: () => context.push(RouteName.searchView),
+        child: Container(
+          height: 56.h,
+          decoration: BoxDecoration(
+            color: AppColor.white,
+            borderRadius: BorderRadius.circular(28.r),
+            border: Border.all(color: AppColor.homeDivider, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: AppColor.black.withValues(alpha: 0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Row(
+              children: [
+                Icon(Icons.search_rounded, size: 24.sp, color: AppColor.textPrimary),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: AppTextWidget(
+                    text: 'Start your search',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.textSecondary,
+                  ),
+                ),
+                Container(
+                  width: 36.w,
+                  height: 36.w,
+                  decoration: BoxDecoration(
+                    color: AppColor.greyExtraLight,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.tune_rounded, size: 18.sp, color: AppColor.textPrimary),
+                ),
+              ],
+            ),
           ),
         ),
-        Positioned(
-          left: 16.w,
-          bottom: 16.h,
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CATEGORY TABS
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildCategoryTabs() {
+    return Container(
+      height: 48.h,
+      margin: EdgeInsets.only(top: 8.h),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        itemCount: _categories.length,
+        separatorBuilder: (_, __) => SizedBox(width: 10.w),
+        itemBuilder: (context, index) {
+          final (label, icon) = _categories[index];
+          final isSelected = index == _selectedCategory;
+          return GestureDetector(
+            onTap: () => setState(() => _selectedCategory = index),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColor.greyExtraLight : AppColor.white,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(
+                  color: isSelected ? AppColor.greyExtraLight : AppColor.homeDivider,
+                  width: 1.2,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
+                    size: 14.sp,
+                    color: AppColor.textPrimary,
+                  ),
+                  SizedBox(width: 6.w),
+                  AppTextWidget(
+                    text: label,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.textPrimary,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CONTINUE SEARCHING
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildContinueSearching() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+      child: Container(
+        padding: EdgeInsets.all(12.p),
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: AppColor.homeDivider),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppTextWidget(
+                    text: 'Continue searching for',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.textPrimary,
+                  ),
+                  SizedBox(height: 2.h),
+                  AppTextWidget(
+                    text: 'homes in North Goa',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.textPrimary,
+                  ),
+                  SizedBox(height: 4.h),
+                  AppTextWidget(
+                    text: 'Week in Oct · 1 guest',
+                    fontSize: 12,
+                    color: AppColor.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8.r),
+              child: SizedBox(
+                width: 80.w,
+                height: 72.h,
+                child: Image.network(
+                  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: AppColor.greyExtraLight,
+                    child: Icon(Icons.home_outlined, size: 24.sp, color: AppColor.grey),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // RECENTLY VIEWED
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildRecentlyViewed() {
+    final items = [
+      _RecentItem('Lonavala', 'Favourite', '4.92', 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400'),
+      _RecentItem('Commercial phot...', 'Holiday Home™', null, 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400'),
+      _RecentItem('Gurugram', '3 homes', null, 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: 24.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AppTextWidget(
+                text: 'Recently viewed',
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: AppColor.textPrimary,
+              ),
+              Icon(Icons.chevron_right_rounded, size: 24.sp, color: AppColor.textPrimary),
+            ],
+          ),
+        ),
+        SizedBox(height: 12.h),
+        SizedBox(
+          height: 140.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+            itemBuilder: (context, index) => _buildRecentItem(items[index]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentItem(_RecentItem item) {
+    return SizedBox(
+      width: 130.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10.r),
+                child: SizedBox(
+                  height: 85.h,
+                  width: 130.w,
+                  child: Image.network(
+                    item.image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: AppColor.greyExtraLight,
+                      child: Icon(Icons.home_outlined, size: 24.sp, color: AppColor.grey),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 6.h,
+                right: 6.w,
+                child: Container(
+                  width: 28.w,
+                  height: 28.w,
+                  decoration: BoxDecoration(
+                    color: AppColor.white.withValues(alpha: 0.9),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.favorite_border_rounded,
+                    size: 14.sp,
+                    color: AppColor.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 6.h),
+          AppTextWidget(
+            text: item.title,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: AppColor.textPrimary,
+            maxLines: 1,
+            textOverflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 2.h),
+          if (item.rating != null)
+            Row(
+              children: [
+                Icon(Icons.star_rounded, size: 12.sp, color: AppColor.textPrimary),
+                SizedBox(width: 2.w),
+                AppTextWidget(
+                  text: item.rating!,
+                  fontSize: 12,
+                  color: AppColor.textPrimary,
+                ),
+                SizedBox(width: 4.w),
+                Flexible(
+                  child: AppTextWidget(
+                    text: item.subtitle,
+                    fontSize: 12,
+                    color: AppColor.textSecondary,
+                    maxLines: 1,
+                    textOverflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            )
+          else
+            AppTextWidget(
+              text: item.subtitle,
+              fontSize: 12,
+              color: AppColor.textSecondary,
+              maxLines: 1,
+              textOverflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // BASED ON YOUR SEARCH
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildBasedOnSearch() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: 24.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: AppTextWidget(
+                  text: 'Based on your North Goa search',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColor.textPrimary,
+                  maxLines: 1,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Icon(Icons.chevron_right_rounded, size: 24.sp, color: AppColor.textPrimary),
+            ],
+          ),
+        ),
+        SizedBox(height: 14.h),
+        _buildSearchPropertyCard(
+          title: 'Flat in Candolim',
+          location: '2,305 kilometres away',
+          dates: '10–15 Oct',
+          price: '₹34,978',
+          priceNote: 'total before taxes',
+          rating: '5.0',
+          images: [
+            'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
+            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
+            'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=900',
+          ],
+          isGuestFavorite: true,
+        ),
+        SizedBox(height: 24.h),
+        _buildSearchPropertyCard(
+          title: 'Home in Candolim',
+          location: '2,230 kilometres away',
+          dates: '20–25 Oct',
+          price: '₹20,844',
+          priceNote: 'total before taxes',
+          rating: '4.82',
+          images: [
+            'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900',
+            'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
+            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
+          ],
+          isGuestFavorite: false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchPropertyCard({
+    required String title,
+    required String location,
+    required String dates,
+    required String price,
+    required String priceNote,
+    required String rating,
+    required List<String> images,
+    required bool isGuestFavorite,
+  }) {
+    return GestureDetector(
+      onTap: () => context.push(
+        RouteName.propertyView.replaceFirst(':propertyId', 'modern-villa'),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _ImageCarousel(
+              images: images,
+              isGuestFavorite: isGuestFavorite,
+            ),
+            SizedBox(height: 10.h),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppTextWidget(
+                    text: title,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.textPrimary,
+                    maxLines: 1,
+                    textOverflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.star_rounded, size: 14.sp, color: AppColor.textPrimary),
+                    SizedBox(width: 2.w),
+                    AppTextWidget(
+                      text: rating,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.textPrimary,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 2.h),
+            AppTextWidget(
+              text: location,
+              fontSize: 14,
+              color: AppColor.textSecondary,
+              maxLines: 1,
+              textOverflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 2.h),
+            AppTextWidget(
+              text: dates,
+              fontSize: 14,
+              color: AppColor.textSecondary,
+            ),
+            SizedBox(height: 4.h),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 14, color: AppColor.textPrimary),
+                children: [
+                  TextSpan(
+                    text: '$price ',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  TextSpan(
+                    text: priceNote,
+                    style: const TextStyle(fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // INSPIRATION
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildInspiration() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppTextWidget(
+            text: 'Inspiration for your next trip',
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColor.textPrimary,
+          ),
+          SizedBox(height: 14.h),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16.r),
+            child: SizedBox(
+              height: 300.h,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=900',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(color: AppColor.greyExtraLight),
+                  ),
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            AppColor.black.withValues(alpha: 0.7),
+                          ],
+                          stops: const [0.4, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 16.w,
+                    bottom: 16.h,
+                    right: 16.w,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppTextWidget(
+                          text: 'Udaipur',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.white,
+                        ),
+                        SizedBox(height: 4.h),
+                        AppTextWidget(
+                          text: 'Discover the city of lakes',
+                          fontSize: 14,
+                          color: AppColor.white.withValues(alpha: 0.9),
+                        ),
+                        SizedBox(height: 12.h),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                            decoration: BoxDecoration(
+                              color: AppColor.white,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: AppTextWidget(
+                              text: 'Explore stays',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // EXPLORE MORE
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildExploreMore() {
+    final items = [
+      _ExploreItem('Amazing pools', Icons.pool_outlined),
+      _ExploreItem('Castles', Icons.castle_outlined),
+      _ExploreItem('Tiny Homes', Icons.home_mini_outlined),
+      _ExploreItem('Treehouse', Icons.forest_outlined),
+    ];
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppTextWidget(
+            text: 'Explore more',
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColor.textPrimary,
+          ),
+          SizedBox(height: 14.h),
+          Row(
+            children: items.map((item) {
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 64.w,
+                        height: 64.w,
+                        decoration: BoxDecoration(
+                          color: AppColor.greyExtraLight,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Icon(item.icon, size: 28.sp, color: AppColor.textPrimary),
+                      ),
+                      SizedBox(height: 8.h),
+                      AppTextWidget(
+                        text: item.label,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.textPrimary,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        textOverflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // EXPERIENCES
+  // ═══════════════════════════════════════════════════════════════════
+
+  Widget _buildExperiences() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          color: AppColor.textPrimary,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              AppTextWidget.titleLarge(
-                text: 'Private Plantation Tours',
-                color: AppColor.white,
+              Padding(
+                padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
+                child: AppTextWidget(
+                  text: 'Airbnb',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: AppColor.white,
+                ),
               ),
-              SizedBox(height: 4.h),
-              AppTextWidget.labelMedium(
-                text: 'Exclusive back-to-nature experiences',
-                color: AppColor.white,
+              Padding(
+                padding: EdgeInsets.fromLTRB(18.w, 2.h, 18.w, 0),
+                child: AppTextWidget(
+                  text: 'Experiences',
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: AppColor.white,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(18.w, 4.h, 18.w, 0),
+                child: AppTextWidget(
+                  text: 'Unforgettable activities\nhosted by locals',
+                  fontSize: 14,
+                  color: AppColor.white.withValues(alpha: 0.85),
+                  height: 1.4,
+                ),
+              ),
+              SizedBox(height: 14.h),
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.r)),
+                    child: SizedBox(
+                      height: 150.h,
+                      width: double.infinity,
+                      child: Image.network(
+                        'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(color: AppColor.greyDark),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 18.w,
+                    bottom: 18.h,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                        decoration: BoxDecoration(
+                          color: AppColor.white,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: AppTextWidget(
+                          text: 'Explore',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-class _SmallDiscover extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  const _SmallDiscover({required this.icon, required this.title});
+// ═══════════════════════════════════════════════════════════════════════
+// PRIVATE WIDGETS
+// ═══════════════════════════════════════════════════════════════════════
+
+class _ImageCarousel extends StatefulWidget {
+  final List<String> images;
+  final bool isGuestFavorite;
+
+  const _ImageCarousel({
+    required this.images,
+    this.isGuestFavorite = false,
+  });
+
   @override
-  Widget build(BuildContext context) => Container(
-    height: 112.h,
-    decoration: BoxDecoration(
-      color: AppColor.greyExtraLight,
-      borderRadius: BorderRadius.circular(13.r),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          color: AppColor.primary,
-          size: 28.sp,
+  State<_ImageCarousel> createState() => _ImageCarouselState();
+}
+
+class _ImageCarouselState extends State<_ImageCarousel> {
+  int _currentIndex = 0;
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 1.0);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 280.h,
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14.r),
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: widget.images.length,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemBuilder: (context, index) {
+                return Image.network(
+                  widget.images[index],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: AppColor.greyExtraLight,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColor.primary,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => Container(
+                    color: AppColor.greyExtraLight,
+                    child: Icon(Icons.home_outlined, size: 42.sp, color: AppColor.grey),
+                  ),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            top: 12.h,
+            right: 12.w,
+            child: const _HeartButton(),
+          ),
+          if (widget.isGuestFavorite)
+            Positioned(
+              top: 12.h,
+              left: 12.w,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: AppColor.guestFavBadgeBackground,
+                  borderRadius: BorderRadius.circular(4.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: AppTextWidget(
+                  text: 'Guest favourite',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.guestFavBadgeText,
+                ),
+              ),
+            ),
+          Positioned(
+            bottom: 10.h,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                widget.images.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: EdgeInsets.symmetric(horizontal: 3.w),
+                  width: _currentIndex == index ? 7.w : 5.w,
+                  height: _currentIndex == index ? 7.w : 5.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentIndex == index
+                        ? AppColor.white
+                        : AppColor.white.withValues(alpha: 0.5),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 10.h,
+            right: 12.w,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+              decoration: BoxDecoration(
+                color: AppColor.black.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+              child: AppTextWidget(
+                text: '${_currentIndex + 1} / ${widget.images.length}',
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: AppColor.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeartButton extends StatefulWidget {
+  const _HeartButton();
+
+  @override
+  State<_HeartButton> createState() => _HeartButtonState();
+}
+
+class _HeartButtonState extends State<_HeartButton> {
+  bool _isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => setState(() => _isSelected = !_isSelected),
+      child: Container(
+        width: 32.w,
+        height: 32.w,
+        decoration: BoxDecoration(
+          color: AppColor.white.withValues(alpha: 0.9),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.black.withValues(alpha: 0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        SizedBox(height: 10.h),
-        AppTextWidget(
-          text: title,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: AppColor.textPrimary,
+        child: Icon(
+          _isSelected ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+          size: 18.sp,
+          color: _isSelected ? AppColor.primary : AppColor.textPrimary,
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DATA MODELS
+// ═══════════════════════════════════════════════════════════════════════
+
+class _RecentItem {
+  final String title;
+  final String subtitle;
+  final String? rating;
+  final String image;
+  const _RecentItem(this.title, this.subtitle, this.rating, this.image);
+}
+
+class _ExploreItem {
+  final String label;
+  final IconData icon;
+  const _ExploreItem(this.label, this.icon);
 }
