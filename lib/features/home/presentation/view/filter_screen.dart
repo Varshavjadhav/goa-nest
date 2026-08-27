@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
+import 'package:goanest/widgets/common_widgets.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
@@ -18,27 +20,15 @@ class _FilterScreenState extends State<FilterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldBackground,
-      appBar: AppBar(
-        backgroundColor: AppColor.scaffoldBackground,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.close),
-        ),
-        title: Text(
-          'Filters',
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+      appBar: CommonWidgets.appBar(
+        title: 'Filters',
+        onBackTap: () => context.pop(),
         actions: [
           TextButton(
             onPressed: _clear,
-            child: Text(
-              'Clear all',
-              style: TextStyle(color: AppColor.primary),
+            child: AppTextWidget.bodyMedium(
+              text: 'Clear all',
+              color: AppColor.primary,
             ),
           ),
         ],
@@ -46,20 +36,11 @@ class _FilterScreenState extends State<FilterScreen> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 30.h),
         children: [
-          Text(
-            'Price range',
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          CommonWidgets.sectionTitle('Price range'),
           SizedBox(height: 5.h),
-          Text(
-            'Nightly prices before fees and taxes',
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: AppColor.textQuaternary,
-            ),
+          AppTextWidget.bodySmall(
+            text: 'Nightly prices before fees and taxes',
+            color: AppColor.textQuaternary,
           ),
           RangeSlider(
             values: price,
@@ -76,50 +57,26 @@ class _FilterScreenState extends State<FilterScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '₹${price.start.round()}',
-                style: TextStyle(fontSize: 13.sp),
-              ),
-              Text(
-                '₹${price.end.round()}',
-                style: TextStyle(fontSize: 13.sp),
-              ),
+              AppTextWidget.bodyMedium(text: '₹${price.start.round()}'),
+              AppTextWidget.bodyMedium(text: '₹${price.end.round()}'),
             ],
           ),
-          Divider(height: 40.h),
-          Text(
-            'Property type',
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          CommonWidgets.divider(height: 40),
+          CommonWidgets.sectionTitle('Property type'),
           SizedBox(height: 12.h),
           _chips(
             ['Villa', 'Apartment', 'Hotel', 'Guesthouse'],
             selectedTypes,
           ),
-          Divider(height: 40.h),
-          Text(
-            'Amenities',
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          CommonWidgets.divider(height: 40),
+          CommonWidgets.sectionTitle('Amenities'),
           SizedBox(height: 12.h),
           _chips(
             ['Pool', 'Wifi', 'Kitchen', 'Air conditioning', 'Beachfront', 'Free parking'],
             selectedAmenities,
           ),
-          Divider(height: 40.h),
-          Text(
-            'Rooms and beds',
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          CommonWidgets.divider(height: 40),
+          CommonWidgets.sectionTitle('Rooms and beds'),
           SizedBox(height: 12.h),
           const _Counter(label: 'Bedrooms'),
           const _Counter(label: 'Beds'),
@@ -129,26 +86,9 @@ class _FilterScreenState extends State<FilterScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 14.h),
-          child: SizedBox(
-            height: 50.h,
-            child: ElevatedButton(
-              onPressed: () => context.pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.primary,
-                foregroundColor: AppColor.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              child: Text(
-                'Show 1,000+ stays',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+          child: CommonWidgets.primaryButton(
+            label: 'Show 1,000+ stays',
+            onTap: () => context.pop(),
           ),
         ),
       ),
@@ -162,10 +102,7 @@ class _FilterScreenState extends State<FilterScreen> {
   );
 
   Widget _chip(String value, Set<String> selected) => FilterChip(
-    label: Text(
-      value,
-      style: TextStyle(fontSize: 13.sp),
-    ),
+    label: AppTextWidget.bodyMedium(text: value),
     selected: selected.contains(value),
     selectedColor: AppColor.tertiary,
     checkmarkColor: AppColor.primary,
@@ -194,10 +131,7 @@ class _Counter extends StatelessWidget {
     child: Row(
       children: [
         Expanded(
-          child: Text(
-            label,
-            style: TextStyle(fontSize: 14.sp),
-          ),
+          child: AppTextWidget.titleSmall(text: label),
         ),
         IconButton(
           onPressed: () {},
@@ -207,13 +141,7 @@ class _Counter extends StatelessWidget {
             color: AppColor.textSecondary,
           ),
         ),
-        Text(
-          '0',
-          style: TextStyle(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        AppTextWidget.titleLarge(text: '0'),
         IconButton(
           onPressed: () {},
           icon: Icon(

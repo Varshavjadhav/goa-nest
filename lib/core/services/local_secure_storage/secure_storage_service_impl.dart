@@ -30,9 +30,8 @@ class SecureStorageServiceImpl implements SecureStorageService {
 
     try {
       await _storage.write(key: key, value: stringValue);
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Secure storage write failed for "$key": $e');
-      // await CrashlyticsService.logError(e, stack);
     }
   }
 
@@ -41,9 +40,8 @@ class SecureStorageServiceImpl implements SecureStorageService {
     late final String? value;
     try {
       value = await _storage.read(key: key);
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Secure storage read failed for "$key": $e');
-      // await CrashlyticsService.logError(e, stack);
       return null;
     }
     if (value == null) return null;
@@ -76,9 +74,8 @@ class SecureStorageServiceImpl implements SecureStorageService {
   Future<void> delete(String key) async {
     try {
       await _storage.delete(key: key);
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Secure storage delete failed for "$key": $e');
-      // await CrashlyticsService.logError(e, stack);
     }
   }
 
@@ -86,9 +83,8 @@ class SecureStorageServiceImpl implements SecureStorageService {
   Future<Map<String, String>> readAll() async {
     try {
       return await _storage.readAll();
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Secure storage readAll failed: $e');
-      // await CrashlyticsService.logError(e, stack);
       return {};
     }
   }
@@ -97,9 +93,8 @@ class SecureStorageServiceImpl implements SecureStorageService {
   Future<void> deleteAll() async {
     try {
       await _storage.deleteAll();
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Secure storage deleteAll failed: $e');
-      // await CrashlyticsService.logError(e, stack);
     }
   }
 
@@ -108,9 +103,8 @@ class SecureStorageServiceImpl implements SecureStorageService {
     try {
       String? value = await _storage.read(key: key);
       return value != null;
-    } catch (e, stack) {
+    } catch (e) {
       debugPrint('Secure storage containsKey failed for "$key": $e');
-      // await CrashlyticsService.logError(e, stack);
       return false;
     }
   }

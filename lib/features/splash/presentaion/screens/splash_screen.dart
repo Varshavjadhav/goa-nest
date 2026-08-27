@@ -69,20 +69,17 @@ class _SplashView extends StatelessWidget {
                   AppTextWidget(
                     text: 'Your Goa. Your Stay.',
                     textAlign: TextAlign.center,
-                    // style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: AppColor.white,
-                    fontSize: 24.sp,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                   ),
                   Gap(8.h),
                   AppTextWidget(
                     text: 'PREMIUM COASTAL LIVING',
                     textAlign: TextAlign.center,
-                    // style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: AppColor.white.withValues(alpha: 0.82),
-                    fontSize: 10.sp,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    // ),
                   ),
                   const Spacer(flex: 5),
                   BlocBuilder<SplashBloc, SplashState>(
@@ -93,11 +90,9 @@ class _SplashView extends StatelessWidget {
                         children: [
                           AppTextWidget(
                             text: message,
-                            // style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: AppColor.white.withValues(alpha: 0.72),
-                            fontSize: 9.sp,
+                            fontSize: 9,
                             fontWeight: FontWeight.w800,
-                            // ),
                           ),
                           Gap(14.h),
                           ClipRRect(
@@ -146,12 +141,12 @@ class _BrandMark extends StatelessWidget {
             boxShadow: [BoxShadow(color: AppColor.black.withValues(alpha: 0.12), blurRadius: 18, offset: const Offset(0, 10))],
           ),
           child: Center(
-            child: Text(
-              Constants.appName,
+            child: AppTextWidget(
+              text: Constants.appName,
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.labelLarge?.copyWith(color: const Color(0xFF174F3A), fontSize: 11.sp, fontWeight: FontWeight.w900),
+              color: const Color(0xFF174F3A),
+              fontSize: 13,
+              fontWeight: FontWeight.w900,
             ),
           ),
         ),

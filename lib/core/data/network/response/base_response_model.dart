@@ -51,14 +51,7 @@ extension ApiFutureEitherMessageX on Future<Either<AppException, BaseResponseMod
   }
 }
 
-// extension ApiFutureEitherMessageX on Future<Either<AppException, BaseResponseModel<dynamic>>> {
-//   Future<Either<AppException, ResultMessage>> mapMessage() {
-//     return then((either) => either.fold(Left.new, (response) => Right(ResultMessage(response.message))));
-//   }
-// }
-// extension ApiFutureEitherMessageX on Future<Either<AppException, BaseResponseModel<dynamic>>> mapMessage() {
-//   return then((either) => either.fold(Left.new, (response) => Right(ResultMessage(response.message ?? 'Success'))));
-// }
+
 
 class ResultMessage {
   final String message;

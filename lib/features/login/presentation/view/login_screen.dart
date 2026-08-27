@@ -7,6 +7,8 @@ import 'package:goanest/features/login/presentation/bloc/login_event.dart';
 import 'package:goanest/features/login/presentation/bloc/login_state.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
+import 'package:goanest/widgets/common_widgets.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -36,76 +38,37 @@ class _LoginView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Havenstay',
-                  style: TextStyle(
-                    color: AppColor.primary,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                AppTextWidget.titleLarge(text: 'GoaNest', color: AppColor.primary),
                 SizedBox(height: 5.h),
-                Text(
-                  'Log in or sign up',
-                  style: TextStyle(fontSize: 15.sp),
-                ),
+                AppTextWidget.bodyLarge(text: 'Log in or sign up'),
                 SizedBox(height: 28.h),
                 const _EmailField(),
                 SizedBox(height: 9.h),
-                _PrimaryButton(
-                  label: 'Continue with Email',
-                  onTap: () => _submit(context),
-                ),
+                CommonWidgets.primaryButton(label: 'Continue with Email', onTap: () => _submit(context)),
                 SizedBox(height: 28.h),
-                const _DividerLabel(),
+                CommonWidgets.dividerLabel(label: 'or'),
                 SizedBox(height: 20.h),
-                const _ProviderButton(
-                  icon: Icons.phone_iphone,
-                  label: 'Continue with Phone',
-                ),
-                _ProviderButton(
-                  icon: Icons.g_mobiledata,
-                  label: 'Continue with Google',
-                  color: Colors.red,
-                ),
-                const _ProviderButton(
-                  icon: Icons.apple,
-                  label: 'Continue with Apple',
-                ),
+                CommonWidgets.providerButton(icon: Icons.phone_iphone, label: 'Continue with Phone', onTap: () {}),
+                CommonWidgets.providerButton(icon: Icons.g_mobiledata, label: 'Continue with Google', iconColor: Colors.red, onTap: () {}),
+                CommonWidgets.providerButton(icon: Icons.apple, label: 'Continue with Apple', onTap: () {}),
                 SizedBox(height: 5.h),
                 Center(
                   child: Wrap(
                     children: [
-                      Text(
-                        "Don't have an account? ",
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: AppColor.textSecondary,
-                        ),
-                      ),
+                      AppTextWidget.bodyMedium(text: "Don't have an account? ", color: AppColor.textSecondary),
                       GestureDetector(
                         onTap: () => context.go(RouteName.registerView),
-                        child: Text(
-                          'Sign up',
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: AppColor.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        child: AppTextWidget(text: 'Sign up', fontSize: 13, color: AppColor.primary, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
                 ),
                 SizedBox(height: 22.h),
                 Center(
-                  child: Text(
-                    'By signing in, you agree to our Terms of Service and\nPrivacy Policy.',
+                  child: AppTextWidget.labelMedium(
+                    text: 'By signing in, you agree to our Terms of Service and\nPrivacy Policy.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: AppColor.textQuaternary,
-                    ),
+                    color: AppColor.textQuaternary,
                   ),
                 ),
               ],
@@ -132,110 +95,7 @@ class _EmailField extends StatelessWidget {
         bloc.add(LoginIdentifierChanged(value));
         bloc.add(const LoginPasswordChanged('stitch-email'));
       },
-      decoration: InputDecoration(
-        hintText: 'Email address',
-        hintStyle: TextStyle(
-          fontSize: 13.sp,
-          color: AppColor.textQuaternary,
-        ),
-        errorText: state.identifierError,
-        filled: true,
-        fillColor: AppColor.white,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 14.w,
-          vertical: 16.h,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.r),
-          borderSide: const BorderSide(color: AppColor.borderGrey),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.r),
-          borderSide: const BorderSide(color: AppColor.borderGrey),
-        ),
-      ),
+      decoration: CommonWidgets.inputDecoration(hint: 'Email address', errorText: state.identifierError),
     );
   }
-}
-
-class _PrimaryButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  const _PrimaryButton({required this.label, required this.onTap});
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    height: 50.h,
-    child: ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColor.primary,
-        foregroundColor: AppColor.white,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ),
-  );
-}
-
-class _DividerLabel extends StatelessWidget {
-  const _DividerLabel();
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      const Expanded(child: Divider(color: AppColor.divider)),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: Text(
-          'or',
-          style: TextStyle(
-            fontSize: 13.sp,
-            color: AppColor.textQuaternary,
-          ),
-        ),
-      ),
-      const Expanded(child: Divider(color: AppColor.divider)),
-    ],
-  );
-}
-
-class _ProviderButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color? color;
-  const _ProviderButton({required this.icon, required this.label, this.color});
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 6.h),
-    child: SizedBox(
-      width: double.infinity,
-      height: 48.h,
-      child: OutlinedButton.icon(
-        onPressed: () {},
-        icon: Icon(icon, size: 18.sp, color: color ?? AppColor.black),
-        label: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13.sp,
-            color: AppColor.textPrimary,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColor.borderGrey),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
-          ),
-        ),
-      ),
-    ),
-  );
 }

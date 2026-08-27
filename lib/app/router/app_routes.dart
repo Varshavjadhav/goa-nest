@@ -19,15 +19,8 @@ class AppRouter {
     initialLocation: RouteName.splashView,
     navigatorKey: Global.navigatorKey,
     debugLogDiagnostics: true,
-    // restorationScopeId: Constants.appName,
-    // observers: [FirebaseAnalyticsObserver(analytics: AnalyticsService.instance)],
     requestFocus: false,
     routes: [
-      // GoRoute(
-      //   name: RouteName.forceUpdateView.removeFirstChar(),
-      //   path: RouteName.forceUpdateView,
-      //   pageBuilder: (context, state) => appCustomTransitionPage(state: state, child: const ForceUpdateView()),
-      // ),
       GoRoute(
         name: RouteName.splashView.removeFirstChar(),
         path: RouteName.splashView,

@@ -97,15 +97,7 @@ class _AppErrorWidgetState extends State<AppErrorWidget> {
               textAlign: TextAlign.center,
             ),
 
-            /*  Gap(18.h),
-            GestureDetector(
-              onTap: () => context.go(RouteName.splashView),
-              child: Container(
-                decoration: BoxDecoration(shape: BoxShape.circle, color: context.themeExt.brandPrimary),
-                padding: EdgeInsets.all(8),
-                child: Icon(Icons.refresh),
-              ),
-            ),*/
+            
           ],
         ),
       ),

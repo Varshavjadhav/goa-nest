@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
@@ -76,32 +77,21 @@ class _HomeWidgetState extends State<HomeWidget> {
                 ),
               ),
               SizedBox(height: 30.h),
-              Text(
-                'Featured Escapes',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.textPrimary,
-                ),
+              AppTextWidget.headlineMedium(
+                text: 'Featured Escapes',
+                color: AppColor.textPrimary,
               ),
               SizedBox(height: 4.h),
-              Text(
-                'Curated collection for your next stay',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColor.textSecondary,
-                ),
+              AppTextWidget.bodySmall(
+                text: 'Curated collection for your next stay',
+                color: AppColor.textSecondary,
               ),
               SizedBox(height: 17.h),
               for (final home in homes) _PropertyCard(home: home),
               SizedBox(height: 2.h),
-              Text(
-                'Discover More',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.textPrimary,
-                ),
+              AppTextWidget.headlineMedium(
+                text: 'Discover More',
+                color: AppColor.textPrimary,
               ),
               SizedBox(height: 15.h),
               const _DiscoverCard(),
@@ -136,13 +126,11 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      Text(
-        'GoNest',
-        style: TextStyle(
-          fontSize: 23.sp,
-          fontWeight: FontWeight.w800,
-          color: AppColor.primary,
-        ),
+      AppTextWidget(
+        text: 'GoaNest',
+        fontSize: 24,
+        fontWeight: FontWeight.w800,
+        color: AppColor.primary,
       ),
       const Spacer(),
       IconButton(
@@ -187,12 +175,9 @@ class _HomeSearch extends StatelessWidget {
           color: AppColor.textSecondary,
         ),
         SizedBox(width: 12.w),
-        Text(
-          'Where in Goa?',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: AppColor.textSecondary,
-          ),
+        AppTextWidget.bodyLarge(
+          text: 'Where in Goa?',
+          color: AppColor.textSecondary,
         ),
         const Spacer(),
         Icon(
@@ -245,13 +230,11 @@ class _CategoryChip extends StatelessWidget {
               color: selected ? AppColor.white : AppColor.primary,
             ),
             SizedBox(width: 7.w),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: selected ? AppColor.white : AppColor.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
+            AppTextWidget(
+              text: label,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: selected ? AppColor.white : AppColor.textPrimary,
             ),
           ],
         ),
@@ -354,14 +337,12 @@ class _PropertyCard extends StatelessWidget {
                       horizontal: 9.w,
                       vertical: 5.h,
                     ),
-                    child: Text(
-                      'PREMIER',
-                      style: TextStyle(
-                        color: AppColor.white,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: .5,
-                      ),
+                    child: AppTextWidget(
+                      text: 'PREMIER',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.white,
+                      letterSpacing: .5,
                     ),
                   ),
                 ),
@@ -372,13 +353,9 @@ class _PropertyCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  home.title,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.textPrimary,
-                  ),
+                child: AppTextWidget.titleLarge(
+                  text: home.title,
+                  color: AppColor.textPrimary,
                 ),
               ),
               Container(
@@ -398,12 +375,10 @@ class _PropertyCard extends StatelessWidget {
                       color: AppColor.primary,
                     ),
                     SizedBox(width: 3.w),
-                    Text(
-                      home.rating,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    AppTextWidget(
+                      text: home.rating,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                     ),
                   ],
                 ),
@@ -419,12 +394,9 @@ class _PropertyCard extends StatelessWidget {
                 color: AppColor.textSecondary,
               ),
               SizedBox(width: 3.w),
-              Text(
-                home.location,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColor.textSecondary,
-                ),
+              AppTextWidget.bodySmall(
+                text: home.location,
+                color: AppColor.textSecondary,
               ),
             ],
           ),
@@ -481,21 +453,14 @@ class _DiscoverCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Private Plantation Tours',
-                style: TextStyle(
-                  color: AppColor.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                ),
+              AppTextWidget.titleLarge(
+                text: 'Private Plantation Tours',
+                color: AppColor.white,
               ),
               SizedBox(height: 4.h),
-              Text(
-                'Exclusive back-to-nature experiences',
-                style: TextStyle(
-                  color: AppColor.white,
-                  fontSize: 11.sp,
-                ),
+              AppTextWidget.labelMedium(
+                text: 'Exclusive back-to-nature experiences',
+                color: AppColor.white,
               ),
             ],
           ),
@@ -525,13 +490,11 @@ class _SmallDiscover extends StatelessWidget {
           size: 28.sp,
         ),
         SizedBox(height: 10.h),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColor.textPrimary,
-          ),
+        AppTextWidget(
+          text: title,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColor.textPrimary,
         ),
       ],
     ),

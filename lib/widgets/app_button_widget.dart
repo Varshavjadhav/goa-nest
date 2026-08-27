@@ -6,7 +6,6 @@ import '../utilities/enums/enums_types.dart';
 import '../utilities/extensions/extensions.dart';
 import '../utilities/extensions/provide_theme_extension.dart';
 import '../utilities/global.dart';
-import '../utilities/helper/app_helpers.dart';
 import 'app_loading_widget.dart';
 
 class AppButton extends StatelessWidget {
@@ -173,7 +172,7 @@ class AppButton extends StatelessWidget {
         ? (borderColor ?? context.themeExt.brandPrimary)
         : theme.colorScheme.onPrimary;
     final effectiveTextStyle =
-        (textStyle ?? TextSizeHelper.size16().copyWith(color: textStyle?.color ?? textColor, fontWeight: FontWeight.w600));
+        (textStyle ?? TextStyle(fontSize: 16.sp, color: textStyle?.color ?? textColor, fontWeight: FontWeight.w600));
 
     // final Color effectiveLoaderColor = loaderColor ?? (buttonStyleType == ButtonStyleType.elevated ? theme.colorScheme.onPrimary : (borderColor ?? theme.primaryColor));
 

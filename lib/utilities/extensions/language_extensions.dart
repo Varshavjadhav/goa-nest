@@ -17,18 +17,6 @@ extension LanguageExtension on Language {
 
 Language resolveLanguageFromDevice() {
   return Language.english;
-  /*final locale = WidgetsBinding.instance.platformDispatcher.locale;
-  final languageCode = locale.languageCode;
-
-  switch (languageCode) {
-    case 'mr':
-      return Language.marathi;
-    case 'hi':
-      return Language.hindi;
-    case 'en':
-    default:
-      return Language.english;
-  }*/
 }
 
 extension LocalizationExtension on BuildContext {

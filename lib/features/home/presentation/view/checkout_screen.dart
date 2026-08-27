@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
+import 'package:goanest/widgets/common_widgets.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -16,43 +18,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.scaffoldBackground,
-      appBar: AppBar(
-        backgroundColor: AppColor.scaffoldBackground,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: Icon(Icons.arrow_back, size: 20.sp),
-        ),
-        title: Text(
-          'Confirm and pay',
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+      appBar: CommonWidgets.appBar(
+        title: 'Confirm and pay',
+        onBackTap: () => context.pop(),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 96.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const _StayCard(),
+            CommonWidgets.stayCard(
+              imageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
+              title: 'Modern villa with pool',
+              subtitle: 'Entire villa · North Goa',
+              rating: '4.9 · 24 reviews',
+            ),
             SizedBox(height: 26.h),
-            const _SectionTitle('Your trip'),
+            CommonWidgets.sectionTitle('Your trip'),
             SizedBox(height: 14.h),
-            const _TripRow(
+            CommonWidgets.tripRow(
               icon: Icons.calendar_month_outlined,
               title: 'Dates',
               value: 'Aug 28 – Sep 1, 2026',
             ),
-            const _TripRow(
+            CommonWidgets.tripRow(
               icon: Icons.group_outlined,
               title: 'Guests',
               value: '2 guests',
             ),
-            Divider(height: 35.h),
-            const _SectionTitle('Payment method'),
+            CommonWidgets.divider(),
+            CommonWidgets.sectionTitle('Payment method'),
             SizedBox(height: 12.h),
             _PaymentOption(
               icon: Icons.credit_card,
@@ -77,224 +72,75 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               onTap: () => setState(() => paymentMethod = 2),
             ),
             SizedBox(height: 20.h),
-            Text(
-              'Price details',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            CommonWidgets.sectionTitle('Price details'),
             SizedBox(height: 14.h),
-            const _PriceRow(label: '₹18,500 × 4 nights', value: '₹74,000'),
-            const _PriceRow(label: 'Cleaning fee', value: '₹2,500'),
-            const _PriceRow(label: 'Service fee', value: '₹4,250'),
-            Divider(height: 25.h),
-            const _PriceRow(
+            CommonWidgets.priceRow(label: '₹18,500 × 4 nights', value: '₹74,000'),
+            CommonWidgets.priceRow(label: 'Cleaning fee', value: '₹2,500'),
+            CommonWidgets.priceRow(label: 'Service fee', value: '₹4,250'),
+            CommonWidgets.divider(height: 25),
+            CommonWidgets.priceRow(
               label: 'Total (INR)',
               value: '₹80,750',
               bold: true,
             ),
             SizedBox(height: 22.h),
-            Text(
-              'By selecting the button below, I agree to the house rules, cancellation policy, and Havenstay terms.',
-              style: TextStyle(
-                fontSize: 11.sp,
-                height: 1.45,
-                color: AppColor.textSecondary,
-              ),
+            AppTextWidget.labelMedium(
+              text: 'By selecting the button below, I agree to the house rules, cancellation policy, and Havenstay terms.',
+              color: AppColor.textSecondary,
+              height: 1.45,
             ),
           ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          height: 70.h,
-          padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 10.h),
-          decoration: const BoxDecoration(
-            color: AppColor.white,
-            boxShadow: [
-              BoxShadow(
-                color: AppColor.shadow,
-                blurRadius: 12,
-                offset: Offset(0, -3),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '₹80,750',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      'Total (INR)',
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: AppColor.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 150.w,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () => context.push(
-                    RouteName.bookingConfirmationView.replaceFirst(
-                      ':propertyId',
-                      'modern-villa',
-                    ),
+      bottomNavigationBar: CommonWidgets.bottomBar(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AppTextWidget.titleLarge(
+                    text: '₹80,750',
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.primary,
-                    foregroundColor: AppColor.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
+                  AppTextWidget.labelMedium(
+                    text: 'Total (INR)',
+                    color: AppColor.textSecondary,
                   ),
-                  child: Text(
-                    'Confirm and pay',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 150.w,
+              height: 50.h,
+              child: ElevatedButton(
+                onPressed: () => context.push(
+                  RouteName.bookingConfirmationView.replaceFirst(
+                    ':propertyId',
+                    'modern-villa',
                   ),
                 ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primary,
+                  foregroundColor: AppColor.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+                child: AppTextWidget(
+                  text: 'Confirm and pay',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColor.white,
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-class _StayCard extends StatelessWidget {
-  const _StayCard();
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.all(12.p),
-    decoration: BoxDecoration(
-      color: AppColor.white,
-      border: Border.all(color: AppColor.divider),
-      borderRadius: BorderRadius.circular(10.r),
-    ),
-    child: Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(7.r),
-          child: Image.network(
-            'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
-            width: 92.w,
-            height: 92.w,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              width: 92.w,
-              height: 92.w,
-              color: AppColor.greyExtraLight,
-            ),
-          ),
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Modern villa with pool',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 6.h),
-              Text(
-                'Entire villa · North Goa',
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: AppColor.textSecondary,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Row(
-                children: [
-                  Icon(Icons.star, size: 14.sp),
-                  SizedBox(width: 3.w),
-                  Text(
-                    '4.9 · 24 reviews',
-                    style: TextStyle(fontSize: 11.sp),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String text;
-  const _SectionTitle(this.text);
-  @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: TextStyle(
-      fontSize: 18.sp,
-      fontWeight: FontWeight.w700,
-    ),
-  );
-}
-
-class _TripRow extends StatelessWidget {
-  final IconData icon;
-  final String title, value;
-  const _TripRow({
-    required this.icon,
-    required this.title,
-    required this.value,
-  });
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 18.h),
-    child: Row(
-      children: [
-        Icon(icon, size: 22.sp),
-        SizedBox(width: 14.w),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 3.h),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: AppColor.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
 }
 
 class _PaymentOption extends StatelessWidget {
@@ -336,20 +182,15 @@ class _PaymentOption extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    AppTextWidget(
+                      text: title,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
                     ),
                     SizedBox(height: 3.h),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: AppColor.textQuaternary,
-                      ),
+                    AppTextWidget.labelMedium(
+                      text: subtitle,
+                      color: AppColor.textQuaternary,
                     ),
                   ],
                 ),
@@ -377,78 +218,17 @@ class _CardFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      const _Input(hint: 'Card number'),
+      TextField(decoration: CommonWidgets.inputDecoration(hint: 'Card number')),
       SizedBox(height: 8.h),
       Row(
         children: [
-          const Expanded(child: _Input(hint: 'Expiration date')),
+          Expanded(child: TextField(decoration: CommonWidgets.inputDecoration(hint: 'Expiration date'))),
           SizedBox(width: 8.w),
-          const Expanded(child: _Input(hint: 'CVV')),
+          Expanded(child: TextField(decoration: CommonWidgets.inputDecoration(hint: 'CVV'))),
         ],
       ),
       SizedBox(height: 8.h),
-      const _Input(hint: 'ZIP code'),
+      TextField(decoration: CommonWidgets.inputDecoration(hint: 'ZIP code')),
     ],
-  );
-}
-
-class _Input extends StatelessWidget {
-  final String hint;
-  const _Input({required this.hint});
-  @override
-  Widget build(BuildContext context) => TextField(
-    decoration: InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(
-        fontSize: 12.sp,
-        color: AppColor.hintGrey,
-      ),
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 12.w,
-        vertical: 13.h,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6.r),
-        borderSide: const BorderSide(color: AppColor.divider),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6.r),
-        borderSide: const BorderSide(color: AppColor.divider),
-      ),
-    ),
-  );
-}
-
-class _PriceRow extends StatelessWidget {
-  final String label, value;
-  final bool bold;
-  const _PriceRow({
-    required this.label,
-    required this.value,
-    this.bold = false,
-  });
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 10.h),
-    child: Row(
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
-            ),
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: bold ? FontWeight.w700 : FontWeight.w400,
-          ),
-        ),
-      ],
-    ),
   );
 }

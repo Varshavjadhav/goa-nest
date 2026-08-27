@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
+import 'package:goanest/widgets/common_widgets.dart';
 
 class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
@@ -21,187 +23,76 @@ class RegistrationScreen extends StatelessWidget {
                   icon: Icon(Icons.arrow_back, size: 18.sp),
                 ),
                 Expanded(
-                  child: Text(
-                    'Registration',
+                  child: AppTextWidget.titleLarge(
+                    text: 'Registration',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColor.primary,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    color: AppColor.primary,
                   ),
                 ),
                 SizedBox(width: 48.w),
               ],
             ),
             SizedBox(height: 5.h),
-            Text(
-              'Create an account',
-              style: TextStyle(
-                fontSize: 19.sp,
-                fontWeight: FontWeight.w500,
-              ),
+            AppTextWidget(
+              text: 'Create an account',
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
             ),
             SizedBox(height: 4.h),
-            Text(
-              'Enter your email to get started.',
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: AppColor.textQuaternary,
-              ),
+            AppTextWidget.bodyMedium(
+              text: 'Enter your email to get started.',
+              color: AppColor.textQuaternary,
             ),
             SizedBox(height: 28.h),
-            const _RegistrationField(),
+            TextField(
+              decoration: CommonWidgets.inputDecoration(hint: 'Email address'),
+            ),
             SizedBox(height: 16.h),
-            Text(
-              'By continuing, you may receive an SMS for verification.\nMessage and data rates may apply.',
+            AppTextWidget.labelMedium(
+              text: 'By continuing, you may receive an SMS for verification.\nMessage and data rates may apply.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11.sp,
-                color: AppColor.textQuaternary,
-              ),
+              color: AppColor.textQuaternary,
             ),
             SizedBox(height: 58.h),
-            SizedBox(
-              width: double.infinity,
-              height: 50.h,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.primary,
-                  foregroundColor: AppColor.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                ),
-                child: Text(
-                  'Continue with Email',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+            CommonWidgets.primaryButton(
+              label: 'Continue with Email',
+              onTap: () {},
             ),
             SizedBox(height: 16.h),
-            const _DividerLabel(),
+            CommonWidgets.dividerLabel(label: 'or'),
             SizedBox(height: 13.h),
-            const _ProviderButton(
+            CommonWidgets.providerButton(
               icon: Icons.phone_iphone,
               label: 'Continue with Phone',
+              onTap: () {},
             ),
-            _ProviderButton(
+            CommonWidgets.providerButton(
               icon: Icons.g_mobiledata,
               label: 'Continue with Google',
-              color: Colors.red,
+              iconColor: Colors.red,
+              onTap: () {},
             ),
-            const _ProviderButton(
+            CommonWidgets.providerButton(
               icon: Icons.apple,
               label: 'Continue with Apple',
+              onTap: () {},
             ),
             SizedBox(height: 12.h),
             Wrap(
               children: [
-                Text(
-                  'Already have an account? ',
-                  style: TextStyle(fontSize: 11.sp),
-                ),
+                AppTextWidget.bodySmall(text: 'Already have an account? '),
                 GestureDetector(
                   onTap: () => context.go(RouteName.loginView),
-                  child: Text(
-                    'Log in',
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: AppColor.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: AppTextWidget(
+                    text: 'Log in',
+                    fontSize: 12,
+                    color: AppColor.primary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ],
-        ),
-      ),
-    ),
-  );
-}
-
-class _RegistrationField extends StatelessWidget {
-  const _RegistrationField();
-  @override
-  Widget build(BuildContext context) => TextField(
-    decoration: InputDecoration(
-      hintText: 'Email address',
-      hintStyle: TextStyle(
-        fontSize: 13.sp,
-        color: AppColor.textQuaternary,
-      ),
-      filled: true,
-      fillColor: AppColor.white,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 14.w,
-        vertical: 16.h,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10.r)),
-        borderSide: const BorderSide(color: AppColor.borderGrey),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10.r)),
-        borderSide: const BorderSide(color: AppColor.borderGrey),
-      ),
-    ),
-  );
-}
-
-class _DividerLabel extends StatelessWidget {
-  const _DividerLabel();
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      const Expanded(child: Divider(color: AppColor.divider)),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: Text(
-          'or',
-          style: TextStyle(
-            fontSize: 13.sp,
-            color: AppColor.textQuaternary,
-          ),
-        ),
-      ),
-      const Expanded(child: Divider(color: AppColor.divider)),
-    ],
-  );
-}
-
-class _ProviderButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color? color;
-  const _ProviderButton({required this.icon, required this.label, this.color});
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 6.h),
-    child: SizedBox(
-      width: double.infinity,
-      height: 48.h,
-      child: OutlinedButton.icon(
-        onPressed: () {},
-        icon: Icon(icon, size: 18.sp, color: color ?? AppColor.black),
-        label: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13.sp,
-            color: AppColor.textPrimary,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColor.borderGrey),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
-          ),
         ),
       ),
     ),

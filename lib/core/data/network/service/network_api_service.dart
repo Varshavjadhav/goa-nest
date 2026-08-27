@@ -25,7 +25,6 @@ class NetworkApiService extends BaseApiServices {
       responseType: ResponseType.json,
       headers: Constants.baseHeader,
       validateStatus: (status) {
-        // Treat only 2xx as valid responses
         return status != null && status >= 200 && status < 300;
       },
     );
@@ -33,25 +32,8 @@ class NetworkApiService extends BaseApiServices {
     _dio = Dio(baseOptions);
 
     _dio.interceptors.addAll([
-      ///for  domain whitelisting
       NetworkInterceptor(),
-      // AppHeaderInterceptor(sl<AppConfigService>()),
       AuthInterceptor(sl<SecureStorageService>()),
-      // EncryptionInterceptor(sl<ApiEncryptionService>(), sl<AppConfigService>()),
-      // DecryptionInterceptor(sl<ApiEncryptionService>(), sl<AppConfigService>()),
-      // TokenRefreshInterceptor(dio: _dio, storage: sl<SecureStorageService>()),
-
-      // SslPinningInterceptor(),
-      // TalkerDioLogger(
-      //   settings: TalkerDioLoggerSettings(
-      //     printRequestData: Constants.debugMode,
-      //     printRequestHeaders: Constants.debugMode,
-      //     printResponseData: Constants.debugMode,
-      //     printResponseTime: Constants.debugMode,
-      //     printResponseMessage: Constants.debugMode,
-      //     enabled: Constants.debugMode,
-      //   ),
-      // ),
     ]);
   }
 
@@ -182,7 +164,6 @@ class NetworkApiService extends BaseApiServices {
 
       final formData = FormData();
 
-      /// Files
       for (final filePath in path) {
         final fileName = filePath.split('/').last;
         final extension = fileName.split('.').last.toLowerCase();
@@ -194,7 +175,6 @@ class NetworkApiService extends BaseApiServices {
         );
       }
 
-      /// Fields
       if (body != null) {
         body.forEach((key, value) {
           if (value != null) {
@@ -220,7 +200,6 @@ class NetworkApiService extends BaseApiServices {
     try {
       final Uri uri = Uri.parse("$storageUrl$apiURL");
 
-      // Use provided name or fallback to last segment
       String cleanFileName = (fileName ?? uri.pathSegments.last)
           .replaceAll(RegExp(r'\.pdf$'), '')
           .replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
@@ -230,14 +209,12 @@ class NetworkApiService extends BaseApiServices {
       final filePath = "${cacheDir.path}/$pdfFileName";
       final file = File(filePath);
 
-      // Check if file already exists in cache
       if (await file.exists()) {
         debugPrint("PDF loaded from cache: $filePath");
         final bytes = await file.readAsBytes();
         return Right(bytes);
       }
 
-      // If not cached, download
       final response = await _dio.get<List<int>>(
         uri.toString(),
         options: Options(responseType: ResponseType.bytes, headers: headers),
@@ -249,7 +226,6 @@ class NetworkApiService extends BaseApiServices {
 
       final Uint8List pdfBytes = Uint8List.fromList(response.data!);
 
-      // Write to cache
       await file.writeAsBytes(pdfBytes, flush: true);
 
       debugPrint("PDF downloaded & cached at: $filePath");
