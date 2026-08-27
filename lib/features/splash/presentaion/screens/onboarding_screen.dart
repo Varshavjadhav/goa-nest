@@ -1,3 +1,4 @@
+import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../../../core.dart';
@@ -19,18 +20,24 @@ class OnboardingScreen extends StatelessWidget {
             child: Align(
               alignment: Alignment.topRight,
               child: Padding(
-                padding: const EdgeInsets.only(top: 18, right: 22),
+                padding: EdgeInsets.only(top: 18.h, right: 22.w),
                 child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.white.withValues(alpha: .35),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: const StadiumBorder(),
                   ),
                   onPressed: () {},
-                  child: const Text('Skip', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+                  child: Text(
+                    'Skip',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -39,8 +46,8 @@ class OnboardingScreen extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Container(
               width: double.infinity,
-              height: 360,
-              padding: const EdgeInsets.fromLTRB(28, 54, 28, 26),
+              height: 360.h,
+              padding: EdgeInsets.fromLTRB(28.w, 54.h, 28.w, 26.h),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(34)),
@@ -49,8 +56,8 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   AppTextWidget(
                     text: "Discover Goa's Best\nStays",
-                    color: Color(0xFF17191C),
-                    fontSize: 28,
+                    color: AppColor.textPrimary,
+                    fontSize: 28.sp,
                     height: 1.22,
                     fontWeight: FontWeight.w800,
                     textAlign: TextAlign.center,
@@ -59,8 +66,8 @@ class OnboardingScreen extends StatelessWidget {
                   AppTextWidget(
                     text: '300+ verified hotels, villas, resorts\nand homestays across Goa',
                     textAlign: TextAlign.center,
-                    color: Color(0xFF64676D),
-                    fontSize: 15,
+                    color: AppColor.textSecondary,
+                    fontSize: 15.sp,
                     height: 1.6,
                   ),
                   const Spacer(),
@@ -68,21 +75,25 @@ class OnboardingScreen extends StatelessWidget {
                   Gap(34.h),
                   SizedBox(
                     width: double.infinity,
-                    height: 60,
+                    height: 56.h,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        backgroundColor: const Color(0xFF064E36),
+                        backgroundColor: AppColor.primary,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13.r)),
                       ),
                       onPressed: () {},
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          AppTextWidget(text: 'Next', fontSize: 21, fontWeight: FontWeight.w800),
+                          AppTextWidget(
+                            text: 'Next',
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w800,
+                          ),
                           Gap(12.w),
-                          Icon(Icons.arrow_forward, size: 24),
+                          Icon(Icons.arrow_forward, size: 22.sp),
                         ],
                       ),
                     ),
@@ -105,10 +116,13 @@ class _Dot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: active ? 26 : 9,
-      height: 9,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(color: active ? const Color(0xFF064E36) : const Color(0xFFD8D8D8), borderRadius: BorderRadius.circular(99)),
+      width: active ? 26.w : 9.w,
+      height: 9.h,
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      decoration: BoxDecoration(
+        color: active ? AppColor.primary : AppColor.grey,
+        borderRadius: BorderRadius.circular(99.r),
+      ),
     );
   }
 }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
-
-const _brand = Color(0xff004c3f);
-const _ink = Color(0xff222222);
-const _muted = Color(0xff717171);
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
@@ -48,27 +46,27 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: const Color(0xfff9f9f9),
+    color: AppColor.surface,
     child: CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 105),
+          padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 105.h),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               const _HomeHeader(),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               GestureDetector(
                 onTap: () => context.push(RouteName.searchView),
                 child: const _HomeSearch(),
               ),
-              const SizedBox(height: 19),
+              SizedBox(height: 19.h),
               SizedBox(
-                height: 46,
+                height: 46.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  separatorBuilder: (_, __) => SizedBox(width: 10.w),
                   itemBuilder: (_, index) => _CategoryChip(
                     label: categories[index],
                     icon: categoryIcons[index],
@@ -77,44 +75,47 @@ class _HomeWidgetState extends State<HomeWidget> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
-              const Text(
+              SizedBox(height: 30.h),
+              Text(
                 'Featured Escapes',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
-                  color: _ink,
+                  color: AppColor.textPrimary,
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
+              SizedBox(height: 4.h),
+              Text(
                 'Curated collection for your next stay',
-                style: TextStyle(fontSize: 12, color: _muted),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColor.textSecondary,
+                ),
               ),
-              const SizedBox(height: 17),
+              SizedBox(height: 17.h),
               for (final home in homes) _PropertyCard(home: home),
-              const SizedBox(height: 2),
-              const Text(
+              SizedBox(height: 2.h),
+              Text(
                 'Discover More',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
-                  color: _ink,
+                  color: AppColor.textPrimary,
                 ),
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: 15.h),
               const _DiscoverCard(),
-              const SizedBox(height: 12),
-              const Row(
+              SizedBox(height: 12.h),
+              Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: _SmallDiscover(
                       icon: Icons.sailing_rounded,
                       title: 'Yacht Rentals',
                     ),
                   ),
-                  SizedBox(width: 12),
-                  Expanded(
+                  SizedBox(width: 12.w),
+                  const Expanded(
                     child: _SmallDiscover(
                       icon: Icons.restaurant_rounded,
                       title: "Chef's Table",
@@ -135,20 +136,27 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      const Text(
+      Text(
         'GoNest',
         style: TextStyle(
-          fontSize: 23,
+          fontSize: 23.sp,
           fontWeight: FontWeight.w800,
-          color: _brand,
+          color: AppColor.primary,
         ),
       ),
       const Spacer(),
       IconButton(
         onPressed: () {},
-        icon: const Icon(Icons.notifications_none_rounded, color: _ink),
+        icon: Icon(
+          Icons.notifications_none_rounded,
+          color: AppColor.textPrimary,
+        ),
       ),
-      const Icon(Icons.tune_rounded, size: 21, color: _ink),
+      Icon(
+        Icons.tune_rounded,
+        size: 21.sp,
+        color: AppColor.textPrimary,
+      ),
     ],
   );
 }
@@ -157,27 +165,41 @@ class _HomeSearch extends StatelessWidget {
   const _HomeSearch();
   @override
   Widget build(BuildContext context) => Container(
-    height: 54,
-    padding: const EdgeInsets.symmetric(horizontal: 17),
+    height: 54.h,
+    padding: EdgeInsets.symmetric(horizontal: 17.w),
     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(28),
-      border: Border.all(color: const Color(0xffe3e3e3)),
+      color: AppColor.white,
+      borderRadius: BorderRadius.circular(28.r),
+      border: Border.all(color: AppColor.homeDivider),
       boxShadow: const [
         BoxShadow(
-          color: Color(0x10000000),
+          color: AppColor.shadow,
           blurRadius: 8,
           offset: Offset(0, 3),
         ),
       ],
     ),
-    child: const Row(
+    child: Row(
       children: [
-        Icon(Icons.search_rounded, size: 21, color: _muted),
-        SizedBox(width: 12),
-        Text('Where in Goa?', style: TextStyle(fontSize: 14, color: _muted)),
-        Spacer(),
-        Icon(Icons.tune_rounded, size: 19, color: _muted),
+        Icon(
+          Icons.search_rounded,
+          size: 21.sp,
+          color: AppColor.textSecondary,
+        ),
+        SizedBox(width: 12.w),
+        Text(
+          'Where in Goa?',
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: AppColor.textSecondary,
+          ),
+        ),
+        const Spacer(),
+        Icon(
+          Icons.tune_rounded,
+          size: 19.sp,
+          color: AppColor.textSecondary,
+        ),
       ],
     ),
   );
@@ -198,32 +220,36 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-    color: selected ? _brand : Colors.white,
+    color: selected ? AppColor.primary : AppColor.white,
     elevation: selected ? 3 : 0,
-    shadowColor: _brand.withValues(alpha: .25),
-    borderRadius: BorderRadius.circular(24),
+    shadowColor: AppColor.primary.withValues(alpha: .25),
+    borderRadius: BorderRadius.circular(24.r),
     child: InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(24.r),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: EdgeInsets.symmetric(horizontal: 15.w),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
-            color: selected ? _brand : const Color(0xffdedede),
+            color: selected ? AppColor.primary : AppColor.homeDivider,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 17, color: selected ? Colors.white : _brand),
-            const SizedBox(width: 7),
+            Icon(
+              icon,
+              size: 17.sp,
+              color: selected ? AppColor.white : AppColor.primary,
+            ),
+            SizedBox(width: 7.w),
             Text(
               label,
               style: TextStyle(
-                fontSize: 12,
-                color: selected ? Colors.white : _ink,
+                fontSize: 12.sp,
+                color: selected ? AppColor.white : AppColor.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -254,56 +280,85 @@ class _PropertyCard extends StatelessWidget {
     onTap: () => context.push(
       RouteName.propertyView.replaceFirst(':propertyId', 'modern-villa'),
     ),
-    borderRadius: BorderRadius.circular(14),
+    borderRadius: BorderRadius.circular(14.r),
     child: Padding(
-      padding: const EdgeInsets.only(bottom: 25),
+      padding: EdgeInsets.only(bottom: 25.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(14.r),
                 child: AspectRatio(
                   aspectRatio: 1.12,
                   child: Image.network(
                     home.image,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: const Color(0xffeeeeee),
-                      child: const Icon(Icons.home_outlined, size: 42),
-                    ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: AppColor.greyExtraLight,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColor.primary,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      debugPrint('IMAGE_ERROR: ${error.toString()}');
+                      debugPrint('IMAGE_ERROR_URL: ${home.image}');
+                      return Container(
+                        color: AppColor.greyExtraLight,
+                        child: Icon(
+                          Icons.home_outlined,
+                          size: 42.sp,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
               Positioned(
-                top: 12,
-                right: 12,
+                top: 12.h,
+                right: 12.w,
                 child: Container(
-                  width: 38,
-                  height: 38,
+                  width: 38.w,
+                  height: 38.w,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .93),
+                    color: AppColor.white.withValues(alpha: .93),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.favorite_border_rounded, size: 21),
+                  child: Icon(
+                    Icons.favorite_border_rounded,
+                    size: 21.sp,
+                  ),
                 ),
               ),
-              const Positioned(
-                bottom: 12,
-                left: 12,
+              Positioned(
+                bottom: 12.h,
+                left: 12.w,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: _brand,
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    color: AppColor.primary,
+                    borderRadius: BorderRadius.all(Radius.circular(4.r)),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 9.w,
+                      vertical: 5.h,
+                    ),
                     child: Text(
                       'PREMIER',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
+                        color: AppColor.white,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w700,
                         letterSpacing: .5,
                       ),
@@ -313,33 +368,40 @@ class _PropertyCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Row(
             children: [
               Expanded(
                 child: Text(
                   home.title,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
-                    color: _ink,
+                    color: AppColor.textPrimary,
                   ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 7.w,
+                  vertical: 4.h,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xfff0f3f0),
-                  borderRadius: BorderRadius.circular(4),
+                  color: AppColor.greyExtraLight,
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.star_rounded, size: 14, color: _brand),
-                    const SizedBox(width: 3),
+                    Icon(
+                      Icons.star_rounded,
+                      size: 14.sp,
+                      color: AppColor.primary,
+                    ),
+                    SizedBox(width: 3.w),
                     Text(
                       home.rating,
-                      style: const TextStyle(
-                        fontSize: 11,
+                      style: TextStyle(
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -348,33 +410,46 @@ class _PropertyCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          SizedBox(height: 5.h),
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 14, color: _muted),
-              const SizedBox(width: 3),
+              Icon(
+                Icons.location_on_outlined,
+                size: 14.sp,
+                color: AppColor.textSecondary,
+              ),
+              SizedBox(width: 3.w),
               Text(
                 home.location,
-                style: const TextStyle(fontSize: 12, color: _muted),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColor.textSecondary,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 7),
+          SizedBox(height: 7.h),
           RichText(
             text: TextSpan(
-              style: const TextStyle(color: _ink, fontSize: 13),
+              style: TextStyle(
+                color: AppColor.textPrimary,
+                fontSize: 13.sp,
+              ),
               children: [
                 TextSpan(
                   text: home.price,
-                  style: const TextStyle(
-                    fontSize: 17,
+                  style: TextStyle(
+                    fontSize: 17.sp,
                     fontWeight: FontWeight.w800,
-                    color: _brand,
+                    color: AppColor.primary,
                   ),
                 ),
-                const TextSpan(
+                TextSpan(
                   text: ' / night',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.sp,
+                  ),
                 ),
               ],
             ),
@@ -389,7 +464,7 @@ class _DiscoverCard extends StatelessWidget {
   const _DiscoverCard();
   @override
   Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(14),
+    borderRadius: BorderRadius.circular(14.r),
     child: Stack(
       children: [
         AspectRatio(
@@ -397,27 +472,30 @@ class _DiscoverCard extends StatelessWidget {
           child: Image.network(
             'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=900',
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(color: _brand),
+            errorBuilder: (_, __, ___) => Container(color: AppColor.primary),
           ),
         ),
-        const Positioned(
-          left: 16,
-          bottom: 16,
+        Positioned(
+          left: 16.w,
+          bottom: 16.h,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Private Plantation Tours',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
+                  color: AppColor.white,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 'Exclusive back-to-nature experiences',
-                style: TextStyle(color: Colors.white, fontSize: 11),
+                style: TextStyle(
+                  color: AppColor.white,
+                  fontSize: 11.sp,
+                ),
               ),
             ],
           ),
@@ -433,22 +511,26 @@ class _SmallDiscover extends StatelessWidget {
   const _SmallDiscover({required this.icon, required this.title});
   @override
   Widget build(BuildContext context) => Container(
-    height: 112,
+    height: 112.h,
     decoration: BoxDecoration(
-      color: const Color(0xffeeeeee),
-      borderRadius: BorderRadius.circular(13),
+      color: AppColor.greyExtraLight,
+      borderRadius: BorderRadius.circular(13.r),
     ),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, color: _brand, size: 28),
-        const SizedBox(height: 10),
+        Icon(
+          icon,
+          color: AppColor.primary,
+          size: 28.sp,
+        ),
+        SizedBox(height: 10.h),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 12,
+          style: TextStyle(
+            fontSize: 12.sp,
             fontWeight: FontWeight.w600,
-            color: _ink,
+            color: AppColor.textPrimary,
           ),
         ),
       ],

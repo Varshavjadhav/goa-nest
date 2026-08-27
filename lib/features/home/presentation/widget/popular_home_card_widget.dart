@@ -57,7 +57,7 @@ class PopularHomeCard extends StatelessWidget {
                         AppTextWidget(
                           text: badge!,
                           color: theme.guestFavBadgeText,
-                          fontSize: 9.sp,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.w700,
                         ),
                       ],

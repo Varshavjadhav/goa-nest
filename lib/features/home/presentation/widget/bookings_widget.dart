@@ -339,7 +339,7 @@ class _StatusChip extends StatelessWidget {
       ),
       child: AppTextWidget(
         text: 'CONFIRMED',
-        fontSize: 7.5.sp,
+        fontSize: 9.sp,
         fontWeight: FontWeight.w900,
         color: AppColor.success,
         letterSpacing: 0.3,
@@ -370,7 +370,7 @@ class _DaysPill extends StatelessWidget {
       ),
       child: AppTextWidget(
         text: text,
-        fontSize: 9.sp,
+        fontSize: 10.sp,
         fontWeight: FontWeight.w700,
         color: foreground,
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class WishlistWidget extends StatelessWidget {
   const WishlistWidget({super.key});
@@ -28,45 +30,52 @@ class WishlistWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: const Color(0xfffafafa),
+      color: AppColor.surface,
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            backgroundColor: const Color(0xfffafafa),
+            backgroundColor: AppColor.surface,
             surfaceTintColor: Colors.transparent,
             pinned: true,
             elevation: 0,
-            title: const Text(
+            title: Text(
               'Wishlists',
               style: TextStyle(
-                color: Color(0xff222222),
-                fontSize: 22,
+                color: AppColor.textPrimary,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   'Edit',
-                  style: TextStyle(color: Color(0xff333333), fontSize: 12),
+                  style: TextStyle(
+                    color: AppColor.textPrimary,
+                    fontSize: 12.sp,
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
             ],
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 100),
+            padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 100.h),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                for (final item in collections) _CollectionCard(item: item),
-                const SizedBox(height: 20),
-                const Text(
+                for (final item in collections)
+                  _CollectionCard(item: item),
+                SizedBox(height: 20.h),
+                Text(
                   'Create new',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 _CreateCollection(onTap: () {}),
               ]),
             ),
@@ -84,9 +93,9 @@ class _CollectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final images = item.$4.isEmpty ? [item.$3] : [item.$3, item.$4];
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: EdgeInsets.only(bottom: 24.h),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         onTap: () => context.push(
           RouteName.propertyView.replaceFirst(':propertyId', 'saved-home'),
         ),
@@ -94,18 +103,18 @@ class _CollectionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               child: SizedBox(
-                height: 148,
+                height: 148.h,
                 child: Row(
                   children: [
                     Expanded(child: _CollectionImage(url: images[0])),
-                    const SizedBox(width: 3),
+                    SizedBox(width: 3.w),
                     Expanded(
                       child: images.length > 1
                           ? _CollectionImage(url: images[1])
                           : Container(
-                              color: const Color(0xffeeeeee),
+                              color: AppColor.greyExtraLight,
                               child: const Icon(Icons.home_outlined),
                             ),
                     ),
@@ -113,15 +122,21 @@ class _CollectionCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
               item.$1,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: 2.h),
             Text(
               item.$2,
-              style: const TextStyle(fontSize: 11, color: Color(0xff777777)),
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: AppColor.textQuaternary,
+              ),
             ),
           ],
         ),
@@ -138,8 +153,11 @@ class _CollectionImage extends StatelessWidget {
     url,
     fit: BoxFit.cover,
     errorBuilder: (_, __, ___) => Container(
-      color: const Color(0xffeeeeee),
-      child: const Icon(Icons.image_outlined, color: Color(0xff999999)),
+      color: AppColor.greyExtraLight,
+      child: const Icon(
+        Icons.image_outlined,
+        color: AppColor.greyMedium,
+      ),
     ),
   );
 }
@@ -150,18 +168,22 @@ class _CreateCollection extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    borderRadius: BorderRadius.circular(8),
+    borderRadius: BorderRadius.circular(8.r),
     child: Container(
-      height: 112,
+      height: 112.h,
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xffdddddd)),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColor.divider),
+        borderRadius: BorderRadius.circular(8.r),
       ),
-      child: const Center(
+      child: Center(
         child: CircleAvatar(
-          radius: 18,
-          backgroundColor: Color(0xffeeeeee),
-          child: Icon(Icons.add, size: 18, color: Color(0xff555555)),
+          radius: 18.r,
+          backgroundColor: AppColor.greyExtraLight,
+          child: Icon(
+            Icons.add,
+            size: 18.sp,
+            color: AppColor.greyDark,
+          ),
         ),
       ),
     ),

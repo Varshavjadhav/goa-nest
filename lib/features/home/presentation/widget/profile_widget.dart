@@ -1,35 +1,33 @@
 import 'package:flutter/material.dart';
-
-const _brand = Color(0xffff385c);
-const _ink = Color(0xff222222);
-const _muted = Color(0xff717171);
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class ProfileWidget extends StatelessWidget {
   const ProfileWidget({super.key});
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: const Color(0xfff9f9f9),
+    color: AppColor.surface,
     child: CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 105),
+          padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 105.h),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              const Text(
+              Text(
                 'Profile',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 26.sp,
                   fontWeight: FontWeight.w700,
-                  color: _ink,
+                  color: AppColor.textPrimary,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               const _ProfileCard(),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               const _HostBanner(),
-              const SizedBox(height: 28),
+              SizedBox(height: 28.h),
               const _Section(
                 title: 'Account',
                 items: [
@@ -80,27 +78,33 @@ class ProfileWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: _ink,
-                  minimumSize: const Size.fromHeight(52),
-                  side: const BorderSide(color: Color(0xffd9d9d9)),
+                  foregroundColor: AppColor.textPrimary,
+                  minimumSize: Size.fromHeight(52.h),
+                  side: const BorderSide(color: AppColor.divider),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Log out',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              const SizedBox(height: 18),
-              const Center(
+              SizedBox(height: 18.h),
+              Center(
                 child: Text(
                   'GoNest v1.0.0',
-                  style: TextStyle(fontSize: 11, color: _muted),
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColor.textSecondary,
+                  ),
                 ),
               ),
             ]),
@@ -115,51 +119,54 @@ class _ProfileCard extends StatelessWidget {
   const _ProfileCard();
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(18),
+    padding: EdgeInsets.all(18.p),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: const Color(0xffe1e1e1)),
-      borderRadius: BorderRadius.circular(16),
+      color: AppColor.white,
+      border: Border.all(color: AppColor.divider),
+      borderRadius: BorderRadius.circular(16.r),
     ),
     child: Row(
       children: [
-        const CircleAvatar(
-          radius: 34,
-          backgroundImage: NetworkImage('https://i.pravatar.cc/140?img=47'),
+        CircleAvatar(
+          radius: 34.r,
+          backgroundImage: const NetworkImage('https://i.pravatar.cc/140?img=47'),
         ),
-        const SizedBox(width: 15),
-        const Expanded(
+        SizedBox(width: 15.w),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Alex Johnson',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
-                  color: _ink,
+                  color: AppColor.textPrimary,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 5.h),
               Text(
                 'alex.johnson@email.com',
-                style: TextStyle(fontSize: 12, color: _muted),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColor.textSecondary,
+                ),
               ),
-              SizedBox(height: 9),
+              SizedBox(height: 9.h),
               Row(
                 children: [
                   Icon(
                     Icons.verified_rounded,
-                    size: 15,
-                    color: Color(0xff25833d),
+                    size: 15.sp,
+                    color: AppColor.success,
                   ),
-                  SizedBox(width: 5),
+                  SizedBox(width: 5.w),
                   Text(
                     'Verified guest',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xff25833d),
+                      color: AppColor.success,
                     ),
                   ),
                 ],
@@ -167,7 +174,10 @@ class _ProfileCard extends StatelessWidget {
             ],
           ),
         ),
-        const Icon(Icons.chevron_right_rounded, color: _muted),
+        Icon(
+          Icons.chevron_right_rounded,
+          color: AppColor.textSecondary,
+        ),
       ],
     ),
   );
@@ -177,44 +187,54 @@ class _HostBanner extends StatelessWidget {
   const _HostBanner();
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(17),
+    padding: EdgeInsets.all(17.p),
     decoration: BoxDecoration(
-      color: const Color(0xffffeef0),
-      borderRadius: BorderRadius.circular(16),
+      color: AppColor.tertiary,
+      borderRadius: BorderRadius.circular(16.r),
     ),
     child: Row(
       children: [
         Container(
-          width: 44,
-          height: 44,
+          width: 44.w,
+          height: 44.w,
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColor.white,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.home_work_outlined, color: _brand),
+          child: Icon(
+            Icons.home_work_outlined,
+            color: AppColor.primary,
+          ),
         ),
-        const SizedBox(width: 13),
-        const Expanded(
+        SizedBox(width: 13.w),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Switch to hosting',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
-                  color: _ink,
+                  color: AppColor.textPrimary,
                 ),
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 4.h),
               Text(
                 'Share your space and earn extra income.',
-                style: TextStyle(fontSize: 12, color: _muted),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColor.textSecondary,
+                ),
               ),
             ],
           ),
         ),
-        const Icon(Icons.arrow_forward_rounded, size: 20, color: _brand),
+        Icon(
+          Icons.arrow_forward_rounded,
+          size: 20.sp,
+          color: AppColor.primary,
+        ),
       ],
     ),
   );
@@ -226,24 +246,24 @@ class _Section extends StatelessWidget {
   const _Section({required this.title, required this.items});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 24),
+    padding: EdgeInsets.only(bottom: 24.h),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 17,
+          style: TextStyle(
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
-            color: _ink,
+            color: AppColor.textPrimary,
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10.h),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: const Color(0xffe1e1e1)),
-            borderRadius: BorderRadius.circular(14),
+            color: AppColor.white,
+            border: Border.all(color: AppColor.divider),
+            borderRadius: BorderRadius.circular(14.r),
           ),
           child: Column(
             children: [
@@ -265,38 +285,49 @@ class _ActionItem {
     children: [
       ListTile(
         onTap: () {},
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 14.w,
+          vertical: 5.h,
+        ),
         leading: Container(
-          width: 38,
-          height: 38,
+          width: 38.w,
+          height: 38.w,
           decoration: BoxDecoration(
-            color: const Color(0xfffff1f2),
-            borderRadius: BorderRadius.circular(10),
+            color: AppColor.tertiary,
+            borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(icon, size: 20, color: _brand),
+          child: Icon(icon, size: 20.sp, color: AppColor.primary),
         ),
         title: Text(
           title,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: 14.sp,
             fontWeight: FontWeight.w600,
-            color: _ink,
+            color: AppColor.textPrimary,
           ),
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 3),
+          padding: EdgeInsets.only(top: 3.h),
           child: Text(
             subtitle,
-            style: const TextStyle(fontSize: 11, color: _muted),
+            style: TextStyle(
+              fontSize: 11.sp,
+              color: AppColor.textSecondary,
+            ),
           ),
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.chevron_right_rounded,
-          size: 21,
-          color: _muted,
+          size: 21.sp,
+          color: AppColor.textSecondary,
         ),
       ),
-      if (divider) const Divider(height: 1, indent: 66, endIndent: 14),
+      if (divider)
+        Divider(
+          height: 1,
+          indent: 66.w,
+          endIndent: 14.w,
+        ),
     ],
   );
 }

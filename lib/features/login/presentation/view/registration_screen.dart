@@ -1,105 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class RegistrationScreen extends StatelessWidget {
   const RegistrationScreen({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xfffafafa),
+    backgroundColor: AppColor.scaffoldBackground,
     body: SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(14, 12, 14, 20),
+        padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 20.h),
         child: Column(
           children: [
             Row(
               children: [
                 IconButton(
                   onPressed: () => context.go(RouteName.loginView),
-                  icon: const Icon(Icons.arrow_back, size: 18),
+                  icon: Icon(Icons.arrow_back, size: 18.sp),
                 ),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Registration',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xffc90032),
-                      fontSize: 15,
+                      color: AppColor.primary,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                const SizedBox(width: 48),
+                SizedBox(width: 48.w),
               ],
             ),
-            const SizedBox(height: 5),
-            const Text(
+            SizedBox(height: 5.h),
+            Text(
               'Create an account',
-              style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 19.sp,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            const SizedBox(height: 4),
-            const Text(
+            SizedBox(height: 4.h),
+            Text(
               'Enter your email to get started.',
-              style: TextStyle(fontSize: 13, color: Color(0xff777777)),
+              style: TextStyle(
+                fontSize: 13.sp,
+                color: AppColor.textQuaternary,
+              ),
             ),
-            const SizedBox(height: 28),
+            SizedBox(height: 28.h),
             const _RegistrationField(),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16.h),
+            Text(
               'By continuing, you may receive an SMS for verification.\nMessage and data rates may apply.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 10, color: Color(0xff777777)),
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: AppColor.textQuaternary,
+              ),
             ),
-            const SizedBox(height: 58),
+            SizedBox(height: 58.h),
             SizedBox(
               width: double.infinity,
-              height: 42,
+              height: 50.h,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffc90032),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColor.primary,
+                  foregroundColor: AppColor.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(7),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Continue with Email',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             const _DividerLabel(),
-            const SizedBox(height: 13),
+            SizedBox(height: 13.h),
             const _ProviderButton(
               icon: Icons.phone_iphone,
               label: 'Continue with Phone',
             ),
-            const _ProviderButton(
+            _ProviderButton(
               icon: Icons.g_mobiledata,
               label: 'Continue with Google',
-              color: Colors.blue,
+              color: Colors.red,
             ),
             const _ProviderButton(
               icon: Icons.apple,
               label: 'Continue with Apple',
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Wrap(
               children: [
-                const Text(
+                Text(
                   'Already have an account? ',
-                  style: TextStyle(fontSize: 11),
+                  style: TextStyle(fontSize: 11.sp),
                 ),
                 GestureDetector(
                   onTap: () => context.go(RouteName.loginView),
-                  child: const Text(
+                  child: Text(
                     'Log in',
                     style: TextStyle(
-                      fontSize: 11,
-                      color: Color(0xffc90032),
+                      fontSize: 11.sp,
+                      color: AppColor.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -116,20 +130,26 @@ class RegistrationScreen extends StatelessWidget {
 class _RegistrationField extends StatelessWidget {
   const _RegistrationField();
   @override
-  Widget build(BuildContext context) => const TextField(
+  Widget build(BuildContext context) => TextField(
     decoration: InputDecoration(
       hintText: 'Email address',
-      hintStyle: TextStyle(fontSize: 13, color: Color(0xff777777)),
+      hintStyle: TextStyle(
+        fontSize: 13.sp,
+        color: AppColor.textQuaternary,
+      ),
       filled: true,
-      fillColor: Colors.white,
-      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+      fillColor: AppColor.white,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 14.w,
+        vertical: 16.h,
+      ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        borderSide: BorderSide(color: Color(0xffcccccc)),
+        borderRadius: BorderRadius.all(Radius.circular(10.r)),
+        borderSide: const BorderSide(color: AppColor.borderGrey),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-        borderSide: BorderSide(color: Color(0xffcccccc)),
+        borderRadius: BorderRadius.all(Radius.circular(10.r)),
+        borderSide: const BorderSide(color: AppColor.borderGrey),
       ),
     ),
   );
@@ -138,17 +158,20 @@ class _RegistrationField extends StatelessWidget {
 class _DividerLabel extends StatelessWidget {
   const _DividerLabel();
   @override
-  Widget build(BuildContext context) => const Row(
+  Widget build(BuildContext context) => Row(
     children: [
-      Expanded(child: Divider(color: Color(0xffe5e5e5))),
+      const Expanded(child: Divider(color: AppColor.divider)),
       Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Text(
           'or',
-          style: TextStyle(fontSize: 13, color: Color(0xff777777)),
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: AppColor.textQuaternary,
+          ),
         ),
       ),
-      Expanded(child: Divider(color: Color(0xffe5e5e5))),
+      const Expanded(child: Divider(color: AppColor.divider)),
     ],
   );
 }
@@ -160,20 +183,25 @@ class _ProviderButton extends StatelessWidget {
   const _ProviderButton({required this.icon, required this.label, this.color});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
+    padding: EdgeInsets.only(bottom: 6.h),
     child: SizedBox(
       width: double.infinity,
-      height: 34,
+      height: 48.h,
       child: OutlinedButton.icon(
         onPressed: () {},
-        icon: Icon(icon, size: 15, color: color ?? Colors.black),
+        icon: Icon(icon, size: 18.sp, color: color ?? AppColor.black),
         label: Text(
           label,
-          style: const TextStyle(fontSize: 13, color: Color(0xff222222)),
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: AppColor.textPrimary,
+          ),
         ),
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Color(0xffcccccc)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+          side: const BorderSide(color: AppColor.borderGrey),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+          ),
         ),
       ),
     ),

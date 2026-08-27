@@ -5,6 +5,8 @@ import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/features/login/presentation/bloc/login_bloc.dart';
 import 'package:goanest/features/login/presentation/bloc/login_event.dart';
 import 'package:goanest/features/login/presentation/bloc/login_state.dart';
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -24,41 +26,44 @@ class _LoginView extends StatelessWidget {
   const _LoginView();
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xfffafafa),
+    backgroundColor: AppColor.scaffoldBackground,
     body: SafeArea(
       child: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(14, 72, 14, 20),
+          padding: EdgeInsets.fromLTRB(14.w, 72.h, 14.w, 20.h),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 430),
+            constraints: BoxConstraints(maxWidth: 430.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Havenstay',
                   style: TextStyle(
-                    color: Color(0xffe0002b),
-                    fontSize: 16,
+                    color: AppColor.primary,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 5),
-                const Text('Log in or sign up', style: TextStyle(fontSize: 15)),
-                const SizedBox(height: 28),
+                SizedBox(height: 5.h),
+                Text(
+                  'Log in or sign up',
+                  style: TextStyle(fontSize: 15.sp),
+                ),
+                SizedBox(height: 28.h),
                 const _EmailField(),
-                const SizedBox(height: 9),
+                SizedBox(height: 9.h),
                 _PrimaryButton(
                   label: 'Continue with Email',
                   onTap: () => _submit(context),
                 ),
-                const SizedBox(height: 28),
+                SizedBox(height: 28.h),
                 const _DividerLabel(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 const _ProviderButton(
                   icon: Icons.phone_iphone,
                   label: 'Continue with Phone',
                 ),
-                const _ProviderButton(
+                _ProviderButton(
                   icon: Icons.g_mobiledata,
                   label: 'Continue with Google',
                   color: Colors.red,
@@ -67,24 +72,24 @@ class _LoginView extends StatelessWidget {
                   icon: Icons.apple,
                   label: 'Continue with Apple',
                 ),
-                const SizedBox(height: 5),
+                SizedBox(height: 5.h),
                 Center(
                   child: Wrap(
                     children: [
-                      const Text(
+                      Text(
                         "Don't have an account? ",
                         style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xff666666),
+                          fontSize: 13.sp,
+                          color: AppColor.textSecondary,
                         ),
                       ),
                       GestureDetector(
                         onTap: () => context.go(RouteName.registerView),
-                        child: const Text(
+                        child: Text(
                           'Sign up',
                           style: TextStyle(
-                            fontSize: 13,
-                            color: Color(0xffe0002b),
+                            fontSize: 13.sp,
+                            color: AppColor.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -92,12 +97,15 @@ class _LoginView extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 22),
-                const Center(
+                SizedBox(height: 22.h),
+                Center(
                   child: Text(
                     'By signing in, you agree to our Terms of Service and\nPrivacy Policy.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 11, color: Color(0xff777777)),
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: AppColor.textQuaternary,
+                    ),
                   ),
                 ),
               ],
@@ -126,21 +134,24 @@ class _EmailField extends StatelessWidget {
       },
       decoration: InputDecoration(
         hintText: 'Email address',
-        hintStyle: const TextStyle(fontSize: 13, color: Color(0xff777777)),
+        hintStyle: TextStyle(
+          fontSize: 13.sp,
+          color: AppColor.textQuaternary,
+        ),
         errorText: state.identifierError,
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 14,
+        fillColor: AppColor.white,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 14.w,
+          vertical: 16.h,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: Color(0xffdddddd)),
+          borderRadius: BorderRadius.circular(10.r),
+          borderSide: const BorderSide(color: AppColor.borderGrey),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: Color(0xffdddddd)),
+          borderRadius: BorderRadius.circular(10.r),
+          borderSide: const BorderSide(color: AppColor.borderGrey),
         ),
       ),
     );
@@ -154,18 +165,23 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
     width: double.infinity,
-    height: 42,
+    height: 50.h,
     child: ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xffc90032),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColor.primary,
+        foregroundColor: AppColor.white,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.r),
+        ),
       ),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     ),
   );
@@ -174,17 +190,20 @@ class _PrimaryButton extends StatelessWidget {
 class _DividerLabel extends StatelessWidget {
   const _DividerLabel();
   @override
-  Widget build(BuildContext context) => const Row(
+  Widget build(BuildContext context) => Row(
     children: [
-      Expanded(child: Divider(color: Color(0xffe5e5e5))),
+      const Expanded(child: Divider(color: AppColor.divider)),
       Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
         child: Text(
           'or',
-          style: TextStyle(fontSize: 13, color: Color(0xff777777)),
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: AppColor.textQuaternary,
+          ),
         ),
       ),
-      Expanded(child: Divider(color: Color(0xffe5e5e5))),
+      const Expanded(child: Divider(color: AppColor.divider)),
     ],
   );
 }
@@ -196,20 +215,25 @@ class _ProviderButton extends StatelessWidget {
   const _ProviderButton({required this.icon, required this.label, this.color});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
+    padding: EdgeInsets.only(bottom: 6.h),
     child: SizedBox(
       width: double.infinity,
-      height: 34,
+      height: 48.h,
       child: OutlinedButton.icon(
         onPressed: () {},
-        icon: Icon(icon, size: 15, color: color ?? Colors.black),
+        icon: Icon(icon, size: 18.sp, color: color ?? AppColor.black),
         label: Text(
           label,
-          style: const TextStyle(fontSize: 13, color: Color(0xff222222)),
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: AppColor.textPrimary,
+          ),
         ),
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Color(0xffdddddd)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+          side: const BorderSide(color: AppColor.borderGrey),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+          ),
         ),
       ),
     ),

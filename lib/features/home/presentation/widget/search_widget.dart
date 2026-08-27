@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
-
-const _pink = Color(0xffba0036);
-const _coral = Color(0xffff385c);
-const _ink = Color(0xff222222);
-const _muted = Color(0xff717171);
-const _surface = Color(0xfff9f9f9);
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 enum _SearchStage { destination, dates, guests, results }
 
@@ -24,7 +20,7 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: _surface,
+    backgroundColor: AppColor.surface,
     body: SafeArea(
       child: Column(
         children: [
@@ -100,32 +96,38 @@ class _TopBar extends StatelessWidget {
   const _TopBar({required this.title, required this.onBack, this.onFilter});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+    padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
     child: Row(
       children: [
         IconButton(
           onPressed: onBack,
           padding: EdgeInsets.zero,
-          icon: const Icon(Icons.arrow_back_rounded, color: _ink),
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: AppColor.textPrimary,
+          ),
         ),
         Expanded(
           child: Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.w700,
-              color: _ink,
+              color: AppColor.textPrimary,
             ),
           ),
         ),
         if (onFilter != null)
           IconButton(
             onPressed: onFilter,
-            icon: const Icon(Icons.tune_rounded, color: _ink),
+            icon: Icon(
+              Icons.tune_rounded,
+              color: AppColor.textPrimary,
+            ),
           )
         else
-          const SizedBox(width: 48),
+          SizedBox(width: 48.w),
       ],
     ),
   );
@@ -136,52 +138,61 @@ class _DestinationStep extends StatelessWidget {
   const _DestinationStep({required this.onSelect});
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(24, 22, 24, 32),
+    padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 32.h),
     children: [
-      const Text(
+      Text(
         'Where do you want to stay?',
         style: TextStyle(
-          fontSize: 25,
+          fontSize: 24.sp,
           height: 1.2,
           fontWeight: FontWeight.w700,
-          color: _ink,
+          color: AppColor.textPrimary,
         ),
       ),
-      const SizedBox(height: 8),
-      const Text(
+      SizedBox(height: 8.h),
+      Text(
         'Search by city, landmark, or neighborhood',
-        style: TextStyle(fontSize: 14, color: _muted),
-      ),
-      const SizedBox(height: 24),
-      Container(
-        height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: _ink, width: 1.5),
-          borderRadius: BorderRadius.circular(12),
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: AppColor.textSecondary,
         ),
-        child: const Row(
+      ),
+      SizedBox(height: 24.h),
+      Container(
+        height: 56.h,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          border: Border.all(
+            color: AppColor.textPrimary,
+            width: 1.5,
+          ),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
           children: [
-            Icon(Icons.search_rounded),
-            SizedBox(width: 12),
+            Icon(Icons.search_rounded, size: 22.sp),
+            SizedBox(width: 12.w),
             Text(
               'Search destinations',
-              style: TextStyle(color: _muted, fontSize: 15),
+              style: TextStyle(
+                color: AppColor.textSecondary,
+                fontSize: 15.sp,
+              ),
             ),
           ],
         ),
       ),
-      const SizedBox(height: 28),
-      const Text(
+      SizedBox(height: 28.h),
+      Text(
         'Popular destinations',
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-          color: _ink,
+          color: AppColor.textPrimary,
         ),
       ),
-      const SizedBox(height: 12),
+      SizedBox(height: 12.h),
       for (final item in const [
         (
           'Goa, India',
@@ -227,41 +238,47 @@ class _DestinationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    borderRadius: BorderRadius.circular(12),
+    borderRadius: BorderRadius.circular(12.r),
     child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 13),
+      padding: EdgeInsets.symmetric(vertical: 13.h),
       child: Row(
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 52.w,
+            height: 52.w,
             decoration: BoxDecoration(
-              color: const Color(0xffffe5e8),
-              borderRadius: BorderRadius.circular(12),
+              color: AppColor.tertiary,
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(icon, color: _pink),
+            child: Icon(icon, color: AppColor.primary),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 15,
+                  style: TextStyle(
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3.h),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontSize: 12, color: _muted),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColor.textSecondary,
+                  ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: _muted),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: AppColor.textSecondary,
+          ),
         ],
       ),
     ),
@@ -280,27 +297,30 @@ class _DatesStep extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(24, 22, 24, 32),
+    padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 32.h),
     children: [
-      const Text(
+      Text(
         'When are you going?',
         style: TextStyle(
-          fontSize: 25,
+          fontSize: 24.sp,
           height: 1.2,
           fontWeight: FontWeight.w700,
-          color: _ink,
+          color: AppColor.textPrimary,
         ),
       ),
-      const SizedBox(height: 8),
-      const Text(
+      SizedBox(height: 8.h),
+      Text(
         'Choose your dates to see available stays',
-        style: TextStyle(fontSize: 14, color: _muted),
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: AppColor.textSecondary,
+        ),
       ),
-      const SizedBox(height: 22),
+      SizedBox(height: 22.h),
       _DateBox(label: 'CHECK-IN', value: _format(checkIn)),
-      const SizedBox(height: 12),
+      SizedBox(height: 12.h),
       _DateBox(label: 'CHECK-OUT', value: _format(checkOut)),
-      const SizedBox(height: 20),
+      SizedBox(height: 20.h),
       OutlinedButton.icon(
         onPressed: () async {
           final range = await showDateRangePicker(
@@ -311,17 +331,20 @@ class _DatesStep extends StatelessWidget {
           if (range != null) onChanged(range);
         },
         icon: const Icon(Icons.date_range_rounded),
-        label: const Text('Choose dates'),
+        label: Text(
+          'Choose dates',
+          style: TextStyle(fontSize: 14.sp),
+        ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: _ink,
-          minimumSize: const Size.fromHeight(50),
-          side: const BorderSide(color: Color(0xffdddddd)),
+          foregroundColor: AppColor.textPrimary,
+          minimumSize: Size.fromHeight(50.h),
+          side: const BorderSide(color: AppColor.divider),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r),
           ),
         ),
       ),
-      const SizedBox(height: 18),
+      SizedBox(height: 18.h),
       _PrimaryButton(
         label: 'Next',
         enabled: checkIn != null && checkOut != null,
@@ -338,35 +361,38 @@ class _DateBox extends StatelessWidget {
   const _DateBox({required this.label, required this.value});
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
+    padding: EdgeInsets.all(16.p),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: const Color(0xffdddddd)),
-      borderRadius: BorderRadius.circular(12),
+      color: AppColor.white,
+      border: Border.all(color: AppColor.divider),
+      borderRadius: BorderRadius.circular(12.r),
     ),
     child: Row(
       children: [
-        const Icon(Icons.calendar_today_outlined, color: _muted),
-        const SizedBox(width: 14),
+        Icon(
+          Icons.calendar_today_outlined,
+          color: AppColor.textSecondary,
+        ),
+        SizedBox(width: 14.w),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 11,
+              style: TextStyle(
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
-                color: _muted,
+                color: AppColor.textSecondary,
                 letterSpacing: .7,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4.h),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 15,
+              style: TextStyle(
+                fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
-                color: _ink,
+                color: AppColor.textPrimary,
               ),
             ),
           ],
@@ -387,23 +413,26 @@ class _GuestsStep extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(24, 22, 24, 32),
+    padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 32.h),
     children: [
-      const Text(
+      Text(
         "Who's coming?",
         style: TextStyle(
-          fontSize: 25,
+          fontSize: 24.sp,
           height: 1.2,
           fontWeight: FontWeight.w700,
-          color: _ink,
+          color: AppColor.textPrimary,
         ),
       ),
-      const SizedBox(height: 8),
-      const Text(
+      SizedBox(height: 8.h),
+      Text(
         'Add guests to find the right space for your trip',
-        style: TextStyle(fontSize: 14, color: _muted),
+        style: TextStyle(
+          fontSize: 14.sp,
+          color: AppColor.textSecondary,
+        ),
       ),
-      const SizedBox(height: 28),
+      SizedBox(height: 28.h),
       _GuestCounter(
         label: 'Adults',
         hint: 'Ages 13 or above',
@@ -417,7 +446,7 @@ class _GuestsStep extends StatelessWidget {
         hint: 'Bringing a service animal?',
         count: 0,
       ),
-      const SizedBox(height: 22),
+      SizedBox(height: 22.h),
       _PrimaryButton(
         label: 'Search stays',
         enabled: guests > 0,
@@ -439,7 +468,7 @@ class _GuestCounter extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 16),
+    padding: EdgeInsets.symmetric(vertical: 16.h),
     child: Row(
       children: [
         Expanded(
@@ -448,13 +477,19 @@ class _GuestCounter extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: TextStyle(
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(hint, style: const TextStyle(fontSize: 12, color: _muted)),
+              SizedBox(height: 4.h),
+              Text(
+                hint,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColor.textSecondary,
+                ),
+              ),
             ],
           ),
         ),
@@ -466,7 +501,10 @@ class _GuestCounter extends StatelessWidget {
         ),
         Text(
           '$count',
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         IconButton(
           onPressed: onChanged == null ? null : () => onChanged!(count + 1),
@@ -488,19 +526,24 @@ class _PrimaryButton extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 54,
+    height: 52.h,
     child: ElevatedButton(
       onPressed: enabled ? onPressed : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: _coral,
-        disabledBackgroundColor: const Color(0xffdddddd),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColor.primary,
+        disabledBackgroundColor: AppColor.divider,
+        foregroundColor: AppColor.white,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.r),
+        ),
       ),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     ),
   );
@@ -511,37 +554,40 @@ class _ResultsStep extends StatelessWidget {
   const _ResultsStep({required this.onFilter});
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+    padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 32.h),
     children: [
       Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               '100+ places to stay',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
-                color: _ink,
+                color: AppColor.textPrimary,
               ),
             ),
           ),
           OutlinedButton.icon(
             onPressed: onFilter,
-            icon: const Icon(Icons.tune_rounded, size: 16),
-            label: const Text('Filters'),
+            icon: Icon(Icons.tune_rounded, size: 16.sp),
+            label: Text(
+              'Filters',
+              style: TextStyle(fontSize: 13.sp),
+            ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: _ink,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              minimumSize: const Size(0, 36),
-              side: const BorderSide(color: Color(0xffdddddd)),
+              foregroundColor: AppColor.textPrimary,
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              minimumSize: Size(0, 36.h),
+              side: const BorderSide(color: AppColor.divider),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(18.r),
               ),
             ),
           ),
         ],
       ),
-      const SizedBox(height: 18),
+      SizedBox(height: 18.h),
       const _ResultCard(
         title: 'Stunning oceanfront villa',
         location: 'North Goa, India',
@@ -574,59 +620,71 @@ class _ResultCard extends StatelessWidget {
       RouteName.propertyView.replaceFirst(':propertyId', 'search-result'),
     ),
     child: Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: EdgeInsets.only(bottom: 24.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(14.r),
                 child: AspectRatio(
                   aspectRatio: 1.08,
                   child: Image.network(
                     image,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
-                      color: const Color(0xffeeeeee),
-                      child: const Icon(Icons.home_outlined, size: 42),
+                      color: AppColor.greyExtraLight,
+                      child: Icon(
+                        Icons.home_outlined,
+                        size: 42.sp,
+                      ),
                     ),
                   ),
                 ),
               ),
               Positioned(
-                top: 12,
-                right: 12,
+                top: 12.h,
+                right: 12.w,
                 child: Container(
-                  width: 38,
-                  height: 38,
+                  width: 38.w,
+                  height: 38.w,
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: AppColor.white,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.favorite_border_rounded, size: 20),
+                  child: Icon(
+                    Icons.favorite_border_rounded,
+                    size: 20.sp,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
+            style: TextStyle(
+              fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: _ink,
+              color: AppColor.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(location, style: const TextStyle(fontSize: 13, color: _muted)),
-          const SizedBox(height: 5),
+          SizedBox(height: 4.h),
+          Text(
+            location,
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: AppColor.textSecondary,
+            ),
+          ),
+          SizedBox(height: 5.h),
           Text(
             price,
-            style: const TextStyle(
-              fontSize: 14,
+            style: TextStyle(
+              fontSize: 14.sp,
               fontWeight: FontWeight.w700,
-              color: _ink,
+              color: AppColor.textPrimary,
             ),
           ),
         ],

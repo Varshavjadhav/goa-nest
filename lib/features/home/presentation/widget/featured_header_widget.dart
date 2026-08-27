@@ -26,7 +26,7 @@ class FeaturedHeader extends StatelessWidget {
               Gap(2.h),
               AppTextWidget(
                 text: 'Curated collection for your next stay',
-                fontSize: 10.5.sp,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
                 color: theme.textSecondary,
               ),

@@ -1,87 +1,99 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
-
-const _pink = Color(0xffff385c);
-const _ink = Color(0xff222222);
-const _muted = Color(0xff717171);
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class BookingConfirmationScreen extends StatelessWidget {
   const BookingConfirmationScreen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xfff9f9f9),
+    backgroundColor: AppColor.surface,
     appBar: AppBar(
-      backgroundColor: const Color(0xfff9f9f9),
+      backgroundColor: AppColor.surface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
         onPressed: () => context.go(RouteName.homeView),
         icon: const Icon(Icons.close_rounded),
       ),
-      title: const Text(
+      title: Text(
         'Booking confirmed',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       centerTitle: true,
     ),
     body: ListView(
-      padding: const EdgeInsets.fromLTRB(24, 28, 24, 36),
+      padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 36.h),
       children: [
         Container(
-          width: 82,
-          height: 82,
-          margin: const EdgeInsets.only(bottom: 20),
+          width: 82.w,
+          height: 82.w,
+          margin: EdgeInsets.only(bottom: 20.h),
           decoration: const BoxDecoration(
             color: Color(0xffe5f5e8),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.check_rounded,
-            color: Color(0xff25833d),
-            size: 48,
+            color: AppColor.success,
+            size: 48.sp,
           ),
         ),
-        const Text(
-          'You’re all set!',
+        Text(
+          'You\'re all set!',
           style: TextStyle(
-            fontSize: 27,
+            fontSize: 26.sp,
             fontWeight: FontWeight.w700,
-            color: _ink,
+            color: AppColor.textPrimary,
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
-          'Your trip is confirmed. We can’t wait to host you.',
-          style: TextStyle(fontSize: 14, color: _muted, height: 1.4),
+        SizedBox(height: 8.h),
+        Text(
+          'Your trip is confirmed. We can\'t wait to host you.',
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: AppColor.textSecondary,
+            height: 1.4,
+          ),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28.h),
         const _BookingCard(),
-        const SizedBox(height: 22),
+        SizedBox(height: 22.h),
         SizedBox(
-          height: 52,
+          height: 52.h,
           child: ElevatedButton(
             onPressed: () => context.go(RouteName.homeView),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _pink,
-              foregroundColor: Colors.white,
+              backgroundColor: AppColor.primary,
+              foregroundColor: AppColor.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Explore more stays',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 24),
-        const Center(
+        SizedBox(height: 24.h),
+        Center(
           child: Text(
             'Confirmation code: HN7K4P',
-            style: TextStyle(fontSize: 12, color: _muted, letterSpacing: .4),
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColor.textSecondary,
+              letterSpacing: .4,
+            ),
           ),
         ),
       ],
@@ -93,11 +105,11 @@ class _BookingCard extends StatelessWidget {
   const _BookingCard();
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
+    padding: EdgeInsets.all(16.p),
     decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: const Color(0xffdddddd)),
-      borderRadius: BorderRadius.circular(14),
+      color: AppColor.white,
+      border: Border.all(color: AppColor.divider),
+      borderRadius: BorderRadius.circular(14.r),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,50 +117,56 @@ class _BookingCard extends StatelessWidget {
         Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(9),
+              borderRadius: BorderRadius.circular(9.r),
               child: Image.network(
                 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
-                width: 76,
-                height: 76,
+                width: 76.w,
+                height: 76.w,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
-                  width: 76,
-                  height: 76,
-                  color: const Color(0xffeeeeee),
+                  width: 76.w,
+                  height: 76.w,
+                  color: AppColor.greyExtraLight,
                   child: const Icon(Icons.home_outlined),
                 ),
               ),
             ),
-            const SizedBox(width: 13),
-            const Expanded(
+            SizedBox(width: 13.w),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Modern villa with pool',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w700,
-                      color: _ink,
+                      color: AppColor.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 5.h),
                   Text(
                     'Entire villa · North Goa',
-                    style: TextStyle(fontSize: 12, color: _muted),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColor.textSecondary,
+                    ),
                   ),
-                  SizedBox(height: 7),
+                  SizedBox(height: 7.h),
                   Row(
                     children: [
                       Icon(
                         Icons.star_rounded,
-                        size: 15,
-                        color: Color(0xffffb400),
+                        size: 15.sp,
+                        color: AppColor.goldPlan,
                       ),
-                      SizedBox(width: 3),
+                      SizedBox(width: 3.w),
                       Text(
                         '4.9 · 24 reviews',
-                        style: TextStyle(fontSize: 11, color: _muted),
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          color: AppColor.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -157,13 +175,17 @@ class _BookingCard extends StatelessWidget {
             ),
           ],
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
           child: Divider(height: 1),
         ),
         const _InfoRow(label: 'Dates', value: 'Aug 28 – Sep 1, 2026'),
         const _InfoRow(label: 'Guests', value: '2 guests'),
-        const _InfoRow(label: 'Total paid', value: '₹80,750', bold: true),
+        const _InfoRow(
+          label: 'Total paid',
+          value: '₹80,750',
+          bold: true,
+        ),
       ],
     ),
   );
@@ -175,21 +197,24 @@ class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.label, required this.value, this.bold = false});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 11),
+    padding: EdgeInsets.only(bottom: 11.h),
     child: Row(
       children: [
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(fontSize: 13, color: _muted),
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: AppColor.textSecondary,
+            ),
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 13.sp,
             fontWeight: bold ? FontWeight.w700 : FontWeight.w600,
-            color: _ink,
+            color: AppColor.textPrimary,
           ),
         ),
       ],

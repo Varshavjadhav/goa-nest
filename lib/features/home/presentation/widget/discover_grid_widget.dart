@@ -48,7 +48,7 @@ class DiscoverGrid extends StatelessWidget {
               Gap(4.h),
               AppTextWidget(
                 text: 'Book an exclusive culinary journey with local masters.',
-                fontSize: 9.5.sp,
+                fontSize: 11.sp,
                 height: 1.25,
                 color: theme.textSecondary,
               ),

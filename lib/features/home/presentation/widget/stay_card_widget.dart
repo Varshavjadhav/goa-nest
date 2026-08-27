@@ -58,7 +58,7 @@ class StayCard extends StatelessWidget {
                     child: AppTextWidget(
                       text: badge!,
                       color: AppColor.white,
-                      fontSize: 8.sp,
+                      fontSize: 9.sp,
                       fontWeight: FontWeight.w900,
                     ),
                   ),

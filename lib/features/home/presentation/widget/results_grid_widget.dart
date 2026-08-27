@@ -157,9 +157,9 @@ class _SearchStayCard extends StatelessWidget {
             ),
             Gap(3.w),
             Expanded(
-              child: AppTextWidget(
+              child:               AppTextWidget(
                 text: stay.location,
-                fontSize: 10.sp,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w600,
                 color: theme.textSecondary,
                 maxLines: 1,
@@ -182,7 +182,7 @@ class _SearchStayCard extends StatelessWidget {
                 text: ' / night',
                 style: TextStyle(
                   color: theme.textSecondary,
-                  fontSize: 9.sp,
+                  fontSize: 11.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),

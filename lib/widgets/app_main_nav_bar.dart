@@ -72,7 +72,7 @@ class AppMainNavBar extends StatelessWidget {
                       AppTextWidget(
                         text: item.label,
                         color: color,
-                        fontSize: 9.sp,
+                        fontSize: 10.sp,
                         fontWeight: isSelected
                             ? FontWeight.w800
                             : FontWeight.w500,

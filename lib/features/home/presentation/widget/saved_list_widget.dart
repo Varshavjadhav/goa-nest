@@ -149,14 +149,14 @@ class _SavedStayCard extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
                 children: [
-                  TextSpan(
-                    text: ' / night',
-                    style: TextStyle(
-                      color: theme.textSecondary,
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+              TextSpan(
+                text: ' / night',
+                style: TextStyle(
+                  color: theme.textSecondary,
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
                 ],
               ),
             ),

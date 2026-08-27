@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
+import 'package:goanest/resources/constants/app_colors.dart';
+import 'package:goanest/utilities/extensions/extensions.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
   const PropertyDetailScreen({super.key});
@@ -13,149 +15,176 @@ class PropertyDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfffafafa),
+      backgroundColor: AppColor.scaffoldBackground,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 285,
+            expandedHeight: 285.h,
             pinned: true,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
+            backgroundColor: AppColor.white,
+            foregroundColor: AppColor.textPrimary,
             surfaceTintColor: Colors.transparent,
             automaticallyImplyLeading: false,
             flexibleSpace: const FlexibleSpaceBar(background: _HeroImage()),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 22, 16, 105),
+            padding: EdgeInsets.fromLTRB(16.w, 22.h, 16.w, 105.h),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const Text(
+                Text(
                   'Modern villa with pool',
-                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 7),
-                const Text(
+                SizedBox(height: 7.h),
+                Text(
                   'Entire villa in North Goa, India',
-                  style: TextStyle(fontSize: 13, color: Color(0xff555555)),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: AppColor.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: 14),
-                const Row(
+                SizedBox(height: 14.h),
+                Row(
                   children: [
-                    Icon(Icons.star, size: 16),
-                    SizedBox(width: 4),
+                    Icon(Icons.star, size: 16.sp),
+                    SizedBox(width: 4.w),
                     Text(
                       '4.9',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(width: 5),
+                    SizedBox(width: 5.w),
                     Text(
                       '· 24 reviews',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         decoration: TextDecoration.underline,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 18),
+                SizedBox(height: 18.h),
                 const _StaySummary(),
-                const Divider(height: 35),
-                const ListTile(
+                Divider(height: 35.h),
+                ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(
-                    radius: 24,
-                    backgroundImage: NetworkImage(
+                    radius: 24.r,
+                    backgroundImage: const NetworkImage(
                       'https://i.pravatar.cc/100?img=47',
                     ),
                   ),
                   title: Text(
                     'Hosted by Anika',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   subtitle: Text(
                     'Superhost · 5 years hosting',
-                    style: TextStyle(fontSize: 12, color: Color(0xff666666)),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColor.textSecondary,
+                    ),
                   ),
                 ),
-                const Divider(height: 35),
-                const Text(
+                Divider(height: 35.h),
+                Text(
                   'What this place offers',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 14),
+                SizedBox(height: 14.h),
                 const _AmenityGrid(),
-                const SizedBox(height: 14),
-                const Text(
+                SizedBox(height: 14.h),
+                Text(
                   'Show all 12 amenities',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                     decoration: TextDecoration.underline,
                   ),
                 ),
-                const Divider(height: 35),
-                const Text(
+                Divider(height: 35.h),
+                Text(
                   'About this place',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                const Text(
+                SizedBox(height: 10.h),
+                Text(
                   'Wake up to open skies and relaxed coastal living in this beautiful Goa retreat. Enjoy a private pool, thoughtful interiors, and easy access to the beach, restaurants, and local markets.',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     height: 1.55,
-                    color: Color(0xff444444),
+                    color: AppColor.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8.h),
+                Text(
                   'Show more',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                     decoration: TextDecoration.underline,
                   ),
                 ),
-                const Divider(height: 40),
-                const Text(
-                  'Where you’ll be',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                Divider(height: 40.h),
+                Text(
+                  'Where you\'ll be',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 5),
-                const Text(
+                SizedBox(height: 5.h),
+                Text(
                   'North Goa, Goa, India',
-                  style: TextStyle(fontSize: 13, color: Color(0xff555555)),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: AppColor.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: 14),
+                SizedBox(height: 14.h),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   child: SizedBox(
-                    height: 190,
+                    height: 190.h,
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
                         Container(color: const Color(0xffdce8e5)),
                         const CustomPaint(painter: _MapPainter()),
-                        const Center(
+                        Center(
                           child: Icon(
                             Icons.location_on,
-                            color: Color(0xffc90032),
-                            size: 36,
+                            color: AppColor.primary,
+                            size: 36.sp,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const Divider(height: 40),
-                const Text(
+                Divider(height: 40.h),
+                Text(
                   'Guest reviews',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 14),
+                SizedBox(height: 14.h),
                 const _ReviewCard(
                   name: 'Rohan',
                   text:
@@ -166,20 +195,23 @@ class PropertyDetailScreen extends StatelessWidget {
                   text:
                       'Exactly as pictured. The location made it easy to explore North Goa.',
                 ),
-                const Text(
+                Text(
                   'Show all 24 reviews',
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                     decoration: TextDecoration.underline,
                   ),
                 ),
-                const Divider(height: 40),
-                const Text(
+                Divider(height: 40.h),
+                Text(
                   'Things to know',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                const SizedBox(height: 14),
+                SizedBox(height: 14.h),
                 const _InfoRow(
                   icon: Icons.access_time,
                   title: 'Check-in after 2:00 pm',
@@ -202,14 +234,19 @@ class PropertyDetailScreen extends StatelessWidget {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
           decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [BoxShadow(color: Color(0x18000000), blurRadius: 12)],
+            color: AppColor.white,
+            boxShadow: [
+              BoxShadow(
+                color: AppColor.shadow,
+                blurRadius: 12,
+              ),
+            ],
           ),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -217,20 +254,23 @@ class PropertyDetailScreen extends StatelessWidget {
                     Text(
                       '₹18,500 night',
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 15.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
                       'Add dates for prices',
-                      style: TextStyle(fontSize: 11, color: Color(0xff666666)),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: AppColor.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
               SizedBox(
-                width: 132,
-                height: 46,
+                width: 140.w,
+                height: 50.h,
                 child: ElevatedButton(
                   onPressed: () => context.push(
                     RouteName.checkoutView.replaceFirst(
@@ -239,16 +279,19 @@ class PropertyDetailScreen extends StatelessWidget {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffc90032),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColor.primary,
+                    foregroundColor: AppColor.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Reserve',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -269,11 +312,11 @@ class _HeroImage extends StatelessWidget {
       Image.network(
         PropertyDetailScreen.photos.first,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(color: const Color(0xffeeeeee)),
+        errorBuilder: (_, __, ___) => Container(color: AppColor.greyExtraLight),
       ),
       Positioned(
         top: MediaQuery.paddingOf(context).top + 8,
-        left: 12,
+        left: 12.w,
         child: _HeaderButton(
           icon: Icons.arrow_back,
           onTap: () => context.pop(),
@@ -281,28 +324,34 @@ class _HeroImage extends StatelessWidget {
       ),
       Positioned(
         top: MediaQuery.paddingOf(context).top + 8,
-        right: 12,
+        right: 12.w,
         child: Row(
           children: [
             _HeaderButton(icon: Icons.ios_share, onTap: () {}),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
             _HeaderButton(icon: Icons.favorite_border, onTap: () {}),
           ],
         ),
       ),
       Positioned(
-        bottom: 16,
-        right: 16,
+        bottom: 16.h,
+        right: 16.w,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: .7),
-            borderRadius: BorderRadius.circular(5),
+            color: AppColor.black.withValues(alpha: .7),
+            borderRadius: BorderRadius.circular(5.r),
           ),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 9.w,
+              vertical: 5.h,
+            ),
             child: Text(
               '1 / 8',
-              style: TextStyle(color: Colors.white, fontSize: 11),
+              style: TextStyle(
+                color: AppColor.white,
+                fontSize: 11.sp,
+              ),
             ),
           ),
         ),
@@ -317,16 +366,20 @@ class _HeaderButton extends StatelessWidget {
   const _HeaderButton({required this.icon, required this.onTap});
   @override
   Widget build(BuildContext context) => Material(
-    color: Colors.white,
+    color: AppColor.white,
     shape: const CircleBorder(),
     elevation: 2,
     child: InkWell(
       onTap: onTap,
       customBorder: const CircleBorder(),
       child: SizedBox(
-        width: 38,
-        height: 38,
-        child: Icon(icon, size: 19, color: Colors.black),
+        width: 38.w,
+        height: 38.w,
+        child: Icon(
+          icon,
+          size: 19.sp,
+          color: AppColor.textPrimary,
+        ),
       ),
     ),
   );
@@ -335,15 +388,18 @@ class _HeaderButton extends StatelessWidget {
 class _StaySummary extends StatelessWidget {
   const _StaySummary();
   @override
-  Widget build(BuildContext context) => const Row(
+  Widget build(BuildContext context) => Row(
     children: [
       Expanded(
         child: Text(
           '8 guests · 4 bedrooms · 5 beds · 3 baths',
-          style: TextStyle(fontSize: 13, color: Color(0xff444444)),
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: AppColor.textSecondary,
+          ),
         ),
       ),
-      Icon(Icons.verified_outlined, size: 20),
+      Icon(Icons.verified_outlined, size: 20.sp),
     ],
   );
 }
@@ -353,36 +409,39 @@ class _ReviewCard extends StatelessWidget {
   const _ReviewCard({required this.name, required this.text});
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 16),
+    padding: EdgeInsets.only(bottom: 16.h),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CircleAvatar(
-          radius: 20,
-          backgroundColor: const Color(0xffeeeeee),
+          radius: 20.r,
+          backgroundColor: AppColor.greyExtraLight,
           child: Text(name.substring(0, 1)),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 name,
-                style: const TextStyle(
-                  fontSize: 13,
+                style: TextStyle(
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text('★★★★★', style: TextStyle(fontSize: 11)),
-              const SizedBox(height: 4),
+              SizedBox(height: 4.h),
+              Text(
+                '★★★★★',
+                style: TextStyle(fontSize: 11.sp),
+              ),
+              SizedBox(height: 4.h),
               Text(
                 text,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: 12.sp,
                   height: 1.4,
-                  color: Color(0xff555555),
+                  color: AppColor.textSecondary,
                 ),
               ),
             ],
@@ -403,22 +462,28 @@ class _InfoRow extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 18),
+    padding: EdgeInsets.only(bottom: 18.h),
     child: Row(
       children: [
-        Icon(icon, size: 22),
-        const SizedBox(width: 14),
+        Icon(icon, size: 22.sp),
+        SizedBox(width: 14.w),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-            const SizedBox(height: 3),
+            SizedBox(height: 3.h),
             Text(
               subtitle,
-              style: const TextStyle(fontSize: 11, color: Color(0xff666666)),
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: AppColor.textSecondary,
+              ),
             ),
           ],
         ),
@@ -430,7 +495,7 @@ class _InfoRow extends StatelessWidget {
 class _AmenityGrid extends StatelessWidget {
   const _AmenityGrid();
   @override
-  Widget build(BuildContext context) => const Column(
+  Widget build(BuildContext context) => Column(
     children: [
       Row(
         children: [
@@ -442,7 +507,7 @@ class _AmenityGrid extends StatelessWidget {
           ),
         ],
       ),
-      SizedBox(height: 18),
+      SizedBox(height: 18.h),
       Row(
         children: [
           Expanded(
@@ -467,9 +532,12 @@ class _Amenity extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      Icon(icon, size: 21),
-      const SizedBox(width: 12),
-      Text(text, style: const TextStyle(fontSize: 13)),
+      Icon(icon, size: 21.sp),
+      SizedBox(width: 12.w),
+      Text(
+        text,
+        style: TextStyle(fontSize: 13.sp),
+      ),
     ],
   );
 }
