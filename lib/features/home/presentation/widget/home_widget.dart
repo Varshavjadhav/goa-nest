@@ -55,28 +55,28 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
       child: GestureDetector(
         onTap: () => context.push(RouteName.searchView),
         child: Container(
-          height: 56.h,
+          height: 50.h,
           decoration: BoxDecoration(
             color: AppColor.white,
-            borderRadius: BorderRadius.circular(28.r),
+            borderRadius: BorderRadius.circular(26.r),
             border: Border.all(color: AppColor.homeDivider, width: 1),
             boxShadow: [
               BoxShadow(
-                color: AppColor.black.withValues(alpha: 0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                color: AppColor.black.withValues(alpha: 0.06),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Row(
               children: [
-                Icon(Icons.search_rounded, size: 24.sp, color: AppColor.textPrimary),
+                Icon(Icons.search_rounded, size: 20.sp, color: AppColor.textPrimary),
                 SizedBox(width: 10.w),
                 Expanded(
                   child: AppTextWidget(
@@ -87,13 +87,13 @@ class _HomeWidgetState extends State<HomeWidget> {
                   ),
                 ),
                 Container(
-                  width: 36.w,
-                  height: 36.w,
+                  width: 34.w,
+                  height: 34.w,
                   decoration: BoxDecoration(
                     color: AppColor.greyExtraLight,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.tune_rounded, size: 18.sp, color: AppColor.textPrimary),
+                  child: Icon(Icons.tune_rounded, size: 16.sp, color: AppColor.textPrimary),
                 ),
               ],
             ),
@@ -109,13 +109,13 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _buildCategoryTabs() {
     return Container(
-      height: 48.h,
-      margin: EdgeInsets.only(top: 8.h),
+      height: 44.h,
+      margin: EdgeInsets.only(top: 10.h),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         itemCount: _categories.length,
-        separatorBuilder: (_, __) => SizedBox(width: 10.w),
+        separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
           final (label, icon) = _categories[index];
           final isSelected = index == _selectedCategory;
@@ -125,12 +125,19 @@ class _HomeWidgetState extends State<HomeWidget> {
               duration: const Duration(milliseconds: 200),
               padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: isSelected ? AppColor.greyExtraLight : AppColor.white,
-                borderRadius: BorderRadius.circular(20.r),
+                color: isSelected ? AppColor.textPrimary : AppColor.white,
+                borderRadius: BorderRadius.circular(18.r),
                 border: Border.all(
-                  color: isSelected ? AppColor.greyExtraLight : AppColor.homeDivider,
-                  width: 1.2,
+                  color: isSelected ? AppColor.textPrimary : AppColor.homeDivider,
+                  width: 1,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColor.black.withValues(alpha: 0.04),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -138,14 +145,14 @@ class _HomeWidgetState extends State<HomeWidget> {
                   Icon(
                     icon,
                     size: 14.sp,
-                    color: AppColor.textPrimary,
+                    color: isSelected ? AppColor.white : AppColor.textPrimary,
                   ),
-                  SizedBox(width: 6.w),
+                  SizedBox(width: 5.w),
                   AppTextWidget(
                     text: label,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: AppColor.textPrimary,
+                    color: isSelected ? AppColor.white : AppColor.textPrimary,
                   ),
                 ],
               ),
@@ -162,13 +169,20 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _buildContinueSearching() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
       child: Container(
         padding: EdgeInsets.all(12.p),
         decoration: BoxDecoration(
           color: AppColor.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColor.homeDivider),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -190,10 +204,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                     fontWeight: FontWeight.w600,
                     color: AppColor.textPrimary,
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 3.h),
                   AppTextWidget(
                     text: 'Week in Oct · 1 guest',
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColor.textSecondary,
                   ),
                 ],
@@ -202,8 +216,8 @@ class _HomeWidgetState extends State<HomeWidget> {
             ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
               child: SizedBox(
-                width: 80.w,
-                height: 72.h,
+                width: 70.w,
+                height: 62.h,
                 child: Image.network(
                   'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400',
                   fit: BoxFit.cover,
@@ -243,22 +257,22 @@ class _HomeWidgetState extends State<HomeWidget> {
             children: [
               AppTextWidget(
                 text: 'Recently viewed',
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: AppColor.textPrimary,
               ),
-              Icon(Icons.chevron_right_rounded, size: 24.sp, color: AppColor.textPrimary),
+              Icon(Icons.chevron_right_rounded, size: 22.sp, color: AppColor.textPrimary),
             ],
           ),
         ),
         SizedBox(height: 12.h),
         SizedBox(
-          height: 140.h,
+          height: 130.h,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             itemCount: items.length,
-            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+            separatorBuilder: (_, __) => SizedBox(width: 10.w),
             itemBuilder: (context, index) => _buildRecentItem(items[index]),
           ),
         ),
@@ -268,7 +282,7 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _buildRecentItem(_RecentItem item) {
     return SizedBox(
-      width: 130.w,
+      width: 125.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -277,14 +291,14 @@ class _HomeWidgetState extends State<HomeWidget> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
-                child: SizedBox(
-                  height: 85.h,
-                  width: 130.w,
+                child: Container(
+                  height: 82.h,
+                  width: 125.w,
+                  color: AppColor.greyExtraLight,
                   child: Image.network(
                     item.image,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColor.greyExtraLight,
+                    errorBuilder: (_, __, ___) => Center(
                       child: Icon(Icons.home_outlined, size: 24.sp, color: AppColor.grey),
                     ),
                   ),
@@ -309,7 +323,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                   child: Icon(
                     Icons.favorite_border_rounded,
                     size: 14.sp,
-                    color: AppColor.textPrimary,
+                    color: AppColor.primary,
                   ),
                 ),
               ),
@@ -318,7 +332,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           SizedBox(height: 6.h),
           AppTextWidget(
             text: item.title,
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: FontWeight.w500,
             color: AppColor.textPrimary,
             maxLines: 1,
@@ -328,18 +342,18 @@ class _HomeWidgetState extends State<HomeWidget> {
           if (item.rating != null)
             Row(
               children: [
-                Icon(Icons.star_rounded, size: 12.sp, color: AppColor.textPrimary),
+                Icon(Icons.star_rounded, size: 12.sp, color: AppColor.primary),
                 SizedBox(width: 2.w),
                 AppTextWidget(
                   text: item.rating!,
-                  fontSize: 12,
+                  fontSize: 11,
                   color: AppColor.textPrimary,
                 ),
-                SizedBox(width: 4.w),
+                SizedBox(width: 3.w),
                 Flexible(
                   child: AppTextWidget(
                     text: item.subtitle,
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColor.textSecondary,
                     maxLines: 1,
                     textOverflow: TextOverflow.ellipsis,
@@ -350,7 +364,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           else
             AppTextWidget(
               text: item.subtitle,
-              fontSize: 12,
+              fontSize: 11,
               color: AppColor.textSecondary,
               maxLines: 1,
               textOverflow: TextOverflow.ellipsis,
@@ -369,7 +383,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(height: 24.h),
+        SizedBox(height: 30.h),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Row(
@@ -378,7 +392,7 @@ class _HomeWidgetState extends State<HomeWidget> {
               Flexible(
                 child: AppTextWidget(
                   text: 'Based on your North Goa search',
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: AppColor.textPrimary,
                   maxLines: 1,
@@ -386,11 +400,19 @@ class _HomeWidgetState extends State<HomeWidget> {
                 ),
               ),
               SizedBox(width: 8.w),
-              Icon(Icons.chevron_right_rounded, size: 24.sp, color: AppColor.textPrimary),
+              Container(
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: AppColor.greyExtraLight,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.chevron_right_rounded, size: 20.sp, color: AppColor.textPrimary),
+              ),
             ],
           ),
         ),
-        SizedBox(height: 14.h),
+        SizedBox(height: 18.h),
         _buildSearchPropertyCard(
           title: 'Flat in Candolim',
           location: '2,305 kilometres away',
@@ -405,7 +427,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           ],
           isGuestFavorite: true,
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: 30.h),
         _buildSearchPropertyCard(
           title: 'Home in Candolim',
           location: '2,230 kilometres away',
@@ -455,7 +477,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Expanded(
                   child: AppTextWidget(
                     text: title,
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: AppColor.textPrimary,
                     maxLines: 1,
@@ -466,11 +488,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.star_rounded, size: 14.sp, color: AppColor.textPrimary),
+                    Icon(Icons.star_rounded, size: 14.sp, color: AppColor.primary),
                     SizedBox(width: 2.w),
                     AppTextWidget(
                       text: rating,
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: AppColor.textPrimary,
                     ),
@@ -481,7 +503,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             SizedBox(height: 2.h),
             AppTextWidget(
               text: location,
-              fontSize: 14,
+              fontSize: 13,
               color: AppColor.textSecondary,
               maxLines: 1,
               textOverflow: TextOverflow.ellipsis,
@@ -489,7 +511,7 @@ class _HomeWidgetState extends State<HomeWidget> {
             SizedBox(height: 2.h),
             AppTextWidget(
               text: dates,
-              fontSize: 14,
+              fontSize: 13,
               color: AppColor.textSecondary,
             ),
             SizedBox(height: 4.h),
@@ -527,15 +549,15 @@ class _HomeWidgetState extends State<HomeWidget> {
         children: [
           AppTextWidget(
             text: 'Inspiration for your next trip',
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColor.textPrimary,
           ),
           SizedBox(height: 14.h),
           ClipRRect(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(14.r),
             child: SizedBox(
-              height: 300.h,
+              height: 280.h,
               width: double.infinity,
               child: Stack(
                 fit: StackFit.expand,
@@ -555,7 +577,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                             Colors.transparent,
                             AppColor.black.withValues(alpha: 0.7),
                           ],
-                          stops: const [0.4, 1.0],
+                          stops: const [0.3, 1.0],
                         ),
                       ),
                     ),
@@ -577,7 +599,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         SizedBox(height: 4.h),
                         AppTextWidget(
                           text: 'Discover the city of lakes',
-                          fontSize: 14,
+                          fontSize: 13,
                           color: AppColor.white.withValues(alpha: 0.9),
                         ),
                         SizedBox(height: 12.h),
@@ -586,14 +608,14 @@ class _HomeWidgetState extends State<HomeWidget> {
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                             decoration: BoxDecoration(
-                              color: AppColor.white,
+                              color: AppColor.primary,
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: AppTextWidget(
                               text: 'Explore stays',
-                              fontSize: 13,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: AppColor.textPrimary,
+                              color: AppColor.white,
                             ),
                           ),
                         ),
@@ -629,7 +651,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         children: [
           AppTextWidget(
             text: 'Explore more',
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColor.textPrimary,
           ),
@@ -643,13 +665,13 @@ class _HomeWidgetState extends State<HomeWidget> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 64.w,
-                        height: 64.w,
+                        width: 60.w,
+                        height: 60.w,
                         decoration: BoxDecoration(
                           color: AppColor.greyExtraLight,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: Icon(item.icon, size: 28.sp, color: AppColor.textPrimary),
+                        child: Icon(item.icon, size: 26.sp, color: AppColor.textPrimary),
                       ),
                       SizedBox(height: 8.h),
                       AppTextWidget(
@@ -678,9 +700,9 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _buildExperiences() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 40.h),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(14.r),
         child: Container(
           color: AppColor.textPrimary,
           child: Column(
@@ -691,7 +713,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 0),
                 child: AppTextWidget(
                   text: 'Airbnb',
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: AppColor.white,
                 ),
@@ -700,7 +722,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 padding: EdgeInsets.fromLTRB(18.w, 2.h, 18.w, 0),
                 child: AppTextWidget(
                   text: 'Experiences',
-                  fontSize: 28,
+                  fontSize: 26,
                   fontWeight: FontWeight.w700,
                   color: AppColor.white,
                 ),
@@ -709,7 +731,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 padding: EdgeInsets.fromLTRB(18.w, 4.h, 18.w, 0),
                 child: AppTextWidget(
                   text: 'Unforgettable activities\nhosted by locals',
-                  fontSize: 14,
+                  fontSize: 13,
                   color: AppColor.white.withValues(alpha: 0.85),
                   height: 1.4,
                 ),
@@ -718,9 +740,9 @@ class _HomeWidgetState extends State<HomeWidget> {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.r)),
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(14.r)),
                     child: SizedBox(
-                      height: 150.h,
+                      height: 140.h,
                       width: double.infinity,
                       child: Image.network(
                         'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900',
@@ -735,14 +757,14 @@ class _HomeWidgetState extends State<HomeWidget> {
                     child: GestureDetector(
                       onTap: () {},
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                         decoration: BoxDecoration(
                           color: AppColor.white,
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AppTextWidget(
                           text: 'Explore',
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: AppColor.textPrimary,
                         ),
@@ -799,7 +821,7 @@ class _ImageCarouselState extends State<_ImageCarousel> {
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(14.r),
+            borderRadius: BorderRadius.circular(12.r),
             child: PageView.builder(
               controller: _pageController,
               itemCount: widget.images.length,
@@ -843,10 +865,10 @@ class _ImageCarouselState extends State<_ImageCarousel> {
               top: 12.h,
               left: 12.w,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                 decoration: BoxDecoration(
-                  color: AppColor.guestFavBadgeBackground,
-                  borderRadius: BorderRadius.circular(4.r),
+                  color: AppColor.white,
+                  borderRadius: BorderRadius.circular(6.r),
                   boxShadow: [
                     BoxShadow(
                       color: AppColor.black.withValues(alpha: 0.1),
@@ -858,12 +880,12 @@ class _ImageCarouselState extends State<_ImageCarousel> {
                   text: 'Guest favourite',
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColor.guestFavBadgeText,
+                  color: AppColor.textPrimary,
                 ),
               ),
             ),
           Positioned(
-            bottom: 10.h,
+            bottom: 12.h,
             left: 0,
             right: 0,
             child: Row(
@@ -886,10 +908,10 @@ class _ImageCarouselState extends State<_ImageCarousel> {
             ),
           ),
           Positioned(
-            bottom: 10.h,
+            bottom: 12.h,
             right: 12.w,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
               decoration: BoxDecoration(
                 color: AppColor.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(6.r),
