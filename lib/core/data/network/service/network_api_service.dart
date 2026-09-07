@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 import '/core.dart';
 import '../../../../resources/constants/constants.dart';
@@ -34,6 +35,22 @@ class NetworkApiService extends BaseApiServices {
     _dio.interceptors.addAll([
       NetworkInterceptor(),
       AuthInterceptor(sl<SecureStorageService>()),
+      TalkerDioLogger(
+        settings: const TalkerDioLoggerSettings(
+          enabled: true,
+          printRequestData: true,
+          printRequestHeaders: true,
+          printRequestExtra: true,
+          printResponseData: true,
+          printResponseHeaders: true,
+          printResponseMessage: true,
+          printResponseTime: true,
+          printErrorData: true,
+          printErrorHeaders: true,
+          printErrorMessage: true,
+          hiddenHeaders: {'authorization'},
+        ),
+      ),
     ]);
   }
 
@@ -50,7 +67,10 @@ class NetworkApiService extends BaseApiServices {
         apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
       }
 
-      final response = await _dio.get(apiURL);
+      final response = await _dio.get(
+        apiURL,
+        options: _options(disableTokenValidityCheck),
+      );
 
       return await Parser.parseBaseResponse<T>(response, fromJson);
     } on DioException catch (e) {
@@ -72,7 +92,11 @@ class NetworkApiService extends BaseApiServices {
         apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
       }
 
-      final response = await _dio.post(apiURL, data: body);
+      final response = await _dio.post(
+        apiURL,
+        data: body,
+        options: _options(disableTokenValidityCheck),
+      );
 
       return await Parser.parseBaseResponse<T>(response, fromJson);
     } on DioException catch (e) {
@@ -94,7 +118,11 @@ class NetworkApiService extends BaseApiServices {
         apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
       }
 
-      final response = await _dio.put(apiURL, data: body);
+      final response = await _dio.put(
+        apiURL,
+        data: body,
+        options: _options(disableTokenValidityCheck),
+      );
 
       return await Parser.parseBaseResponse<T>(response, fromJson);
     } on DioException catch (e) {
@@ -116,7 +144,11 @@ class NetworkApiService extends BaseApiServices {
         apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
       }
 
-      final response = await _dio.patch(apiURL, data: body);
+      final response = await _dio.patch(
+        apiURL,
+        data: body,
+        options: _options(disableTokenValidityCheck),
+      );
 
       return await Parser.parseBaseResponse<T>(response, fromJson);
     } on DioException catch (e) {
@@ -138,13 +170,20 @@ class NetworkApiService extends BaseApiServices {
         apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
       }
 
-      final response = await _dio.delete(apiURL, data: body);
+      final response = await _dio.delete(
+        apiURL,
+        data: body,
+        options: _options(disableTokenValidityCheck),
+      );
 
       return await Parser.parseBaseResponse<T>(response, fromJson);
     } on DioException catch (e) {
       return Left(Failure.handleDioError(e));
     }
   }
+
+  Options? _options(bool skipAuth) =>
+      skipAuth ? Options(extra: {'skipAuth': true}) : null;
 
   @override
   Future<Either<AppException, BaseResponseModel<T>>> multipartApi<T>(
@@ -168,10 +207,19 @@ class NetworkApiService extends BaseApiServices {
         final fileName = filePath.split('/').last;
         final extension = fileName.split('.').last.toLowerCase();
 
-        final mimeType = extension == 'pdf' ? 'application/pdf' : 'image/$extension';
+        final mimeType = extension == 'pdf'
+            ? 'application/pdf'
+            : 'image/$extension';
 
         formData.files.add(
-          MapEntry(fileFieldName, await MultipartFile.fromFile(filePath, filename: fileName, contentType: DioMediaType.parse(mimeType))),
+          MapEntry(
+            fileFieldName,
+            await MultipartFile.fromFile(
+              filePath,
+              filename: fileName,
+              contentType: DioMediaType.parse(mimeType),
+            ),
+          ),
         );
       }
 
@@ -196,7 +244,11 @@ class NetworkApiService extends BaseApiServices {
   }
 
   @override
-  Future<Either<AppException, Uint8List>> downloadPdfBytes(String apiURL, Map<String, String> headers, {String? fileName}) async {
+  Future<Either<AppException, Uint8List>> downloadPdfBytes(
+    String apiURL,
+    Map<String, String> headers, {
+    String? fileName,
+  }) async {
     try {
       final Uri uri = Uri.parse("$storageUrl$apiURL");
 

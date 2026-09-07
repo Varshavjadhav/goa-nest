@@ -38,27 +38,54 @@ class _LoginView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppTextWidget.titleLarge(text: 'GoaNest', color: AppColor.primary),
+                AppTextWidget.titleLarge(
+                  text: 'GoaNest',
+                  color: AppColor.primary,
+                ),
                 SizedBox(height: 5.h),
                 AppTextWidget.bodyLarge(text: 'Log in or sign up'),
                 SizedBox(height: 28.h),
                 const _EmailField(),
                 SizedBox(height: 9.h),
-                CommonWidgets.primaryButton(label: 'Continue with Email', onTap: () => _submit(context)),
+                CommonWidgets.primaryButton(
+                  label: 'Continue with Email',
+                  onTap: () => _submit(context),
+                ),
                 SizedBox(height: 28.h),
                 CommonWidgets.dividerLabel(label: 'or'),
                 SizedBox(height: 20.h),
-                CommonWidgets.providerButton(icon: Icons.phone_iphone, label: 'Continue with Phone', onTap: () {}),
-                CommonWidgets.providerButton(icon: Icons.g_mobiledata, label: 'Continue with Google', iconColor: Colors.red, onTap: () {}),
-                CommonWidgets.providerButton(icon: Icons.apple, label: 'Continue with Apple', onTap: () {}),
+                CommonWidgets.providerButton(
+                  icon: Icons.phone_iphone,
+                  label: 'Continue with Phone',
+                  onTap: () {},
+                ),
+                CommonWidgets.providerButton(
+                  icon: Icons.g_mobiledata,
+                  label: 'Continue with Google',
+                  iconColor: Colors.red,
+                  onTap: () {},
+                ),
+                CommonWidgets.providerButton(
+                  icon: Icons.apple,
+                  label: 'Continue with Apple',
+                  onTap: () {},
+                ),
                 SizedBox(height: 5.h),
                 Center(
                   child: Wrap(
                     children: [
-                      AppTextWidget.bodyMedium(text: "Don't have an account? ", color: AppColor.textSecondary),
+                      AppTextWidget.bodyMedium(
+                        text: "Don't have an account? ",
+                        color: AppColor.textSecondary,
+                      ),
                       GestureDetector(
                         onTap: () => context.go(RouteName.registerView),
-                        child: AppTextWidget(text: 'Sign up', fontSize: 13, color: AppColor.primary, fontWeight: FontWeight.w600),
+                        child: AppTextWidget(
+                          text: 'Sign up',
+                          fontSize: 13,
+                          color: AppColor.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -66,7 +93,8 @@ class _LoginView extends StatelessWidget {
                 SizedBox(height: 22.h),
                 Center(
                   child: AppTextWidget.labelMedium(
-                    text: 'By signing in, you agree to our Terms of Service and\nPrivacy Policy.',
+                    text:
+                        'By signing in, you agree to our Terms of Service and\nPrivacy Policy.',
                     textAlign: TextAlign.center,
                     color: AppColor.textQuaternary,
                   ),
@@ -95,7 +123,10 @@ class _EmailField extends StatelessWidget {
         bloc.add(LoginIdentifierChanged(value));
         bloc.add(const LoginPasswordChanged('stitch-email'));
       },
-      decoration: CommonWidgets.inputDecoration(hint: 'Email address', errorText: state.identifierError),
+      decoration: CommonWidgets.inputDecoration(
+        hint: 'Email address',
+        errorText: state.identifierError,
+      ),
     );
   }
 }
