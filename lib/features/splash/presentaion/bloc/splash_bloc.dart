@@ -9,12 +9,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<SplashStarted>(_onSplashStarted);
   }
 
-  Future<void> _onSplashStarted(
-    SplashStarted event,
-    Emitter<SplashState> emit,
-  ) async {
+  Future<void> _onSplashStarted(SplashStarted event, Emitter<SplashState> emit) async {
     emit(const SplashLoadingState());
     await Future<void>.delayed(const Duration(seconds: 2));
-    emit(const SplashReadyState(nextRoute: RouteName.loginView));
+    emit(const SplashReadyState(nextRoute: RouteName.homeView));
   }
 }

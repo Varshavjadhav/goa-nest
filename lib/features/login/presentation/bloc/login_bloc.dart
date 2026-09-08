@@ -1,10 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:goanest/features/login/domain/usecase/get_login.dart';
 
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(const LoginState()) {
+  final GetLoginUseCase login;
+
+  LoginBloc(this.login) : super(const LoginState()) {
     on<LoginIdentifierChanged>((event, emit) {
       emit(
         state.copyWith(
@@ -29,37 +32,49 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginRememberMeToggled>((event, emit) {
       emit(state.copyWith(rememberMe: !state.rememberMe));
     });
-    on<LoginSubmitted>((event, emit) {
-      final identifierError = _validateIdentifier(state.identifier);
-      final passwordError = _validatePassword(state.password);
+    on<LoginSubmitted>(_submit);
+  }
 
-      if (identifierError != null || passwordError != null) {
-        emit(
-          state.copyWith(
-            identifierError: identifierError,
-            passwordError: passwordError,
-            status: LoginStatus.failure,
-          ),
-        );
-        return;
-      }
+  Future<void> _submit(LoginSubmitted event, Emitter<LoginState> emit) async {
+    final identifierError = _validateIdentifier(state.identifier);
+    final passwordError = _validatePassword(state.password);
 
+    if (identifierError != null || passwordError != null) {
       emit(
         state.copyWith(
-          status: LoginStatus.submitting,
-          message: null,
-          identifierError: null,
-          passwordError: null,
+          identifierError: identifierError,
+          passwordError: passwordError,
+          status: LoginStatus.failure,
         ),
       );
+      return;
+    }
 
-      emit(
+    emit(
+      state.copyWith(
+        status: LoginStatus.submitting,
+        message: null,
+        identifierError: null,
+        passwordError: null,
+      ),
+    );
+
+    final result = await login(
+      email: state.identifier.trim(),
+      password: state.password,
+    );
+
+    result.fold(
+      (error) => emit(
+        state.copyWith(status: LoginStatus.failure, message: error.message),
+      ),
+      (_) => emit(
         state.copyWith(
           status: LoginStatus.success,
           message: 'Login successful',
         ),
-      );
-    });
+      ),
+    );
   }
 
   String? _validateIdentifier(String identifier) {

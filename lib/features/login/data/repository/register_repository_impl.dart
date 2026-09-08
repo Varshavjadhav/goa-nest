@@ -38,6 +38,8 @@ class RegisterRepositoryImpl implements RegisterRepository {
     if (data == null) return Left(UnknownError());
     await storage.write(Flags.token, data.accessToken);
     await storage.write(Flags.refreshToken, data.refreshToken);
+    await storage.write(Flags.user, data.user);
+    await storage.write(Flags.isLoggedIn, true);
     return Right(data);
   }
 }

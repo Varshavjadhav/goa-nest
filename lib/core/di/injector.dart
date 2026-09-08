@@ -4,7 +4,10 @@ import '../data/network/service/network_api_service.dart';
 import '../services/local_secure_storage/secure_storage_service.dart';
 import '../services/local_secure_storage/secure_storage_service_impl.dart';
 import '../../features/login/data/datasource/register_remote_datasource.dart';
+import '../../features/login/data/datasource/login_remote_datasource.dart';
+import '../../features/login/data/repository/login_repository_impl.dart';
 import '../../features/login/data/repository/register_repository_impl.dart';
+import '../../features/login/domain/usecase/get_login.dart';
 import '../../features/login/domain/usecase/register_user.dart';
 
 final sl = GetIt.instance;
@@ -17,6 +20,18 @@ void setupServiceLocator() {
     () => SecureStorageServiceImpl(),
   );
   sl.registerLazySingleton<BaseApiServices>(() => NetworkApiService());
+  sl.registerLazySingleton<LoginRemoteDataSource>(
+    () => LoginRemoteDataSource(sl<BaseApiServices>()),
+  );
+  sl.registerLazySingleton<LoginRepositoryImpl>(
+    () => LoginRepositoryImpl(
+      sl<LoginRemoteDataSource>(),
+      sl<SecureStorageService>(),
+    ),
+  );
+  sl.registerLazySingleton<GetLoginUseCase>(
+    () => GetLoginUseCase(sl<LoginRepositoryImpl>()),
+  );
   sl.registerLazySingleton<RegisterRemoteDataSource>(
     () => RegisterRemoteDataSource(sl<BaseApiServices>()),
   );

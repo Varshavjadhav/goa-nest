@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
+import 'package:goanest/core/di/injector.dart';
+import 'package:goanest/features/login/domain/usecase/get_login.dart';
 import 'package:goanest/features/login/presentation/bloc/login_bloc.dart';
 import 'package:goanest/features/login/presentation/bloc/login_event.dart';
 import 'package:goanest/features/login/presentation/bloc/login_state.dart';
@@ -14,10 +16,15 @@ class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (_) => LoginBloc(),
+    create: (_) => LoginBloc(sl<GetLoginUseCase>()),
     child: BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status == LoginStatus.success) context.go(RouteName.homeView);
+        if (state.status == LoginStatus.failure && state.message != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message!)));
+        }
       },
       child: const _LoginView(),
     ),
@@ -46,10 +53,16 @@ class _LoginView extends StatelessWidget {
                 AppTextWidget.bodyLarge(text: 'Log in or sign up'),
                 SizedBox(height: 28.h),
                 const _EmailField(),
+                SizedBox(height: 16.h),
+                const _PasswordField(),
                 SizedBox(height: 9.h),
                 CommonWidgets.primaryButton(
-                  label: 'Continue with Email',
-                  onTap: () => _submit(context),
+                  label: context.watch<LoginBloc>().state.isSubmitting
+                      ? 'Signing in...'
+                      : 'Continue with Email',
+                  onTap: context.watch<LoginBloc>().state.isSubmitting
+                      ? () {}
+                      : () => _submit(context),
                 ),
                 SizedBox(height: 28.h),
                 CommonWidgets.dividerLabel(label: 'or'),
@@ -121,11 +134,34 @@ class _EmailField extends StatelessWidget {
       onChanged: (value) {
         final bloc = context.read<LoginBloc>();
         bloc.add(LoginIdentifierChanged(value));
-        bloc.add(const LoginPasswordChanged('stitch-email'));
       },
       decoration: CommonWidgets.inputDecoration(
         hint: 'Email address',
         errorText: state.identifierError,
+      ),
+    );
+  }
+}
+
+class _PasswordField extends StatelessWidget {
+  const _PasswordField();
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<LoginBloc>().state;
+    final bloc = context.read<LoginBloc>();
+    return TextField(
+      obscureText: state.obscurePassword,
+      onChanged: (value) => bloc.add(LoginPasswordChanged(value)),
+      decoration: CommonWidgets.inputDecoration(
+        hint: 'Password',
+        errorText: state.passwordError,
+        suffixIcon: IconButton(
+          onPressed: () => bloc.add(const LoginPasswordVisibilityToggled()),
+          icon: Icon(
+            state.obscurePassword ? Icons.visibility : Icons.visibility_off,
+          ),
+        ),
       ),
     );
   }
