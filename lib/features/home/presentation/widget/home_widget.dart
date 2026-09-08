@@ -288,16 +288,22 @@ class _HomeWidgetState extends State<HomeWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppTextWidget(
-                text: 'Recently viewed',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColor.textPrimary,
+              GestureDetector(
+                onTap: () => context.push(RouteName.recentlyViewedView),
+                child: AppTextWidget(
+                  text: 'Recently viewed',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColor.textPrimary,
+                ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 22.sp,
-                color: AppColor.textPrimary,
+              GestureDetector(
+                onTap: () => context.push(RouteName.recentlyViewedView),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  size: 22.sp,
+                  color: AppColor.textPrimary,
+                ),
               ),
             ],
           ),
@@ -308,12 +314,47 @@ class _HomeWidgetState extends State<HomeWidget> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: items.length,
+            itemCount: items.length + 1,
             separatorBuilder: (_, __) => SizedBox(width: 10.w),
-            itemBuilder: (context, index) => _buildRecentItem(items[index]),
+            itemBuilder: (context, index) => index == items.length
+                ? _buildRecentlyViewAll()
+                : _buildRecentItem(items[index]),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRecentlyViewAll() {
+    return GestureDetector(
+      onTap: () => context.push(RouteName.recentlyViewedView),
+      child: Container(
+        width: 125.w,
+        height: 82.h,
+        margin: EdgeInsets.only(top: 0.h),
+        decoration: BoxDecoration(
+          color: AppColor.greyExtraLight,
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(color: AppColor.homeDivider),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.arrow_forward_rounded,
+              size: 22.sp,
+              color: AppColor.textPrimary,
+            ),
+            SizedBox(height: 7.h),
+            AppTextWidget(
+              text: 'See all',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppColor.textPrimary,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

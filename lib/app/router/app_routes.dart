@@ -3,6 +3,7 @@ import 'package:goanest/features/home/presentation/view/filter_screen.dart';
 import 'package:goanest/features/home/presentation/widget/search_widget.dart';
 import 'package:goanest/features/home/presentation/view/home_screen.dart';
 import 'package:goanest/features/home/presentation/view/property_detail_screen.dart';
+import 'package:goanest/features/home/presentation/view/recently_viewed_screen.dart';
 import 'package:goanest/features/home/presentation/view/checkout_screen.dart';
 import 'package:goanest/features/home/presentation/view/booking_confirmation_screen.dart';
 import 'package:goanest/features/login/presentation/view/login_screen.dart';
@@ -63,6 +64,15 @@ class AppRouter {
           state: state,
           transitionBuilder: slideInOutTransition,
           child: const SearchWidget(),
+        ),
+      ),
+      GoRoute(
+        name: 'recently-viewed',
+        path: RouteName.recentlyViewedView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: const RecentlyViewedScreen(),
         ),
       ),
       GoRoute(
