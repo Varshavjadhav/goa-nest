@@ -4,6 +4,7 @@ import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
+import 'package:goanest/widgets/screenshot_crop_widget.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
@@ -37,7 +38,10 @@ class _HomeWidgetState extends State<HomeWidget> {
               delegate: SliverChildListDelegate([
                 _buildContinueSearching(),
                 _buildRecentlyViewed(),
+                _buildRecommendedForYou(),
+                _buildPopularDestinationStays(),
                 _buildBasedOnSearch(),
+                _buildTopDestinations(),
                 _buildInspiration(),
                 _buildExploreMore(),
                 _buildExperiences(),
@@ -76,7 +80,11 @@ class _HomeWidgetState extends State<HomeWidget> {
             padding: EdgeInsets.symmetric(horizontal: 14.w),
             child: Row(
               children: [
-                Icon(Icons.search_rounded, size: 20.sp, color: AppColor.textPrimary),
+                Icon(
+                  Icons.search_rounded,
+                  size: 20.sp,
+                  color: AppColor.textPrimary,
+                ),
                 SizedBox(width: 10.w),
                 Expanded(
                   child: AppTextWidget(
@@ -93,7 +101,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                     color: AppColor.greyExtraLight,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.tune_rounded, size: 16.sp, color: AppColor.textPrimary),
+                  child: Icon(
+                    Icons.tune_rounded,
+                    size: 16.sp,
+                    color: AppColor.textPrimary,
+                  ),
                 ),
               ],
             ),
@@ -128,7 +140,9 @@ class _HomeWidgetState extends State<HomeWidget> {
                 color: isSelected ? AppColor.textPrimary : AppColor.white,
                 borderRadius: BorderRadius.circular(18.r),
                 border: Border.all(
-                  color: isSelected ? AppColor.textPrimary : AppColor.homeDivider,
+                  color: isSelected
+                      ? AppColor.textPrimary
+                      : AppColor.homeDivider,
                   width: 1,
                 ),
                 boxShadow: [
@@ -223,7 +237,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
                     color: AppColor.greyExtraLight,
-                    child: Icon(Icons.home_outlined, size: 24.sp, color: AppColor.grey),
+                    child: Icon(
+                      Icons.home_outlined,
+                      size: 24.sp,
+                      color: AppColor.grey,
+                    ),
                   ),
                 ),
               ),
@@ -240,9 +258,24 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   Widget _buildRecentlyViewed() {
     final items = [
-      _RecentItem('Lonavala', 'Favourite', '4.92', 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400'),
-      _RecentItem('Commercial phot...', 'Holiday Home™', null, 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400'),
-      _RecentItem('Gurugram', '3 homes', null, 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400'),
+      _RecentItem(
+        'Lonavala',
+        'Favourite',
+        '4.92',
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400',
+      ),
+      _RecentItem(
+        'Commercial phot...',
+        'Holiday Home™',
+        null,
+        'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400',
+      ),
+      _RecentItem(
+        'Gurugram',
+        '3 homes',
+        null,
+        'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400',
+      ),
     ];
 
     return Column(
@@ -261,7 +294,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                 fontWeight: FontWeight.w700,
                 color: AppColor.textPrimary,
               ),
-              Icon(Icons.chevron_right_rounded, size: 22.sp, color: AppColor.textPrimary),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 22.sp,
+                color: AppColor.textPrimary,
+              ),
             ],
           ),
         ),
@@ -277,6 +314,160 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildRecommendedForYou() {
+    return _buildHorizontalStaySection(
+      title: 'Recommended for you',
+      items: const [
+        _HorizontalStay(
+          'The Canopy Nest',
+          'Agonda, South Goa',
+          '₹9,800',
+          '5.0',
+          Rect.fromLTWH(33, 847, 130, 112),
+        ),
+        _HorizontalStay(
+          'Azure Bay Retreat',
+          'Anjuna, North Goa',
+          '₹18,500',
+          '4.9',
+          Rect.fromLTWH(33, 313, 130, 112),
+        ),
+        _HorizontalStay(
+          'Palolem Hideaway',
+          'Palolem, South Goa',
+          '₹14,600',
+          '4.7',
+          Rect.fromLTWH(164, 600, 130, 112),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPopularDestinationStays() {
+    return _buildHorizontalStaySection(
+      title: 'Popular destination stays',
+      items: const [
+        _HorizontalStay(
+          'Casa Verde Manor',
+          'Assagao, Goa',
+          '₹12,200',
+          '4.8',
+          Rect.fromLTWH(164, 340, 130, 112),
+        ),
+        _HorizontalStay(
+          'Palolem Hideaway',
+          'Palolem, South Goa',
+          '₹14,600',
+          '4.7',
+          Rect.fromLTWH(164, 600, 130, 112),
+        ),
+        _HorizontalStay(
+          'Azure Bay Retreat',
+          'Anjuna, North Goa',
+          '₹18,500',
+          '4.9',
+          Rect.fromLTWH(33, 313, 130, 112),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHorizontalStaySection({
+    required String title,
+    required List<_HorizontalStay> items,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(top: 30.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: AppTextWidget(
+              text: title,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColor.textPrimary,
+            ),
+          ),
+          SizedBox(height: 12.h),
+          SizedBox(
+            height: 200.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              physics: const BouncingScrollPhysics(),
+              itemCount: items.length,
+              separatorBuilder: (_, __) => SizedBox(width: 12.w),
+              itemBuilder: (_, index) => _buildHorizontalStayCard(items[index]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHorizontalStayCard(_HorizontalStay item) {
+    return SizedBox(
+      width: 170.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 112.h,
+            width: 170.w,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: ScreenshotCrop(crop: item.crop, borderRadius: 10.r),
+                ),
+                Positioned(top: 7.h, right: 7.w, child: const _HeartButton()),
+              ],
+            ),
+          ),
+          SizedBox(height: 7.h),
+          Row(
+            children: [
+              Expanded(
+                child: AppTextWidget(
+                  text: item.title,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.textPrimary,
+                  maxLines: 1,
+                  textOverflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Icon(Icons.star_rounded, size: 12.sp, color: AppColor.primary),
+              SizedBox(width: 2.w),
+              AppTextWidget(
+                text: item.rating,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: AppColor.textPrimary,
+              ),
+            ],
+          ),
+          SizedBox(height: 2.h),
+          AppTextWidget(
+            text: item.location,
+            fontSize: 10,
+            color: AppColor.textSecondary,
+            maxLines: 1,
+            textOverflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 4.h),
+          AppTextWidget(
+            text: '${item.price} / night',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: AppColor.textPrimary,
+          ),
+        ],
+      ),
     );
   }
 
@@ -299,7 +490,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                     item.image,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Center(
-                      child: Icon(Icons.home_outlined, size: 24.sp, color: AppColor.grey),
+                      child: Icon(
+                        Icons.home_outlined,
+                        size: 24.sp,
+                        color: AppColor.grey,
+                      ),
                     ),
                   ),
                 ),
@@ -320,11 +515,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.favorite_border_rounded,
-                    size: 14.sp,
-                    color: AppColor.primary,
-                  ),
+                  child: const _HeartButton(),
                 ),
               ),
             ],
@@ -407,46 +598,141 @@ class _HomeWidgetState extends State<HomeWidget> {
                   color: AppColor.greyExtraLight,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.chevron_right_rounded, size: 20.sp, color: AppColor.textPrimary),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20.sp,
+                  color: AppColor.textPrimary,
+                ),
               ),
             ],
           ),
         ),
         SizedBox(height: 18.h),
-        _buildSearchPropertyCard(
-          title: 'Flat in Candolim',
-          location: '2,305 kilometres away',
-          dates: '10–15 Oct',
-          price: '₹34,978',
-          priceNote: 'total before taxes',
-          rating: '5.0',
-          images: [
-            'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
-            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
-            'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=900',
-          ],
-          isGuestFavorite: true,
-        ),
-        SizedBox(height: 30.h),
-        _buildSearchPropertyCard(
-          title: 'Home in Candolim',
-          location: '2,230 kilometres away',
-          dates: '20–25 Oct',
-          price: '₹20,844',
-          priceNote: 'total before taxes',
-          rating: '4.82',
-          images: [
-            'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900',
-            'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
-            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
-          ],
-          isGuestFavorite: false,
+        SizedBox(
+          // The card keeps the original 280.h image carousel plus its details
+          // below it, so the horizontal list does not clip or overflow.
+          height: 405.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            physics: const BouncingScrollPhysics(),
+            itemCount: 2,
+            separatorBuilder: (_, __) => SizedBox(width: 14.w),
+            itemBuilder: (_, index) => SizedBox(
+              width: 285.w,
+              child: _buildSearchPropertyCard(
+                horizontal: true,
+                title: index == 0 ? 'Flat in Candolim' : 'Home in Candolim',
+                location: index == 0
+                    ? '2,305 kilometres away'
+                    : '2,230 kilometres away',
+                dates: index == 0 ? '10–15 Oct' : '20–25 Oct',
+                price: index == 0 ? '₹34,978' : '₹20,844',
+                priceNote: 'total before taxes',
+                rating: index == 0 ? '5.0' : '4.82',
+                images: index == 0
+                    ? [
+                        'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
+                        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
+                        'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=900',
+                      ]
+                    : [
+                        'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900',
+                        'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
+                        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
+                      ],
+                isGuestFavorite: index == 0,
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
+  Widget _buildTopDestinations() {
+    const destinations = [
+      ('Palolem', 'South Goa', Rect.fromLTWH(33, 313, 130, 112)),
+      ('Vagator', 'North Goa', Rect.fromLTWH(164, 340, 130, 112)),
+      ('Assagao', 'North Goa', Rect.fromLTWH(33, 581, 130, 112)),
+      ('Divar Island', 'Islands', Rect.fromLTWH(164, 600, 130, 112)),
+    ];
+
+    return Padding(
+      padding: EdgeInsets.only(top: 30.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: AppTextWidget(
+              text: 'Top destinations',
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColor.textPrimary,
+            ),
+          ),
+          SizedBox(height: 12.h),
+          SizedBox(
+            height: 166.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              physics: const BouncingScrollPhysics(),
+              itemCount: destinations.length,
+              separatorBuilder: (_, __) => SizedBox(width: 12.w),
+              itemBuilder: (_, index) {
+                final destination = destinations[index];
+                return SizedBox(
+                  width: 152.w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 112.h,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: ScreenshotCrop(
+                                crop: destination.$3,
+                                borderRadius: 10.r,
+                              ),
+                            ),
+                            Positioned(
+                              top: 7.h,
+                              right: 7.w,
+                              child: const _HeartButton(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 9.h),
+                      AppTextWidget(
+                        text: destination.$1,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: AppColor.textPrimary,
+                      ),
+                      SizedBox(height: 2.h),
+                      AppTextWidget(
+                        text: destination.$2,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.textSecondary,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSearchPropertyCard({
+    bool horizontal = false,
     required String title,
     required String location,
     required String dates,
@@ -461,15 +747,14 @@ class _HomeWidgetState extends State<HomeWidget> {
         RouteName.propertyView.replaceFirst(':propertyId', 'modern-villa'),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        padding: horizontal
+            ? EdgeInsets.zero
+            : EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            _ImageCarousel(
-              images: images,
-              isGuestFavorite: isGuestFavorite,
-            ),
+            _ImageCarousel(images: images, isGuestFavorite: isGuestFavorite),
             SizedBox(height: 10.h),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -488,7 +773,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.star_rounded, size: 14.sp, color: AppColor.primary),
+                    Icon(
+                      Icons.star_rounded,
+                      size: 14.sp,
+                      color: AppColor.primary,
+                    ),
                     SizedBox(width: 2.w),
                     AppTextWidget(
                       text: rating,
@@ -565,7 +854,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                   Image.network(
                     'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=900',
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(color: AppColor.greyExtraLight),
+                    errorBuilder: (_, __, ___) =>
+                        Container(color: AppColor.greyExtraLight),
                   ),
                   Positioned.fill(
                     child: DecoratedBox(
@@ -606,7 +896,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                         GestureDetector(
                           onTap: () {},
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 10.h,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColor.primary,
                               borderRadius: BorderRadius.circular(8.r),
@@ -671,7 +964,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                           color: AppColor.greyExtraLight,
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: Icon(item.icon, size: 26.sp, color: AppColor.textPrimary),
+                        child: Icon(
+                          item.icon,
+                          size: 26.sp,
+                          color: AppColor.textPrimary,
+                        ),
                       ),
                       SizedBox(height: 8.h),
                       AppTextWidget(
@@ -740,14 +1037,17 @@ class _HomeWidgetState extends State<HomeWidget> {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(14.r)),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(14.r),
+                    ),
                     child: SizedBox(
                       height: 140.h,
                       width: double.infinity,
                       child: Image.network(
                         'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900',
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(color: AppColor.greyDark),
+                        errorBuilder: (_, __, ___) =>
+                            Container(color: AppColor.greyDark),
                       ),
                     ),
                   ),
@@ -757,7 +1057,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                     child: GestureDetector(
                       onTap: () {},
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 10.h,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColor.white,
                           borderRadius: BorderRadius.circular(8.r),
@@ -789,10 +1092,7 @@ class _ImageCarousel extends StatefulWidget {
   final List<String> images;
   final bool isGuestFavorite;
 
-  const _ImageCarousel({
-    required this.images,
-    this.isGuestFavorite = false,
-  });
+  const _ImageCarousel({required this.images, this.isGuestFavorite = false});
 
   @override
   State<_ImageCarousel> createState() => _ImageCarouselState();
@@ -841,7 +1141,7 @@ class _ImageCarouselState extends State<_ImageCarousel> {
                           color: AppColor.primary,
                           value: loadingProgress.expectedTotalBytes != null
                               ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
+                                    loadingProgress.expectedTotalBytes!
                               : null,
                         ),
                       ),
@@ -849,17 +1149,17 @@ class _ImageCarouselState extends State<_ImageCarousel> {
                   },
                   errorBuilder: (_, __, ___) => Container(
                     color: AppColor.greyExtraLight,
-                    child: Icon(Icons.home_outlined, size: 42.sp, color: AppColor.grey),
+                    child: Icon(
+                      Icons.home_outlined,
+                      size: 42.sp,
+                      color: AppColor.grey,
+                    ),
                   ),
                 );
               },
             ),
           ),
-          Positioned(
-            top: 12.h,
-            right: 12.w,
-            child: const _HeartButton(),
-          ),
+          Positioned(top: 12.h, right: 12.w, child: const _HeartButton()),
           if (widget.isGuestFavorite)
             Positioned(
               top: 12.h,
@@ -978,6 +1278,22 @@ class _RecentItem {
   final String? rating;
   final String image;
   const _RecentItem(this.title, this.subtitle, this.rating, this.image);
+}
+
+class _HorizontalStay {
+  final String title;
+  final String location;
+  final String price;
+  final String rating;
+  final Rect crop;
+
+  const _HorizontalStay(
+    this.title,
+    this.location,
+    this.price,
+    this.rating,
+    this.crop,
+  );
 }
 
 class _ExploreItem {
