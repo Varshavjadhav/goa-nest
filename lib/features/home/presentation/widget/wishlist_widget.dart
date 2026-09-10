@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 
@@ -95,9 +93,8 @@ class _CollectionCard extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 24.h),
       child: InkWell(
         borderRadius: BorderRadius.circular(12.r),
-        onTap: () => context.push(
-          RouteName.propertyView.replaceFirst(':propertyId', 'saved-home'),
-        ),
+        // These are placeholder wishlist collections without backend IDs.
+        onTap: null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

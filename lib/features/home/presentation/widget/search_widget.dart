@@ -574,9 +574,8 @@ class _ResultCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: () => context.push(
-      RouteName.propertyView.replaceFirst(':propertyId', 'search-result'),
-    ),
+    // These are placeholder search results without backend property IDs.
+    onTap: null,
     child: Padding(
       padding: EdgeInsets.only(bottom: 24.h),
       child: Column(

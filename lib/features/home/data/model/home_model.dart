@@ -1,51 +1,3 @@
-class HomeModel {
-  final List<CategoryModel> categories;
-  final PropertyCollection popularStays;
-  final PropertyCollection recommendedForYou;
-  final PropertyCollection recentlyViewed;
-  final List<DestinationModel> topDestinations;
-
-  const HomeModel({
-    this.categories = const [],
-    this.popularStays = const PropertyCollection(),
-    this.recommendedForYou = const PropertyCollection(),
-    this.recentlyViewed = const PropertyCollection(),
-    this.topDestinations = const [],
-  });
-
-  factory HomeModel.fromJson(Map<String, dynamic> json) => HomeModel(
-    categories: _list(json['categories'], CategoryModel.fromJson),
-    popularStays: PropertyCollection.fromJson(json['popularStays']),
-    recommendedForYou: PropertyCollection.fromJson(json['recommendedForYou']),
-    recentlyViewed: PropertyCollection.fromJson(json['recentlyViewed']),
-    topDestinations: _list(json['topDestinations'], DestinationModel.fromJson),
-  );
-}
-
-class CategoryModel {
-  final String id;
-  final String name;
-  final String slug;
-  final String icon;
-  final String description;
-
-  const CategoryModel({
-    this.id = '',
-    this.name = '',
-    this.slug = '',
-    this.icon = '',
-    this.description = '',
-  });
-
-  factory CategoryModel.fromJson(Map<String, dynamic> json) => CategoryModel(
-    id: _string(json['_id'] ?? json['id']),
-    name: _string(json['name']),
-    slug: _string(json['slug']),
-    icon: _string(json['icon']),
-    description: _string(json['description']),
-  );
-}
-
 class PropertyCollection {
   final List<PropertyModel> properties;
   final int total;
@@ -75,28 +27,6 @@ class PropertyCollection {
   }
 }
 
-class DestinationModel {
-  final String city;
-  final String country;
-  final String image;
-  final int propertyCount;
-
-  const DestinationModel({
-    this.city = '',
-    this.country = '',
-    this.image = '',
-    this.propertyCount = 0,
-  });
-
-  factory DestinationModel.fromJson(Map<String, dynamic> json) =>
-      DestinationModel(
-        city: _string(json['city']),
-        country: _string(json['country']),
-        image: _string(json['image']),
-        propertyCount: _int(json['propertyCount']),
-      );
-}
-
 class PropertyModel {
   final String id;
   final String title;
@@ -105,9 +35,16 @@ class PropertyModel {
   final String pricePerNight;
   final String location;
   final String city;
+  final String state;
   final String country;
+  final String zipCode;
+  final double latitude;
+  final double longitude;
   final String hostName;
   final String hostAvatar;
+  final String hostBio;
+  final String categoryName;
+  final String categoryIcon;
   final List<String> images;
   final List<String> amenities;
   final int maxGuests;
@@ -127,9 +64,16 @@ class PropertyModel {
     this.pricePerNight = '',
     this.location = '',
     this.city = '',
+    this.state = '',
     this.country = '',
+    this.zipCode = '',
+    this.latitude = 0,
+    this.longitude = 0,
     this.hostName = '',
     this.hostAvatar = '',
+    this.hostBio = '',
+    this.categoryName = '',
+    this.categoryIcon = '',
     this.images = const [],
     this.amenities = const [],
     this.maxGuests = 0,
@@ -159,9 +103,22 @@ class PropertyModel {
           ? _string(locationJson['address'])
           : '${_string(locationJson['city'])}, ${_string(locationJson['country'])}',
       city: _string(locationJson['city']),
+      state: _string(locationJson['state']),
       country: _string(locationJson['country']),
+      zipCode: _string(locationJson['zipCode']),
+      latitude: _double(locationJson['lat']),
+      longitude: _double(locationJson['lng']),
       hostName: _string(host['name']),
       hostAvatar: _string(host['avatar']),
+      hostBio: _string(host['bio']),
+      categoryName: _string(
+        json['category'] is Map
+            ? (json['category'] as Map)['name']
+            : json['category'],
+      ),
+      categoryIcon: _string(
+        json['category'] is Map ? (json['category'] as Map)['icon'] : null,
+      ),
       images: _images(json['images']),
       amenities: _strings(json['amenities']),
       maxGuests: _int(json['maxGuests']),

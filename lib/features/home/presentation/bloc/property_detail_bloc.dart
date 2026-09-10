@@ -9,6 +9,10 @@ class PropertyDetailBloc
 
   PropertyDetailBloc(this.repository) : super(PropertyDetailInitial()) {
     on<LoadPropertyDetail>((event, emit) async {
+      if (event.propertyId.trim().isEmpty) {
+        emit(PropertyDetailError('Property ID is missing.'));
+        return;
+      }
       emit(PropertyDetailLoading());
       final result = await repository.getProperty(event.propertyId);
       result.fold((error) => emit(PropertyDetailError(error.message)), (

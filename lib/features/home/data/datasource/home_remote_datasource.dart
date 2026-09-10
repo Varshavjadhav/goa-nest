@@ -4,6 +4,8 @@ import 'package:goanest/core/data/network/response/base_response_model.dart';
 import 'package:goanest/core/data/network/service/base_api_service.dart';
 import 'package:goanest/resources/constants/url_end_points.dart';
 
+import '../model/explore_model.dart';
+import '../model/favorite_model.dart';
 import '../model/home_model.dart';
 import '../model/property_detail_model.dart';
 import '../model/wishlist_model.dart';
@@ -13,12 +15,12 @@ class HomeRemoteDataSource {
 
   const HomeRemoteDataSource(this.apiService);
 
-  Future<Either<AppException, BaseResponseModel<HomeModel>>> getHome() =>
-      apiService.getApi(ApiUrl.home, const {}, HomeModel.fromJson);
+  Future<Either<AppException, BaseResponseModel<ExploreModel>>> getExplore() =>
+      apiService.getApi(ApiUrl.home, const {}, ExploreModel.fromJson);
 
   Future<Either<AppException, BaseResponseModel<PropertyDetailModel>>>
   getProperty(String propertyId) => apiService.getApi(
-    ApiUrl.propertyDetails.replaceAll('{id}', propertyId),
+    ApiUrl.propertyDetail.replaceAll('{propertyId}', propertyId),
     const {},
     PropertyDetailModel.fromJson,
   );
@@ -38,20 +40,20 @@ class HomeRemoteDataSource {
     (json) => _wishlistList(json['wishlists']),
   );
 
-  Future<Either<AppException, BaseResponseModel<dynamic>>> addFavorite(
+  Future<Either<AppException, BaseResponseModel<FavoriteModel>>> addFavorite(
     String id,
-  ) => apiService.postApi<dynamic>(
-    ApiUrl.favorites.replaceAll('{id}', id),
+  ) => apiService.postApi<FavoriteModel>(
+    ApiUrl.favorite.replaceAll('{propertyId}', id),
     const {},
-    (_) => null,
+    FavoriteModel.fromJson,
   );
 
-  Future<Either<AppException, BaseResponseModel<dynamic>>> removeFavorite(
+  Future<Either<AppException, BaseResponseModel<FavoriteModel>>> removeFavorite(
     String id,
-  ) => apiService.deleteApi<dynamic>(
-    ApiUrl.favorites.replaceAll('{id}', id),
+  ) => apiService.deleteApi<FavoriteModel>(
+    ApiUrl.favorite.replaceAll('{propertyId}', id),
     const {},
-    (_) => null,
+    FavoriteModel.fromJson,
   );
 
   Future<Either<AppException, BaseResponseModel<dynamic>>> markRecentlyViewed(

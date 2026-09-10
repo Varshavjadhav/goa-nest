@@ -9,6 +9,16 @@ import 'package:goanest/features/home/presentation/view/booking_confirmation_scr
 import 'package:goanest/features/login/presentation/view/login_screen.dart';
 import 'package:goanest/features/login/presentation/view/registration_screen.dart';
 import 'package:goanest/features/splash/presentaion/screens/splash_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:goanest/core/di/injector.dart';
+import 'package:goanest/features/home/presentation/bloc/recently_viewed_bloc.dart';
+import 'package:goanest/features/home/presentation/bloc/wishlist_bloc.dart';
+import 'package:goanest/features/home/presentation/bloc/property_detail_bloc.dart';
+import 'package:goanest/features/home/presentation/bloc/property_detail_event.dart';
+import 'package:goanest/features/home/presentation/bloc/recently_viewed_event.dart';
+import 'package:goanest/features/home/domain/usecase/get_recently_viewed.dart';
+import 'package:goanest/features/home/domain/usecase/get_wishlists.dart';
+import 'package:goanest/features/home/data/repository/home_repository_impl.dart';
 
 import '../../core.dart';
 import '../../utilities/extensions/extensions.dart';
@@ -72,7 +82,22 @@ class AppRouter {
         pageBuilder: (context, state) => appCustomTransitionPage(
           state: state,
           transitionBuilder: slideInOutTransition,
-          child: const RecentlyViewedScreen(),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) =>
+                    RecentlyViewedBloc(sl<GetRecentlyViewedUseCase>())
+                      ..add(LoadRecentlyViewed()),
+              ),
+              BlocProvider(
+                create: (_) => WishlistBloc(
+                  sl<GetWishlistsUseCase>(),
+                  sl<HomeRepositoryImpl>(),
+                ),
+              ),
+            ],
+            child: const RecentlyViewedScreen(),
+          ),
         ),
       ),
       GoRoute(
@@ -81,7 +106,15 @@ class AppRouter {
         pageBuilder: (context, state) => appCustomTransitionPage(
           state: state,
           transitionBuilder: slideInOutTransition,
-          child: const PropertyDetailScreen(),
+          child: BlocProvider(
+            create: (_) => PropertyDetailBloc(sl<HomeRepositoryImpl>())
+              ..add(
+                LoadPropertyDetail(state.pathParameters['propertyId'] ?? ''),
+              ),
+            child: PropertyDetailScreen(
+              propertyId: state.pathParameters['propertyId'] ?? '',
+            ),
+          ),
         ),
       ),
       GoRoute(

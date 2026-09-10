@@ -22,8 +22,9 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
           ? await repository.removeFavorite(event.propertyId)
           : await repository.addFavorite(event.propertyId);
       result.fold(
-        (error) => emit(WishlistError(error.message)),
-        (_) => emit(FavoriteUpdated(event.propertyId, !event.isLiked)),
+        (error) =>
+            emit(FavoriteError(event.propertyId, event.isLiked, error.message)),
+        (favorite) => emit(FavoriteUpdated(event.propertyId, favorite.isLiked)),
       );
     });
   }

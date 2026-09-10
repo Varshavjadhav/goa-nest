@@ -1,130 +1,119 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:goanest/core.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
-import 'package:goanest/widgets/screenshot_crop_widget.dart';
+
+import '../../data/model/home_model.dart';
+import '../bloc/recently_viewed_bloc.dart';
+import '../bloc/recently_viewed_event.dart';
+import '../bloc/recently_viewed_state.dart';
+import '../bloc/wishlist_bloc.dart';
+import '../bloc/wishlist_event.dart';
+import '../bloc/wishlist_state.dart';
 
 class RecentlyViewedScreen extends StatelessWidget {
   const RecentlyViewedScreen({super.key});
 
-  static const _items = [
-    _RecentlyItem(
-      'Lonavala',
-      'Favourite',
-      '4.92',
-      Rect.fromLTWH(33, 313, 130, 112),
-    ),
-    _RecentlyItem(
-      'Commercial phot...',
-      'Holiday Home™',
-      null,
-      Rect.fromLTWH(164, 340, 130, 112),
-    ),
-    _RecentlyItem(
-      'Gurugram',
-      '3 homes',
-      null,
-      Rect.fromLTWH(33, 581, 130, 112),
-    ),
-    _RecentlyItem(
-      'Azure Bay Retreat',
-      'Anjuna, North Goa',
-      '4.9',
-      Rect.fromLTWH(33, 313, 130, 112),
-    ),
-    _RecentlyItem(
-      'Casa Verde Manor',
-      'Assagao, Goa',
-      '4.8',
-      Rect.fromLTWH(164, 340, 130, 112),
-    ),
-    _RecentlyItem(
-      'The Canopy Nest',
-      'Agonda, South Goa',
-      '5.0',
-      Rect.fromLTWH(33, 847, 130, 112),
-    ),
-  ];
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: AppColor.white,
+    appBar: AppBar(
       backgroundColor: AppColor.white,
-      appBar: AppBar(
-        backgroundColor: AppColor.white,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: context.pop,
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            size: 22.sp,
-            color: AppColor.textPrimary,
-          ),
-        ),
-        title: AppTextWidget(
-          text: 'Recently viewed',
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      leading: IconButton(
+        onPressed: context.pop,
+        icon: Icon(
+          Icons.arrow_back_rounded,
+          size: 22.sp,
           color: AppColor.textPrimary,
         ),
-        centerTitle: true,
       ),
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 18.h),
-              child: AppTextWidget(
-                text: 'Stays and places you recently explored',
-                fontSize: 13,
-                color: AppColor.textSecondary,
+      title: AppTextWidget(
+        text: 'Recently viewed',
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: AppColor.textPrimary,
+      ),
+      centerTitle: true,
+    ),
+    body: BlocBuilder<RecentlyViewedBloc, RecentlyViewedState>(
+      builder: (context, state) {
+        if (state is RecentlyViewedLoading || state is RecentlyViewedInitial) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is RecentlyViewedError) {
+          return _MessageView(
+            message: state.message,
+            action: () =>
+                context.read<RecentlyViewedBloc>().add(LoadRecentlyViewed()),
+          );
+        }
+        final result = (state as RecentlyViewedLoaded).result;
+        if (result.properties.isEmpty) {
+          return const _MessageView(
+            message: 'You have not viewed any stays yet.',
+          );
+        }
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 18.h),
+                child: AppTextWidget(
+                  text: 'Stays and places you recently explored',
+                  fontSize: 13,
+                  color: AppColor.textSecondary,
+                ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 32.h),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _RecentlyCard(item: _items[index]),
-                childCount: _items.length,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.68,
-                crossAxisSpacing: 14.w,
-                mainAxisSpacing: 24.h,
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 32.h),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate(
+                  (_, index) =>
+                      _RecentlyCard(property: result.properties[index]),
+                  childCount: result.properties.length,
+                ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: .68,
+                  crossAxisSpacing: 14.w,
+                  mainAxisSpacing: 24.h,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        );
+      },
+    ),
+  );
 }
 
 class _RecentlyCard extends StatefulWidget {
-  final _RecentlyItem item;
-
-  const _RecentlyCard({required this.item});
+  final PropertyModel property;
+  const _RecentlyCard({required this.property});
 
   @override
   State<_RecentlyCard> createState() => _RecentlyCardState();
 }
 
 class _RecentlyCardState extends State<_RecentlyCard> {
-  bool _liked = false;
+  late bool liked = widget.property.isLiked;
 
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
+    final property = widget.property;
+    final image = property.images.isEmpty ? '' : property.images.first;
     return GestureDetector(
-      onTap: () => context.push(
-        RouteName.propertyView.replaceFirst(':propertyId', 'recently-viewed'),
-      ),
+      onTap: property.id.isEmpty
+          ? null
+          : () => context.push(
+              RouteName.propertyView.replaceFirst(':propertyId', property.id),
+            ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -134,13 +123,39 @@ class _RecentlyCardState extends State<_RecentlyCard> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: ScreenshotCrop(crop: item.crop, borderRadius: 10.r),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.r),
+                    child: image.isEmpty
+                        ? _placeholder()
+                        : Image.network(
+                            image,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _placeholder(),
+                          ),
+                  ),
                 ),
-                Positioned(
-                  top: 8.h,
-                  right: 8.w,
-                  child: GestureDetector(
-                    onTap: () => setState(() => _liked = !_liked),
+            Positioned(
+              top: 8.h,
+              right: 8.w,
+              child: BlocListener<WishlistBloc, WishlistState>(
+                listenWhen: (_, state) => state is FavoriteUpdated || state is FavoriteError,
+                listener: (_, state) {
+                  if (state is FavoriteUpdated && state.propertyId == property.id) {
+                    setState(() => liked = state.isLiked);
+                  } else if (state is FavoriteError && state.propertyId == property.id) {
+                    setState(() => liked = state.previousIsLiked);
+                  }
+                },
+                child: GestureDetector(
+                    onTap: property.id.isEmpty
+                        ? null
+                        : () {
+                            final wasLiked = liked;
+                            setState(() => liked = !liked);
+                            context.read<WishlistBloc>().add(
+                              ToggleFavorite(property.id, isLiked: wasLiked),
+                            );
+                          },
                     child: Container(
                       width: 30.w,
                       height: 30.w,
@@ -149,15 +164,16 @@ class _RecentlyCardState extends State<_RecentlyCard> {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        _liked
+                        liked
                             ? Icons.favorite_rounded
                             : Icons.favorite_border_rounded,
                         size: 17.sp,
-                        color: _liked ? AppColor.primary : AppColor.textPrimary,
+                        color: liked ? AppColor.primary : AppColor.textPrimary,
                       ),
                     ),
                   ),
                 ),
+              ),
               ],
             ),
           ),
@@ -166,45 +182,72 @@ class _RecentlyCardState extends State<_RecentlyCard> {
             children: [
               Expanded(
                 child: AppTextWidget(
-                  text: item.title,
+                  text: property.title,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: AppColor.textPrimary,
                   maxLines: 1,
                   textOverflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (item.rating != null) ...[
-                Icon(Icons.star_rounded, size: 12.sp, color: AppColor.primary),
-                SizedBox(width: 2.w),
-                AppTextWidget(
-                  text: item.rating!,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.textPrimary,
-                ),
-              ],
+              Icon(Icons.star_rounded, size: 12.sp, color: AppColor.primary),
+              SizedBox(width: 2.w),
+              AppTextWidget(
+                text: property.rating.toStringAsFixed(2),
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+              ),
             ],
           ),
           SizedBox(height: 3.h),
           AppTextWidget(
-            text: item.subtitle,
+            text: property.location,
             fontSize: 11,
             color: AppColor.textSecondary,
             maxLines: 1,
             textOverflow: TextOverflow.ellipsis,
           ),
+          SizedBox(height: 4.h),
+          AppTextWidget(
+            text: '${property.pricePerNight} / night',
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
         ],
       ),
     );
   }
+
+  Widget _placeholder() => Container(
+    color: AppColor.greyExtraLight,
+    alignment: Alignment.center,
+    child: Icon(Icons.home_outlined, size: 34.sp, color: AppColor.grey),
+  );
 }
 
-class _RecentlyItem {
-  final String title;
-  final String subtitle;
-  final String? rating;
-  final Rect crop;
+class _MessageView extends StatelessWidget {
+  final String message;
+  final VoidCallback? action;
+  const _MessageView({required this.message, this.action});
 
-  const _RecentlyItem(this.title, this.subtitle, this.rating, this.crop);
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: EdgeInsets.all(24.w),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppTextWidget(
+            text: message,
+            fontSize: 14,
+            color: AppColor.textSecondary,
+            textAlign: TextAlign.center,
+          ),
+          if (action != null) ...[
+            SizedBox(height: 14.h),
+            ElevatedButton(onPressed: action, child: const Text('Try again')),
+          ],
+        ],
+      ),
+    ),
+  );
 }

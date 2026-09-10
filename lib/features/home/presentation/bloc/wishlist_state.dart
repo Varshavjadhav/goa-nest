@@ -21,3 +21,11 @@ class FavoriteUpdated extends WishlistState {
   final bool isLiked;
   FavoriteUpdated(this.propertyId, this.isLiked);
 }
+
+class FavoriteError extends WishlistState {
+  final String propertyId;
+  final bool previousIsLiked;
+  final String message;
+
+  FavoriteError(this.propertyId, this.previousIsLiked, this.message);
+}

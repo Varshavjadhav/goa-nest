@@ -64,7 +64,7 @@ class NetworkApiService extends BaseApiServices {
   }) async {
     try {
       if (queryParams != null && queryParams.isNotEmpty) {
-        apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
+        apiURL = "$apiURL${_queryString(queryParams)}";
       }
 
       final response = await _dio.get(
@@ -89,7 +89,7 @@ class NetworkApiService extends BaseApiServices {
   }) async {
     try {
       if (queryParams != null && queryParams.isNotEmpty) {
-        apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
+        apiURL = "$apiURL${_queryString(queryParams)}";
       }
 
       final response = await _dio.post(
@@ -115,7 +115,7 @@ class NetworkApiService extends BaseApiServices {
   }) async {
     try {
       if (queryParams != null && queryParams.isNotEmpty) {
-        apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
+        apiURL = "$apiURL${_queryString(queryParams)}";
       }
 
       final response = await _dio.put(
@@ -141,7 +141,7 @@ class NetworkApiService extends BaseApiServices {
   }) async {
     try {
       if (queryParams != null && queryParams.isNotEmpty) {
-        apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
+        apiURL = "$apiURL${_queryString(queryParams)}";
       }
 
       final response = await _dio.patch(
@@ -167,7 +167,7 @@ class NetworkApiService extends BaseApiServices {
   }) async {
     try {
       if (queryParams != null && queryParams.isNotEmpty) {
-        apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
+        apiURL = "$apiURL${_queryString(queryParams)}";
       }
 
       final response = await _dio.delete(
@@ -185,6 +185,14 @@ class NetworkApiService extends BaseApiServices {
   Options? _options(bool skipAuth) =>
       skipAuth ? Options(extra: {'skipAuth': true}) : null;
 
+  String _queryString(Map<String, dynamic> queryParams) {
+    final values = <String, String>{};
+    queryParams.forEach((key, value) {
+      if (value != null) values[key] = value.toString();
+    });
+    return Uri(queryParameters: values).toString();
+  }
+
   @override
   Future<Either<AppException, BaseResponseModel<T>>> multipartApi<T>(
     String apiURL,
@@ -198,7 +206,7 @@ class NetworkApiService extends BaseApiServices {
   }) async {
     try {
       if (queryParams != null && queryParams.isNotEmpty) {
-        apiURL = "$apiURL${Uri(queryParameters: queryParams)}";
+        apiURL = "$apiURL${_queryString(queryParams)}";
       }
 
       final formData = FormData();

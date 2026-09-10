@@ -3,9 +3,11 @@ import 'package:dartz/dartz.dart';
 import 'package:goanest/core/data/error/app_exception.dart';
 import 'package:goanest/core/data/network/response/base_response_model.dart';
 import '../datasource/home_remote_datasource.dart';
-import '../model/home_model.dart';
+import '../model/explore_model.dart';
 import '../model/property_detail_model.dart';
+import '../model/home_model.dart';
 import '../model/wishlist_model.dart';
+import '../model/favorite_model.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
@@ -13,8 +15,8 @@ class HomeRepositoryImpl implements HomeRepository {
   const HomeRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<AppException, HomeModel>> getHome() =>
-      remoteDataSource.getHome().mapEntity((data) => data);
+  Future<Either<AppException, ExploreModel>> getExplore() =>
+      remoteDataSource.getExplore().mapEntity((data) => data);
 
   @override
   Future<Either<AppException, PropertyDetailModel>> getProperty(String id) =>
@@ -33,12 +35,12 @@ class HomeRepositoryImpl implements HomeRepository {
       remoteDataSource.getWishlists().mapEntity((data) => data);
 
   @override
-  Future<Either<AppException, ResultMessage>> addFavorite(String id) =>
-      remoteDataSource.addFavorite(id).mapMessage();
+  Future<Either<AppException, FavoriteModel>> addFavorite(String id) =>
+      remoteDataSource.addFavorite(id).mapEntity((data) => data);
 
   @override
-  Future<Either<AppException, ResultMessage>> removeFavorite(String id) =>
-      remoteDataSource.removeFavorite(id).mapMessage();
+  Future<Either<AppException, FavoriteModel>> removeFavorite(String id) =>
+      remoteDataSource.removeFavorite(id).mapEntity((data) => data);
 
   @override
   Future<Either<AppException, ResultMessage>> markRecentlyViewed(String id) =>

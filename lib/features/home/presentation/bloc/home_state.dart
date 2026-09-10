@@ -1,4 +1,4 @@
-import '../../data/model/home_model.dart';
+import '../../data/model/explore_model.dart';
 
 abstract class HomeState {}
 
@@ -7,7 +7,7 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
-  final HomeModel home;
+  final ExploreModel home;
   HomeLoaded(this.home);
 }
 
