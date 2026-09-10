@@ -33,19 +33,14 @@ class PropertyDetailScreen extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(16.w, 22.h, 16.w, 105.h),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                AppTextWidget.headlineLarge(
-                  text: 'Modern villa with pool',
-                ),
+                AppTextWidget.headlineLarge(text: 'Modern villa with pool'),
                 SizedBox(height: 7.h),
                 AppTextWidget.bodyMedium(
                   text: 'Entire villa in North Goa, India',
                   color: AppColor.textSecondary,
                 ),
                 SizedBox(height: 14.h),
-                CommonWidgets.starRatingRow(
-                  rating: '4.9',
-                  reviewCount: '24',
-                ),
+                CommonWidgets.starRatingRow(rating: '4.9', reviewCount: '24'),
                 SizedBox(height: 18.h),
                 const _StaySummary(),
                 CommonWidgets.divider(),
@@ -68,29 +63,24 @@ class PropertyDetailScreen extends StatelessWidget {
                   ),
                 ),
                 CommonWidgets.divider(),
-                AppTextWidget.headlineSmall(
-                  text: 'What this place offers',
-                ),
+                AppTextWidget.headlineSmall(text: 'What this place offers'),
                 SizedBox(height: 14.h),
                 const _AmenityGrid(),
                 SizedBox(height: 14.h),
                 CommonWidgets.showMoreLink(text: 'Show all 12 amenities'),
                 CommonWidgets.divider(),
-                AppTextWidget.headlineSmall(
-                  text: 'About this place',
-                ),
+                AppTextWidget.headlineSmall(text: 'About this place'),
                 SizedBox(height: 10.h),
                 AppTextWidget.bodyMedium(
-                  text: 'Wake up to open skies and relaxed coastal living in this beautiful Goa retreat. Enjoy a private pool, thoughtful interiors, and easy access to the beach, restaurants, and local markets.',
+                  text:
+                      'Wake up to open skies and relaxed coastal living in this beautiful Goa retreat. Enjoy a private pool, thoughtful interiors, and easy access to the beach, restaurants, and local markets.',
                   height: 1.55,
                   color: AppColor.textSecondary,
                 ),
                 SizedBox(height: 8.h),
                 CommonWidgets.showMoreLink(text: 'Show more'),
                 CommonWidgets.divider(height: 40),
-                AppTextWidget.headlineSmall(
-                  text: 'Where you\'ll be',
-                ),
+                AppTextWidget.headlineSmall(text: 'Where you\'ll be'),
                 SizedBox(height: 5.h),
                 AppTextWidget.bodyMedium(
                   text: 'North Goa, Goa, India',
@@ -118,23 +108,21 @@ class PropertyDetailScreen extends StatelessWidget {
                   ),
                 ),
                 CommonWidgets.divider(height: 40),
-                AppTextWidget.headlineSmall(
-                  text: 'Guest reviews',
-                ),
+                AppTextWidget.headlineSmall(text: 'Guest reviews'),
                 SizedBox(height: 14.h),
                 CommonWidgets.reviewCard(
                   name: 'Rohan',
-                  text: 'Beautiful home, thoughtful host, and the pool was perfect for a relaxing weekend.',
+                  text:
+                      'Beautiful home, thoughtful host, and the pool was perfect for a relaxing weekend.',
                 ),
                 CommonWidgets.reviewCard(
                   name: 'Maya',
-                  text: 'Exactly as pictured. The location made it easy to explore North Goa.',
+                  text:
+                      'Exactly as pictured. The location made it easy to explore North Goa.',
                 ),
                 CommonWidgets.showMoreLink(text: 'Show all 24 reviews'),
                 CommonWidgets.divider(height: 40),
-                AppTextWidget.headlineSmall(
-                  text: 'Things to know',
-                ),
+                AppTextWidget.headlineSmall(text: 'Things to know'),
                 SizedBox(height: 14.h),
                 CommonWidgets.infoRow(
                   icon: Icons.access_time,
@@ -164,9 +152,7 @@ class PropertyDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppTextWidget.titleLarge(
-                    text: '₹18,500 night',
-                  ),
+                  AppTextWidget.titleLarge(text: '₹18,500 night'),
                   AppTextWidget.labelMedium(
                     text: 'Add dates for prices',
                     color: AppColor.textSecondary,
@@ -233,7 +219,10 @@ class _HeroImage extends StatelessWidget {
           children: [
             CommonWidgets.headerButton(icon: Icons.ios_share, onTap: () {}),
             SizedBox(width: 8.w),
-            CommonWidgets.headerButton(icon: Icons.favorite_border, onTap: () {}),
+            CommonWidgets.headerButton(
+              icon: Icons.favorite_border,
+              onTap: () {},
+            ),
           ],
         ),
       ),

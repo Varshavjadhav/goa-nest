@@ -40,11 +40,7 @@ class WeekendBanner extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
-            Icons.arrow_forward_rounded,
-            color: theme.homeIcon,
-            size: 18.sp,
-          ),
+          Icon(Icons.arrow_forward_rounded, color: theme.homeIcon, size: 18.sp),
         ],
       ),
     );

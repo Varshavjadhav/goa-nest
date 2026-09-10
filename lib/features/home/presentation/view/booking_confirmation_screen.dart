@@ -39,9 +39,7 @@ class BookingConfirmationScreen extends StatelessWidget {
             size: 48.sp,
           ),
         ),
-        AppTextWidget.displaySmall(
-          text: 'You\'re all set!',
-        ),
+        AppTextWidget.displaySmall(text: 'You\'re all set!'),
         SizedBox(height: 8.h),
         AppTextWidget.titleSmall(
           text: 'Your trip is confirmed. We can\'t wait to host you.',
@@ -112,11 +110,7 @@ class BookingConfirmationScreen extends StatelessWidget {
               ),
               _InfoRow(label: 'Dates', value: 'Aug 28 – Sep 1, 2026'),
               _InfoRow(label: 'Guests', value: '2 guests'),
-              _InfoRow(
-                label: 'Total paid',
-                value: '₹80,750',
-                bold: true,
-              ),
+              _InfoRow(label: 'Total paid', value: '₹80,750', bold: true),
             ],
           ),
         ),

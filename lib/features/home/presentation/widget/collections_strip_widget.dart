@@ -36,7 +36,11 @@ class CollectionsStrip extends StatelessWidget {
         separatorBuilder: (_, _) => Gap(11.w),
         itemBuilder: (context, index) {
           final c = _collections[index];
-          return _CollectionCard(crop: c.crop, name: c.name, subtitle: c.subtitle);
+          return _CollectionCard(
+            crop: c.crop,
+            name: c.name,
+            subtitle: c.subtitle,
+          );
         },
       ),
     );

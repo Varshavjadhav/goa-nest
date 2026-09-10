@@ -64,17 +64,18 @@ class _FilterScreenState extends State<FilterScreen> {
           CommonWidgets.divider(height: 40),
           CommonWidgets.sectionTitle('Property type'),
           SizedBox(height: 12.h),
-          _chips(
-            ['Villa', 'Apartment', 'Hotel', 'Guesthouse'],
-            selectedTypes,
-          ),
+          _chips(['Villa', 'Apartment', 'Hotel', 'Guesthouse'], selectedTypes),
           CommonWidgets.divider(height: 40),
           CommonWidgets.sectionTitle('Amenities'),
           SizedBox(height: 12.h),
-          _chips(
-            ['Pool', 'Wifi', 'Kitchen', 'Air conditioning', 'Beachfront', 'Free parking'],
-            selectedAmenities,
-          ),
+          _chips([
+            'Pool',
+            'Wifi',
+            'Kitchen',
+            'Air conditioning',
+            'Beachfront',
+            'Free parking',
+          ], selectedAmenities),
           CommonWidgets.divider(height: 40),
           CommonWidgets.sectionTitle('Rooms and beds'),
           SizedBox(height: 12.h),
@@ -130,9 +131,7 @@ class _Counter extends StatelessWidget {
     padding: EdgeInsets.only(bottom: 12.h),
     child: Row(
       children: [
-        Expanded(
-          child: AppTextWidget.titleSmall(text: label),
-        ),
+        Expanded(child: AppTextWidget.titleSmall(text: label)),
         IconButton(
           onPressed: () {},
           icon: Icon(

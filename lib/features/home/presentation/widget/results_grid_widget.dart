@@ -91,7 +91,8 @@ class _SearchStayCard extends StatelessWidget {
     String location,
     String price,
     String rating,
-  }) stay;
+  })
+  stay;
 
   const _SearchStayCard({required this.stay});
 
@@ -157,7 +158,7 @@ class _SearchStayCard extends StatelessWidget {
             ),
             Gap(3.w),
             Expanded(
-              child:               AppTextWidget(
+              child: AppTextWidget(
                 text: stay.location,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w600,

@@ -28,7 +28,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CommonWidgets.stayCard(
-              imageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
+              imageUrl:
+                  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
               title: 'Modern villa with pool',
               subtitle: 'Entire villa · North Goa',
               rating: '4.9 · 24 reviews',
@@ -74,7 +75,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             SizedBox(height: 20.h),
             CommonWidgets.sectionTitle('Price details'),
             SizedBox(height: 14.h),
-            CommonWidgets.priceRow(label: '₹18,500 × 4 nights', value: '₹74,000'),
+            CommonWidgets.priceRow(
+              label: '₹18,500 × 4 nights',
+              value: '₹74,000',
+            ),
             CommonWidgets.priceRow(label: 'Cleaning fee', value: '₹2,500'),
             CommonWidgets.priceRow(label: 'Service fee', value: '₹4,250'),
             CommonWidgets.divider(height: 25),
@@ -85,7 +89,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             SizedBox(height: 22.h),
             AppTextWidget.labelMedium(
-              text: 'By selecting the button below, I agree to the house rules, cancellation policy, and Havenstay terms.',
+              text:
+                  'By selecting the button below, I agree to the house rules, cancellation policy, and Havenstay terms.',
               color: AppColor.textSecondary,
               height: 1.45,
             ),
@@ -100,9 +105,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AppTextWidget.titleLarge(
-                    text: '₹80,750',
-                  ),
+                  AppTextWidget.titleLarge(text: '₹80,750'),
                   AppTextWidget.labelMedium(
                     text: 'Total (INR)',
                     color: AppColor.textSecondary,
@@ -222,9 +225,19 @@ class _CardFields extends StatelessWidget {
       SizedBox(height: 8.h),
       Row(
         children: [
-          Expanded(child: TextField(decoration: CommonWidgets.inputDecoration(hint: 'Expiration date'))),
+          Expanded(
+            child: TextField(
+              decoration: CommonWidgets.inputDecoration(
+                hint: 'Expiration date',
+              ),
+            ),
+          ),
           SizedBox(width: 8.w),
-          Expanded(child: TextField(decoration: CommonWidgets.inputDecoration(hint: 'CVV'))),
+          Expanded(
+            child: TextField(
+              decoration: CommonWidgets.inputDecoration(hint: 'CVV'),
+            ),
+          ),
         ],
       ),
       SizedBox(height: 8.h),

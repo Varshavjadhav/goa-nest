@@ -216,7 +216,9 @@ class _BookingsList extends StatelessWidget {
       children: List.generate(_bookings.length, (index) {
         final booking = _bookings[index];
         return Padding(
-          padding: EdgeInsets.only(bottom: index == _bookings.length - 1 ? 0 : 18.h),
+          padding: EdgeInsets.only(
+            bottom: index == _bookings.length - 1 ? 0 : 18.h,
+          ),
           child: _BookingCard(
             crop: booking.crop,
             title: booking.title,
@@ -357,10 +359,10 @@ class _DaysPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.themeExt;
-    final background =
-        highlight ? theme.brandPrimary.withValues(alpha: 0.1) : theme.divider;
-    final foreground =
-        highlight ? theme.brandPrimary : theme.textSecondary;
+    final background = highlight
+        ? theme.brandPrimary.withValues(alpha: 0.1)
+        : theme.divider;
+    final foreground = highlight ? theme.brandPrimary : theme.textSecondary;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.p, vertical: 4.h),

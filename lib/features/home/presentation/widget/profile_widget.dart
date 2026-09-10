@@ -129,7 +129,9 @@ class _ProfileCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 34.r,
-          backgroundImage: const NetworkImage('https://i.pravatar.cc/140?img=47'),
+          backgroundImage: const NetworkImage(
+            'https://i.pravatar.cc/140?img=47',
+          ),
         ),
         SizedBox(width: 15.w),
         Expanded(
@@ -174,10 +176,7 @@ class _ProfileCard extends StatelessWidget {
             ],
           ),
         ),
-        Icon(
-          Icons.chevron_right_rounded,
-          color: AppColor.textSecondary,
-        ),
+        Icon(Icons.chevron_right_rounded, color: AppColor.textSecondary),
       ],
     ),
   );
@@ -201,10 +200,7 @@ class _HostBanner extends StatelessWidget {
             color: AppColor.white,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.home_work_outlined,
-            color: AppColor.primary,
-          ),
+          child: Icon(Icons.home_work_outlined, color: AppColor.primary),
         ),
         SizedBox(width: 13.w),
         Expanded(
@@ -230,11 +226,7 @@ class _HostBanner extends StatelessWidget {
             ],
           ),
         ),
-        Icon(
-          Icons.arrow_forward_rounded,
-          size: 20.sp,
-          color: AppColor.primary,
-        ),
+        Icon(Icons.arrow_forward_rounded, size: 20.sp, color: AppColor.primary),
       ],
     ),
   );
@@ -285,10 +277,7 @@ class _ActionItem {
     children: [
       ListTile(
         onTap: () {},
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 14.w,
-          vertical: 5.h,
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 5.h),
         leading: Container(
           width: 38.w,
           height: 38.w,
@@ -310,10 +299,7 @@ class _ActionItem {
           padding: EdgeInsets.only(top: 3.h),
           child: Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 11.sp,
-              color: AppColor.textSecondary,
-            ),
+            style: TextStyle(fontSize: 11.sp, color: AppColor.textSecondary),
           ),
         ),
         trailing: Icon(
@@ -322,12 +308,7 @@ class _ActionItem {
           color: AppColor.textSecondary,
         ),
       ),
-      if (divider)
-        Divider(
-          height: 1,
-          indent: 66.w,
-          endIndent: 14.w,
-        ),
+      if (divider) Divider(height: 1, indent: 66.w, endIndent: 14.w),
     ],
   );
 }

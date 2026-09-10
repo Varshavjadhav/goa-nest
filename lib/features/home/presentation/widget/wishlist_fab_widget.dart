@@ -24,7 +24,11 @@ class WishlistFab extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(Icons.playlist_add_rounded, color: AppColor.white, size: 24.sp),
+      child: Icon(
+        Icons.playlist_add_rounded,
+        color: AppColor.white,
+        size: 24.sp,
+      ),
     );
   }
 }

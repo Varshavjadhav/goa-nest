@@ -11,10 +11,10 @@ class WishlistTopBar extends StatelessWidget {
     final theme = context.themeExt;
 
     Widget icon(IconData data) => SizedBox(
-          width: 34.w,
-          height: 34.w,
-          child: Icon(data, color: theme.textPrimary, size: 20.sp),
-        );
+      width: 34.w,
+      height: 34.w,
+      child: Icon(data, color: theme.textPrimary, size: 20.sp),
+    );
 
     return Row(
       children: [

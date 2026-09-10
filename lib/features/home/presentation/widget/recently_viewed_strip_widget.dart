@@ -76,7 +76,11 @@ class RecentlyViewedStrip extends StatelessWidget {
                       color: theme.homeSubtitleText,
                     ),
                     Gap(6.w),
-                    Icon(Icons.star_rounded, color: theme.homeIcon, size: 13.sp),
+                    Icon(
+                      Icons.star_rounded,
+                      color: theme.homeIcon,
+                      size: 13.sp,
+                    ),
                     Gap(3.w),
                     AppTextWidget(
                       text: item.rating,

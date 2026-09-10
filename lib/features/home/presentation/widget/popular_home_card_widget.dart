@@ -40,7 +40,10 @@ class PopularHomeCard extends StatelessWidget {
                   left: 10.p,
                   top: 10.p,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 9.p, vertical: 5.p),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 9.p,
+                      vertical: 5.p,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.guestFavBadgeBackground,
                       borderRadius: BorderRadius.circular(16.r),

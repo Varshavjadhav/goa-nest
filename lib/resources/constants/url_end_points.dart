@@ -9,4 +9,14 @@ class ApiUrl {
   static const String login = 'auth/login';
 
   static const String appVersion = 'app-version';
+  static const String home = 'home';
+  static const String properties = 'properties';
+  static const String propertyDetails = 'properties/{id}';
+  static const String favorites = 'favorites/{id}';
+  static const String recentlyViewed = 'recently-viewed';
+  static const String recentlyViewedProperty = 'recently-viewed/{id}';
+  static const String wishlists = 'wishlists';
+  static const String wishlist = 'wishlists/{id}';
+  static const String wishlistProperty =
+      'wishlists/{id}/properties/{propertyId}';
 }

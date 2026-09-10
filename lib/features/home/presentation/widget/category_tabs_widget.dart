@@ -60,7 +60,9 @@ class CategoryTabs extends StatelessWidget {
               text: label,
               fontSize: 12.sp,
               fontWeight: FontWeight.w600,
-              color: isSelected ? theme.tabSelectedForeground : theme.tabForeground,
+              color: isSelected
+                  ? theme.tabSelectedForeground
+                  : theme.tabForeground,
             ),
           ],
         ),

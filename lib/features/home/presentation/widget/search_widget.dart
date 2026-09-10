@@ -102,10 +102,7 @@ class _TopBar extends StatelessWidget {
         IconButton(
           onPressed: onBack,
           padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            color: AppColor.textPrimary,
-          ),
+          icon: Icon(Icons.arrow_back_rounded, color: AppColor.textPrimary),
         ),
         Expanded(
           child: Text(
@@ -121,10 +118,7 @@ class _TopBar extends StatelessWidget {
         if (onFilter != null)
           IconButton(
             onPressed: onFilter,
-            icon: Icon(
-              Icons.tune_rounded,
-              color: AppColor.textPrimary,
-            ),
+            icon: Icon(Icons.tune_rounded, color: AppColor.textPrimary),
           )
         else
           SizedBox(width: 48.w),
@@ -152,10 +146,7 @@ class _DestinationStep extends StatelessWidget {
       SizedBox(height: 8.h),
       Text(
         'Search by city, landmark, or neighborhood',
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: AppColor.textSecondary,
-        ),
+        style: TextStyle(fontSize: 14.sp, color: AppColor.textSecondary),
       ),
       SizedBox(height: 24.h),
       Container(
@@ -163,10 +154,7 @@ class _DestinationStep extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
           color: AppColor.white,
-          border: Border.all(
-            color: AppColor.textPrimary,
-            width: 1.5,
-          ),
+          border: Border.all(color: AppColor.textPrimary, width: 1.5),
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Row(
@@ -175,10 +163,7 @@ class _DestinationStep extends StatelessWidget {
             SizedBox(width: 12.w),
             Text(
               'Search destinations',
-              style: TextStyle(
-                color: AppColor.textSecondary,
-                fontSize: 15.sp,
-              ),
+              style: TextStyle(color: AppColor.textSecondary, fontSize: 15.sp),
             ),
           ],
         ),
@@ -275,10 +260,7 @@ class _DestinationTile extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: AppColor.textSecondary,
-          ),
+          Icon(Icons.chevron_right_rounded, color: AppColor.textSecondary),
         ],
       ),
     ),
@@ -311,10 +293,7 @@ class _DatesStep extends StatelessWidget {
       SizedBox(height: 8.h),
       Text(
         'Choose your dates to see available stays',
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: AppColor.textSecondary,
-        ),
+        style: TextStyle(fontSize: 14.sp, color: AppColor.textSecondary),
       ),
       SizedBox(height: 22.h),
       _DateBox(label: 'CHECK-IN', value: _format(checkIn)),
@@ -331,10 +310,7 @@ class _DatesStep extends StatelessWidget {
           if (range != null) onChanged(range);
         },
         icon: const Icon(Icons.date_range_rounded),
-        label: Text(
-          'Choose dates',
-          style: TextStyle(fontSize: 14.sp),
-        ),
+        label: Text('Choose dates', style: TextStyle(fontSize: 14.sp)),
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColor.textPrimary,
           minimumSize: Size.fromHeight(50.h),
@@ -369,10 +345,7 @@ class _DateBox extends StatelessWidget {
     ),
     child: Row(
       children: [
-        Icon(
-          Icons.calendar_today_outlined,
-          color: AppColor.textSecondary,
-        ),
+        Icon(Icons.calendar_today_outlined, color: AppColor.textSecondary),
         SizedBox(width: 14.w),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,10 +400,7 @@ class _GuestsStep extends StatelessWidget {
       SizedBox(height: 8.h),
       Text(
         'Add guests to find the right space for your trip',
-        style: TextStyle(
-          fontSize: 14.sp,
-          color: AppColor.textSecondary,
-        ),
+        style: TextStyle(fontSize: 14.sp, color: AppColor.textSecondary),
       ),
       SizedBox(height: 28.h),
       _GuestCounter(
@@ -477,10 +447,7 @@ class _GuestCounter extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 4.h),
               Text(
@@ -501,10 +468,7 @@ class _GuestCounter extends StatelessWidget {
         ),
         Text(
           '$count',
-          style: TextStyle(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
         ),
         IconButton(
           onPressed: onChanged == null ? null : () => onChanged!(count + 1),
@@ -540,10 +504,7 @@ class _PrimaryButton extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 15.sp,
-          fontWeight: FontWeight.w700,
-        ),
+        style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700),
       ),
     ),
   );
@@ -571,10 +532,7 @@ class _ResultsStep extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: onFilter,
             icon: Icon(Icons.tune_rounded, size: 16.sp),
-            label: Text(
-              'Filters',
-              style: TextStyle(fontSize: 13.sp),
-            ),
+            label: Text('Filters', style: TextStyle(fontSize: 13.sp)),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColor.textPrimary,
               padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -635,10 +593,7 @@ class _ResultCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
                       color: AppColor.greyExtraLight,
-                      child: Icon(
-                        Icons.home_outlined,
-                        size: 42.sp,
-                      ),
+                      child: Icon(Icons.home_outlined, size: 42.sp),
                     ),
                   ),
                 ),
@@ -653,10 +608,7 @@ class _ResultCard extends StatelessWidget {
                     color: AppColor.white,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.favorite_border_rounded,
-                    size: 20.sp,
-                  ),
+                  child: Icon(Icons.favorite_border_rounded, size: 20.sp),
                 ),
               ),
             ],
@@ -673,10 +625,7 @@ class _ResultCard extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             location,
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: AppColor.textSecondary,
-            ),
+            style: TextStyle(fontSize: 13.sp, color: AppColor.textSecondary),
           ),
           SizedBox(height: 5.h),
           Text(

@@ -65,8 +65,7 @@ class WishlistWidget extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 100.h),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                for (final item in collections)
-                  _CollectionCard(item: item),
+                for (final item in collections) _CollectionCard(item: item),
                 SizedBox(height: 20.h),
                 Text(
                   'Create new',
@@ -125,18 +124,12 @@ class _CollectionCard extends StatelessWidget {
             SizedBox(height: 8.h),
             Text(
               item.$1,
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 2.h),
             Text(
               item.$2,
-              style: TextStyle(
-                fontSize: 11.sp,
-                color: AppColor.textQuaternary,
-              ),
+              style: TextStyle(fontSize: 11.sp, color: AppColor.textQuaternary),
             ),
           ],
         ),
@@ -154,10 +147,7 @@ class _CollectionImage extends StatelessWidget {
     fit: BoxFit.cover,
     errorBuilder: (_, __, ___) => Container(
       color: AppColor.greyExtraLight,
-      child: const Icon(
-        Icons.image_outlined,
-        color: AppColor.greyMedium,
-      ),
+      child: const Icon(Icons.image_outlined, color: AppColor.greyMedium),
     ),
   );
 }
@@ -179,11 +169,7 @@ class _CreateCollection extends StatelessWidget {
         child: CircleAvatar(
           radius: 18.r,
           backgroundColor: AppColor.greyExtraLight,
-          child: Icon(
-            Icons.add,
-            size: 18.sp,
-            color: AppColor.greyDark,
-          ),
+          child: Icon(Icons.add, size: 18.sp, color: AppColor.greyDark),
         ),
       ),
     ),

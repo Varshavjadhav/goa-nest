@@ -9,6 +9,11 @@ import '../../features/login/data/repository/login_repository_impl.dart';
 import '../../features/login/data/repository/register_repository_impl.dart';
 import '../../features/login/domain/usecase/get_login.dart';
 import '../../features/login/domain/usecase/register_user.dart';
+import '../../features/home/data/datasource/home_remote_datasource.dart';
+import '../../features/home/data/repository/home_repository_impl.dart';
+import '../../features/home/domain/usecase/get_home.dart';
+import '../../features/home/domain/usecase/get_recently_viewed.dart';
+import '../../features/home/domain/usecase/get_wishlists.dart';
 
 final sl = GetIt.instance;
 
@@ -43,5 +48,20 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<RegisterUserUseCase>(
     () => RegisterUserUseCase(sl<RegisterRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSource(sl<BaseApiServices>()),
+  );
+  sl.registerLazySingleton<HomeRepositoryImpl>(
+    () => HomeRepositoryImpl(sl<HomeRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetHomeUseCase>(
+    () => GetHomeUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<GetRecentlyViewedUseCase>(
+    () => GetRecentlyViewedUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<GetWishlistsUseCase>(
+    () => GetWishlistsUseCase(sl<HomeRepositoryImpl>()),
   );
 }

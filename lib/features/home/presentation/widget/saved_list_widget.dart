@@ -57,7 +57,8 @@ class _SavedStayCard extends StatelessWidget {
     String location,
     String price,
     String rating,
-  }) stay;
+  })
+  stay;
 
   const _SavedStayCard({required this.stay});
 
@@ -149,14 +150,14 @@ class _SavedStayCard extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
                 children: [
-              TextSpan(
-                text: ' / night',
-                style: TextStyle(
-                  color: theme.textSecondary,
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+                  TextSpan(
+                    text: ' / night',
+                    style: TextStyle(
+                      color: theme.textSecondary,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ],
               ),
             ),
