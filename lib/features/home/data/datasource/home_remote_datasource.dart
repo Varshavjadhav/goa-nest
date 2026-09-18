@@ -40,6 +40,35 @@ class HomeRemoteDataSource {
     (json) => _wishlistList(json['wishlists']),
   );
 
+  Future<Either<AppException, BaseResponseModel<WishlistModel>>> createWishlist(
+    String name,
+  ) => apiService.postApi(
+    ApiUrl.wishlists,
+    const {},
+    WishlistModel.fromResponseJson,
+    body: {'name': name},
+  );
+
+  Future<Either<AppException, BaseResponseModel<WishlistModel>>>
+  addPropertyToWishlist(String wishlistId, String propertyId) =>
+      apiService.postApi(
+        ApiUrl.wishlistProperties
+            .replaceAll('{wishlistId}', wishlistId)
+            .replaceAll('{propertyId}', propertyId),
+        const {},
+        WishlistModel.fromResponseJson,
+      );
+
+  Future<Either<AppException, BaseResponseModel<WishlistModel>>>
+  removePropertyFromWishlist(String wishlistId, String propertyId) =>
+      apiService.deleteApi(
+        ApiUrl.wishlistProperties
+            .replaceAll('{wishlistId}', wishlistId)
+            .replaceAll('{propertyId}', propertyId),
+        const {},
+        WishlistModel.fromResponseJson,
+      );
+
   Future<Either<AppException, BaseResponseModel<FavoriteModel>>> addFavorite(
     String id,
   ) => apiService.postApi<FavoriteModel>(

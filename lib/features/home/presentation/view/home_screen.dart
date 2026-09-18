@@ -63,9 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
           create: (_) => RecentlyViewedBloc(sl<GetRecentlyViewedUseCase>()),
         ),
         BlocProvider(
-          create: (_) =>
-              WishlistBloc(sl<GetWishlistsUseCase>(), sl<HomeRepositoryImpl>())
-                ..add(LoadWishlists()),
+          create: (_) => WishlistBloc(
+            sl<GetWishlistsUseCase>(),
+            sl<CreateWishlistUseCase>(),
+            sl<AddPropertyToWishlistUseCase>(),
+            sl<RemovePropertyFromWishlistUseCase>(),
+            sl<HomeRepositoryImpl>(),
+          )..add(LoadWishlists()),
         ),
       ],
       child: AppScaffold(

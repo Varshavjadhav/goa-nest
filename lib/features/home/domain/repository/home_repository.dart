@@ -15,6 +15,15 @@ abstract class HomeRepository {
     int limit = 20,
   });
   Future<Either<AppException, List<WishlistModel>>> getWishlists();
+  Future<Either<AppException, WishlistModel>> createWishlist(String name);
+  Future<Either<AppException, WishlistModel>> addPropertyToWishlist(
+    String wishlistId,
+    String propertyId,
+  );
+  Future<Either<AppException, WishlistModel>> removePropertyFromWishlist(
+    String wishlistId,
+    String propertyId,
+  );
   Future<Either<AppException, FavoriteModel>> addFavorite(String id);
   Future<Either<AppException, FavoriteModel>> removeFavorite(String id);
   Future<Either<AppException, ResultMessage>> markRecentlyViewed(String id);

@@ -16,6 +16,12 @@ class WishlistError extends WishlistState {
   WishlistError(this.message);
 }
 
+class WishlistActionError extends WishlistState {
+  final String message;
+  final List<WishlistModel> wishlists;
+  WishlistActionError(this.message, this.wishlists);
+}
+
 class FavoriteUpdated extends WishlistState {
   final String propertyId;
   final bool isLiked;

@@ -92,6 +92,9 @@ class AppRouter {
               BlocProvider(
                 create: (_) => WishlistBloc(
                   sl<GetWishlistsUseCase>(),
+                  sl<CreateWishlistUseCase>(),
+                  sl<AddPropertyToWishlistUseCase>(),
+                  sl<RemovePropertyFromWishlistUseCase>(),
                   sl<HomeRepositoryImpl>(),
                 ),
               ),

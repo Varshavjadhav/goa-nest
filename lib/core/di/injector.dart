@@ -64,4 +64,13 @@ void setupServiceLocator() {
   sl.registerLazySingleton<GetWishlistsUseCase>(
     () => GetWishlistsUseCase(sl<HomeRepositoryImpl>()),
   );
+  sl.registerLazySingleton<CreateWishlistUseCase>(
+    () => CreateWishlistUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<AddPropertyToWishlistUseCase>(
+    () => AddPropertyToWishlistUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<RemovePropertyFromWishlistUseCase>(
+    () => RemovePropertyFromWishlistUseCase(sl<HomeRepositoryImpl>()),
+  );
 }

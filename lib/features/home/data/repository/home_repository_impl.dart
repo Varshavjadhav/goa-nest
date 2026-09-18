@@ -35,6 +35,26 @@ class HomeRepositoryImpl implements HomeRepository {
       remoteDataSource.getWishlists().mapEntity((data) => data);
 
   @override
+  Future<Either<AppException, WishlistModel>> createWishlist(String name) =>
+      remoteDataSource.createWishlist(name).mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, WishlistModel>> addPropertyToWishlist(
+    String wishlistId,
+    String propertyId,
+  ) => remoteDataSource
+      .addPropertyToWishlist(wishlistId, propertyId)
+      .mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, WishlistModel>> removePropertyFromWishlist(
+    String wishlistId,
+    String propertyId,
+  ) => remoteDataSource
+      .removePropertyFromWishlist(wishlistId, propertyId)
+      .mapEntity((data) => data);
+
+  @override
   Future<Either<AppException, FavoriteModel>> addFavorite(String id) =>
       remoteDataSource.addFavorite(id).mapEntity((data) => data);
 
