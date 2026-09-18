@@ -9,6 +9,7 @@ import '../model/home_model.dart';
 import '../model/wishlist_model.dart';
 import '../model/favorite_model.dart';
 import '../model/search_model.dart';
+import '../model/profile_model.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
@@ -18,6 +19,15 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppException, ExploreModel>> getExplore() =>
       remoteDataSource.getExplore().mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, ProfileModel>> getProfile() =>
+      remoteDataSource.getProfile().mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, ProfileModel>> updateProfile(
+    ProfileUpdateRequest request,
+  ) => remoteDataSource.updateProfile(request).mapEntity((data) => data);
 
   @override
   Future<Either<AppException, PropertyDetailModel>> getProperty(String id) =>

@@ -11,6 +11,12 @@ class RegisterUserUseCase {
   Future<Either<AppException, RegisterResponse>> call({
     required String name,
     required String email,
+    required String phone,
     required String password,
-  }) => repository.register(name: name, email: email, password: password);
+  }) => repository.register(
+    name: name,
+    email: email,
+    phone: phone,
+    password: password,
+  );
 }

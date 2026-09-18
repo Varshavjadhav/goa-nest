@@ -13,13 +13,19 @@ class RegisterRemoteDataSource {
   Future<Either<AppException, BaseResponseModel<RegisterResponse>>> register({
     required String name,
     required String email,
+    required String phone,
     required String password,
   }) {
     return apiService.postApi<RegisterResponse>(
       ApiUrl.register,
       const {},
       RegisterResponse.fromJson,
-      body: {'name': name, 'email': email, 'password': password},
+      body: {
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+      },
       disableTokenValidityCheck: true,
     );
   }

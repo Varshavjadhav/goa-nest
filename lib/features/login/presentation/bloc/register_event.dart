@@ -12,6 +12,11 @@ class RegisterEmailChanged extends RegisterEvent {
   const RegisterEmailChanged(this.value);
 }
 
+class RegisterPhoneChanged extends RegisterEvent {
+  final String value;
+  const RegisterPhoneChanged(this.value);
+}
+
 class RegisterPasswordChanged extends RegisterEvent {
   final String value;
   const RegisterPasswordChanged(this.value);

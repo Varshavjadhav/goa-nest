@@ -20,4 +20,5 @@ class ApiUrl {
       'wishlists/{wishlistId}/properties/{propertyId}';
   static const String search = 'search';
   static const String searchSuggestions = 'search/suggestions';
+  static const String userProfile = 'user/profile';
 }

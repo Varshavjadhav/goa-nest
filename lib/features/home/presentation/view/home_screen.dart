@@ -13,11 +13,14 @@ import '../bloc/home_event.dart';
 import '../bloc/recently_viewed_bloc.dart';
 import '../bloc/wishlist_bloc.dart';
 import '../bloc/wishlist_event.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_event.dart';
 import '../../../../core/di/injector.dart';
 import '../../data/repository/home_repository_impl.dart';
 import '../../domain/usecase/get_home.dart';
 import '../../domain/usecase/get_recently_viewed.dart';
 import '../../domain/usecase/get_wishlists.dart';
+import '../../domain/usecase/profile_usecases.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -58,6 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
       providers: [
         BlocProvider(
           create: (_) => HomeBloc(sl<GetHomeUseCase>())..add(LoadHome()),
+        ),
+        BlocProvider(
+          create: (_) => ProfileBloc(
+            sl<GetProfileUseCase>(),
+            sl<UpdateProfileUseCase>(),
+          )..add(LoadProfile()),
         ),
         BlocProvider(
           create: (_) => RecentlyViewedBloc(sl<GetRecentlyViewedUseCase>()),

@@ -94,6 +94,15 @@ class _RegistrationView extends StatelessWidget {
               ),
               SizedBox(height: 16.h),
               TextField(
+                keyboardType: TextInputType.phone,
+                onChanged: (value) => bloc.add(RegisterPhoneChanged(value)),
+                decoration: CommonWidgets.inputDecoration(
+                  hint: 'Phone number',
+                  errorText: state.phoneError,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              TextField(
                 obscureText: state.obscurePassword,
                 onChanged: (value) => bloc.add(RegisterPasswordChanged(value)),
                 decoration: CommonWidgets.inputDecoration(

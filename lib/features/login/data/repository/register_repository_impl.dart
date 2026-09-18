@@ -16,11 +16,13 @@ class RegisterRepositoryImpl implements RegisterRepository {
   Future<Either<AppException, RegisterResponse>> register({
     required String name,
     required String email,
+    required String phone,
     required String password,
   }) async {
     final result = await remoteDataSource.register(
       name: name,
       email: email,
+      phone: phone,
       password: password,
     );
     if (result.isLeft()) {

@@ -24,6 +24,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         ),
       ),
     );
+    on<RegisterPhoneChanged>(
+      (e, emit) => emit(
+        state.copyWith(
+          phone: e.value,
+          status: RegisterStatus.initial,
+          clearErrors: true,
+        ),
+      ),
+    );
     on<RegisterPasswordChanged>(
       (e, emit) => emit(
         state.copyWith(
@@ -52,15 +61,24 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         : (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(state.email.trim())
               ? 'Enter a valid email address'
               : null);
+    final phoneError = state.phone.trim().isEmpty
+        ? 'Please enter your phone number'
+        : (!RegExp(r'^\+?[0-9\s()\-]{7,20}$').hasMatch(state.phone.trim())
+              ? 'Enter a valid phone number'
+              : null);
     final passwordError = state.password.length < 6
         ? 'Password must be at least 6 characters'
         : null;
-    if (nameError != null || emailError != null || passwordError != null) {
+    if (nameError != null ||
+        emailError != null ||
+        phoneError != null ||
+        passwordError != null) {
       emit(
         state.copyWith(
           status: RegisterStatus.failure,
           nameError: nameError,
           emailError: emailError,
+          phoneError: phoneError,
           passwordError: passwordError,
         ),
       );
@@ -76,6 +94,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     final result = await registerUser(
       name: state.name.trim(),
       email: state.email.trim(),
+      phone: state.phone.trim(),
       password: state.password,
     );
     result.fold(

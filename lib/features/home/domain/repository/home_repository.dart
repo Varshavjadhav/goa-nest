@@ -7,9 +7,14 @@ import '../../data/model/property_detail_model.dart';
 import '../../data/model/wishlist_model.dart';
 import '../../data/model/favorite_model.dart';
 import '../../data/model/search_model.dart';
+import '../../data/model/profile_model.dart';
 
 abstract class HomeRepository {
   Future<Either<AppException, ExploreModel>> getExplore();
+  Future<Either<AppException, ProfileModel>> getProfile();
+  Future<Either<AppException, ProfileModel>> updateProfile(
+    ProfileUpdateRequest request,
+  );
   Future<Either<AppException, PropertyDetailModel>> getProperty(String id);
   Future<Either<AppException, PropertyCollection>> getRecentlyViewed({
     int page = 1,
