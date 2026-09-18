@@ -3,6 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/model/search_model.dart';
+import '../../data/model/explore_model.dart';
+import '../bloc/search_bloc.dart';
+import '../bloc/search_event.dart';
+import '../bloc/search_state.dart';
 
 enum _SearchStage { destination, dates, guests, results }
 
@@ -17,6 +23,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   String destination = '';
   DateTime? checkIn, checkOut;
   int guests = 0;
+  SearchQuery searchQuery = const SearchQuery();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -64,6 +71,7 @@ class _SearchWidgetState extends State<SearchWidget> {
         return _DestinationStep(
           onSelect: (value) => setState(() {
             destination = value;
+            searchQuery = searchQuery.copyWith(query: value);
             stage = _SearchStage.dates;
           }),
         );
@@ -74,17 +82,30 @@ class _SearchWidgetState extends State<SearchWidget> {
           onChanged: (range) => setState(() {
             checkIn = range.start;
             checkOut = range.end;
+            searchQuery = searchQuery.copyWith(
+              checkIn: range.start,
+              checkOut: range.end,
+            );
           }),
           onNext: () => setState(() => stage = _SearchStage.guests),
         );
       case _SearchStage.guests:
         return _GuestsStep(
           guests: guests,
-          onChanged: (value) => setState(() => guests = value),
-          onSearch: () => setState(() => stage = _SearchStage.results),
+          onChanged: (value) => setState(() {
+            guests = value;
+            searchQuery = searchQuery.copyWith(maxGuests: value);
+          }),
+          onSearch: () {
+            context.read<SearchBloc>().add(SearchProperties(searchQuery));
+            setState(() => stage = _SearchStage.results);
+          },
         );
       case _SearchStage.results:
-        return _ResultsStep(onFilter: () => context.push(RouteName.filterView));
+        return _ResultsStep(
+          query: searchQuery,
+          onFilter: () => context.push(RouteName.filterView),
+        );
     }
   }
 }
@@ -127,9 +148,23 @@ class _TopBar extends StatelessWidget {
   );
 }
 
-class _DestinationStep extends StatelessWidget {
+class _DestinationStep extends StatefulWidget {
   final ValueChanged<String> onSelect;
   const _DestinationStep({required this.onSelect});
+
+  @override
+  State<_DestinationStep> createState() => _DestinationStepState();
+}
+
+class _DestinationStepState extends State<_DestinationStep> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => ListView(
     padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 32.h),
@@ -149,24 +184,66 @@ class _DestinationStep extends StatelessWidget {
         style: TextStyle(fontSize: 14.sp, color: AppColor.textSecondary),
       ),
       SizedBox(height: 24.h),
-      Container(
-        height: 56.h,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        decoration: BoxDecoration(
-          color: AppColor.white,
-          border: Border.all(color: AppColor.textPrimary, width: 1.5),
-          borderRadius: BorderRadius.circular(12.r),
+      TextField(
+        controller: _controller,
+        onChanged: (value) =>
+            context.read<SearchBloc>().add(SearchSuggestionsChanged(value)),
+        onSubmitted: (value) {
+          if (value.trim().isNotEmpty) widget.onSelect(value.trim());
+        },
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search_rounded),
+          hintText: 'Search destinations',
+          filled: true,
+          fillColor: AppColor.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColor.textPrimary, width: 1.5),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColor.textPrimary, width: 1.5),
+          ),
         ),
-        child: Row(
-          children: [
-            Icon(Icons.search_rounded, size: 22.sp),
-            SizedBox(width: 12.w),
-            Text(
-              'Search destinations',
-              style: TextStyle(color: AppColor.textSecondary, fontSize: 15.sp),
+      ),
+      BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          if (state is SearchSuggestionsLoading) {
+            return Padding(
+              padding: EdgeInsets.only(top: 12.h),
+              child: const LinearProgressIndicator(),
+            );
+          }
+          if (state is! SearchSuggestionsLoaded || state.suggestions.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return Padding(
+            padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
+            child: Column(
+              children: state.suggestions
+                  .map(
+                    (suggestion) => ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        backgroundColor: AppColor.tertiary,
+                        child: Icon(
+                          Icons.location_on_outlined,
+                          color: AppColor.primary,
+                        ),
+                      ),
+                      title: Text(suggestion.label),
+                      subtitle: Text('${suggestion.propertyCount} stays'),
+                      onTap: () {
+                        _controller.text = suggestion.label;
+                        widget.onSelect(suggestion.label);
+                      },
+                    ),
+                  )
+                  .toList(),
             ),
-          ],
-        ),
+          );
+        },
       ),
       SizedBox(height: 28.h),
       Text(
@@ -204,7 +281,7 @@ class _DestinationStep extends StatelessWidget {
           title: item.$1,
           subtitle: item.$2,
           icon: item.$3,
-          onTap: () => onSelect(item.$1),
+          onTap: () => widget.onSelect(item.$1),
         ),
     ],
   );
@@ -511,71 +588,108 @@ class _PrimaryButton extends StatelessWidget {
 }
 
 class _ResultsStep extends StatelessWidget {
+  final SearchQuery query;
   final VoidCallback onFilter;
-  const _ResultsStep({required this.onFilter});
+  const _ResultsStep({required this.query, required this.onFilter});
   @override
   Widget build(BuildContext context) => ListView(
     padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 32.h),
     children: [
-      Row(
-        children: [
-          Expanded(
-            child: Text(
-              '100+ places to stay',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColor.textPrimary,
+      BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          if (state is SearchLoading || state is SearchInitial) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 60),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (state is SearchError) {
+            return _SearchMessage(
+              message: state.message,
+              onRetry: () =>
+                  context.read<SearchBloc>().add(SearchProperties(query)),
+            );
+          }
+          final results = state is SearchLoaded
+              ? state.results
+              : const SearchResultsModel();
+          if (results.items.isEmpty) {
+            return const _SearchMessage(
+              message: 'No stays found for this search.',
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${results.total} ${results.total == 1 ? 'place' : 'places'} to stay',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColor.textPrimary,
+                      ),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: onFilter,
+                    icon: Icon(Icons.tune_rounded, size: 16.sp),
+                    label: Text('Filters', style: TextStyle(fontSize: 13.sp)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColor.textPrimary,
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      minimumSize: Size(0, 36.h),
+                      side: const BorderSide(color: AppColor.divider),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.r),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          OutlinedButton.icon(
-            onPressed: onFilter,
-            icon: Icon(Icons.tune_rounded, size: 16.sp),
-            label: Text('Filters', style: TextStyle(fontSize: 13.sp)),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColor.textPrimary,
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              minimumSize: Size(0, 36.h),
-              side: const BorderSide(color: AppColor.divider),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.r),
-              ),
-            ),
-          ),
-        ],
-      ),
-      SizedBox(height: 18.h),
-      const _ResultCard(
-        title: 'Stunning oceanfront villa',
-        location: 'North Goa, India',
-        price: '₹18,500 night',
-        image:
-            'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900',
-      ),
-      const _ResultCard(
-        title: 'Casa Verde Manor',
-        location: 'Assagao, Goa',
-        price: '₹12,200 night',
-        image:
-            'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900',
+              SizedBox(height: 18.h),
+              for (final item in results.items) _ResultCard(property: item),
+            ],
+          );
+        },
       ),
     ],
   );
 }
 
+class _SearchMessage extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
+  const _SearchMessage({required this.message, this.onRetry});
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.symmetric(vertical: 60.h),
+    child: Center(
+      child: Column(
+        children: [
+          Text(message, textAlign: TextAlign.center),
+          if (onRetry != null) ...[
+            SizedBox(height: 12.h),
+            TextButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ],
+      ),
+    ),
+  );
+}
+
 class _ResultCard extends StatelessWidget {
-  final String title, location, price, image;
-  const _ResultCard({
-    required this.title,
-    required this.location,
-    required this.price,
-    required this.image,
-  });
+  final ExploreProperty property;
+  const _ResultCard({required this.property});
   @override
   Widget build(BuildContext context) => InkWell(
-    // These are placeholder search results without backend property IDs.
-    onTap: null,
+    onTap: property.id.isEmpty
+        ? null
+        : () => context.push(
+            RouteName.propertyView.replaceFirst(':propertyId', property.id),
+          ),
     child: Padding(
       padding: EdgeInsets.only(bottom: 24.h),
       child: Column(
@@ -588,7 +702,7 @@ class _ResultCard extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1.08,
                   child: Image.network(
-                    image,
+                    property.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
                       color: AppColor.greyExtraLight,
@@ -607,14 +721,22 @@ class _ResultCard extends StatelessWidget {
                     color: AppColor.white,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.favorite_border_rounded, size: 20.sp),
+                  child: Icon(
+                    property.isLiked
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    size: 20.sp,
+                    color: property.isLiked
+                        ? AppColor.primary
+                        : AppColor.textPrimary,
+                  ),
                 ),
               ),
             ],
           ),
           SizedBox(height: 10.h),
           Text(
-            title,
+            property.title,
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
@@ -623,12 +745,12 @@ class _ResultCard extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            location,
+            property.location,
             style: TextStyle(fontSize: 13.sp, color: AppColor.textSecondary),
           ),
           SizedBox(height: 5.h),
           Text(
-            price,
+            '${property.currency} ${property.pricePerNight.toStringAsFixed(0)} / night',
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,

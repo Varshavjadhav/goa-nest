@@ -9,6 +9,7 @@ import '../model/favorite_model.dart';
 import '../model/home_model.dart';
 import '../model/property_detail_model.dart';
 import '../model/wishlist_model.dart';
+import '../model/search_model.dart';
 
 class HomeRemoteDataSource {
   final BaseApiServices apiService;
@@ -31,6 +32,32 @@ class HomeRemoteDataSource {
     const {},
     PropertyCollection.fromJson,
     queryParams: {'page': page, 'limit': limit},
+  );
+
+  Future<Either<AppException, BaseResponseModel<SearchResultsModel>>> search(
+    SearchQuery query,
+  ) => apiService.getApi(
+    ApiUrl.search,
+    const {},
+    SearchResultsModel.fromJson,
+    queryParams: query.toQueryParams(),
+  );
+
+  Future<Either<AppException, BaseResponseModel<List<SearchSuggestionModel>>>>
+  getSearchSuggestions(String query) => apiService.getApi(
+    ApiUrl.searchSuggestions,
+    const {},
+    (json) => json['suggestions'] is List
+        ? (json['suggestions'] as List)
+              .whereType<Map>()
+              .map(
+                (item) => SearchSuggestionModel.fromJson(
+                  Map<String, dynamic>.from(item),
+                ),
+              )
+              .toList()
+        : const [],
+    queryParams: {'q': query},
   );
 
   Future<Either<AppException, BaseResponseModel<List<WishlistModel>>>>

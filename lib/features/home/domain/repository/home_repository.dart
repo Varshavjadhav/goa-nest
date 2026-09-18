@@ -6,6 +6,7 @@ import '../../data/model/home_model.dart';
 import '../../data/model/property_detail_model.dart';
 import '../../data/model/wishlist_model.dart';
 import '../../data/model/favorite_model.dart';
+import '../../data/model/search_model.dart';
 
 abstract class HomeRepository {
   Future<Either<AppException, ExploreModel>> getExplore();
@@ -14,6 +15,9 @@ abstract class HomeRepository {
     int page = 1,
     int limit = 20,
   });
+  Future<Either<AppException, SearchResultsModel>> search(SearchQuery query);
+  Future<Either<AppException, List<SearchSuggestionModel>>>
+  getSearchSuggestions(String query);
   Future<Either<AppException, List<WishlistModel>>> getWishlists();
   Future<Either<AppException, WishlistModel>> createWishlist(String name);
   Future<Either<AppException, WishlistModel>> addPropertyToWishlist(

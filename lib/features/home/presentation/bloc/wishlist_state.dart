@@ -25,13 +25,20 @@ class WishlistActionError extends WishlistState {
 class FavoriteUpdated extends WishlistState {
   final String propertyId;
   final bool isLiked;
-  FavoriteUpdated(this.propertyId, this.isLiked);
+  final List<WishlistModel> wishlists;
+  FavoriteUpdated(this.propertyId, this.isLiked, this.wishlists);
 }
 
 class FavoriteError extends WishlistState {
   final String propertyId;
   final bool previousIsLiked;
   final String message;
+  final List<WishlistModel> wishlists;
 
-  FavoriteError(this.propertyId, this.previousIsLiked, this.message);
+  FavoriteError(
+    this.propertyId,
+    this.previousIsLiked,
+    this.message,
+    this.wishlists,
+  );
 }

@@ -18,4 +18,6 @@ class ApiUrl {
   static const String wishlists = 'wishlists';
   static const String wishlistProperties =
       'wishlists/{wishlistId}/properties/{propertyId}';
+  static const String search = 'search';
+  static const String searchSuggestions = 'search/suggestions';
 }

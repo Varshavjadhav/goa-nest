@@ -18,7 +18,9 @@ import 'package:goanest/features/home/presentation/bloc/property_detail_event.da
 import 'package:goanest/features/home/presentation/bloc/recently_viewed_event.dart';
 import 'package:goanest/features/home/domain/usecase/get_recently_viewed.dart';
 import 'package:goanest/features/home/domain/usecase/get_wishlists.dart';
+import 'package:goanest/features/home/domain/usecase/search_properties.dart';
 import 'package:goanest/features/home/data/repository/home_repository_impl.dart';
+import 'package:goanest/features/home/presentation/bloc/search_bloc.dart';
 
 import '../../core.dart';
 import '../../utilities/extensions/extensions.dart';
@@ -73,7 +75,13 @@ class AppRouter {
         pageBuilder: (context, state) => appCustomTransitionPage(
           state: state,
           transitionBuilder: slideInOutTransition,
-          child: const SearchWidget(),
+          child: BlocProvider(
+            create: (_) => SearchBloc(
+              sl<SearchPropertiesUseCase>(),
+              sl<GetSearchSuggestionsUseCase>(),
+            ),
+            child: const SearchWidget(),
+          ),
         ),
       ),
       GoRoute(

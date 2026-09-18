@@ -49,13 +49,53 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       );
     });
     on<ToggleFavorite>((event, emit) async {
+      final currentWishlist = _currentWishlists.isEmpty
+          ? null
+          : _currentWishlists.first;
+
+      // A home-screen heart represents saving a stay to the user's first
+      // wishlist. Keep the legacy favorites endpoint as a fallback for users
+      // who do not have a wishlist yet.
+      if (currentWishlist != null && currentWishlist.id.isNotEmpty) {
+        final wishlistResult = event.isLiked
+            ? await removeProperty(currentWishlist.id, event.propertyId)
+            : await addProperty(currentWishlist.id, event.propertyId);
+        wishlistResult.fold(
+          (error) => emit(
+            FavoriteError(
+              event.propertyId,
+              event.isLiked,
+              error.message,
+              _currentWishlists,
+            ),
+          ),
+          (wishlist) => emit(
+            FavoriteUpdated(
+              event.propertyId,
+              !event.isLiked,
+              _replaceWishlist(wishlist),
+            ),
+          ),
+        );
+        return;
+      }
+
       final result = event.isLiked
           ? await repository.removeFavorite(event.propertyId)
           : await repository.addFavorite(event.propertyId);
       result.fold(
         (error) =>
-            emit(FavoriteError(event.propertyId, event.isLiked, error.message)),
-        (favorite) => emit(FavoriteUpdated(event.propertyId, favorite.isLiked)),
+            emit(
+              FavoriteError(
+                event.propertyId,
+                event.isLiked,
+                error.message,
+                _currentWishlists,
+              ),
+            ),
+        (favorite) => emit(
+          FavoriteUpdated(event.propertyId, favorite.isLiked, _currentWishlists),
+        ),
       );
     });
   }
@@ -64,6 +104,10 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       ? (state as WishlistLoaded).wishlists
       : state is WishlistActionError
       ? (state as WishlistActionError).wishlists
+      : state is FavoriteUpdated
+      ? (state as FavoriteUpdated).wishlists
+      : state is FavoriteError
+      ? (state as FavoriteError).wishlists
       : const [];
 
   List<WishlistModel> _replaceWishlist(WishlistModel wishlist) {

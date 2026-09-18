@@ -72,29 +72,34 @@ class _HomeScreenState extends State<HomeScreen> {
           )..add(LoadWishlists()),
         ),
       ],
-      child: AppScaffold(
-        backgroundColor: context.themeExt.homeScaffold,
-        extendBody: true,
-        body: SafeArea(
-          bottom: false,
-          child: IndexedStack(
-            index: _currentIndex,
-            children: const [
-              HomeWidget(),
-              WishlistWidget(),
-              BookingsWidget(),
-              ProfileWidget(),
-            ],
+      child: Builder(
+        builder: (providerContext) => AppScaffold(
+          backgroundColor: providerContext.themeExt.homeScaffold,
+          extendBody: true,
+          body: SafeArea(
+            bottom: false,
+            child: IndexedStack(
+              index: _currentIndex,
+              children: const [
+                HomeWidget(),
+                WishlistWidget(),
+                BookingsWidget(),
+                ProfileWidget(),
+              ],
+            ),
           ),
-        ),
-        bottomNavigationBar: AppMainNavBar(
-          currentIndex: _currentIndex,
-          items: _navItems,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+          bottomNavigationBar: AppMainNavBar(
+            currentIndex: _currentIndex,
+            items: _navItems,
+            onTap: (index) {
+              if (index == 1 && _currentIndex != 1) {
+                providerContext.read<WishlistBloc>().add(LoadWishlists());
+              }
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
         ),
       ),
     );

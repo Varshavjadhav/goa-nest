@@ -38,6 +38,10 @@ class WishlistWidget extends StatelessWidget {
               ? state.wishlists
               : state is WishlistActionError
               ? state.wishlists
+              : state is FavoriteUpdated
+              ? state.wishlists
+              : state is FavoriteError
+              ? state.wishlists
               : const <WishlistModel>[];
           return _Content(wishlists: wishlists);
         },
@@ -296,12 +300,18 @@ class _CreateWishlistDialogState extends State<_CreateWishlistDialog> {
 Future<void> _showWishlistDetails(
   BuildContext context,
   WishlistModel wishlist,
-) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  backgroundColor: AppColor.surface,
-  builder: (_) => _WishlistDetails(wishlist: wishlist),
-);
+) {
+  final wishlistBloc = context.read<WishlistBloc>();
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColor.surface,
+    builder: (_) => BlocProvider.value(
+      value: wishlistBloc,
+      child: _WishlistDetails(wishlist: wishlist),
+    ),
+  );
+}
 
 class _WishlistDetails extends StatelessWidget {
   final WishlistModel wishlist;

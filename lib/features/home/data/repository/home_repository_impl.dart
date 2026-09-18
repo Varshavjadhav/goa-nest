@@ -8,6 +8,7 @@ import '../model/property_detail_model.dart';
 import '../model/home_model.dart';
 import '../model/wishlist_model.dart';
 import '../model/favorite_model.dart';
+import '../model/search_model.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
@@ -29,6 +30,15 @@ class HomeRepositoryImpl implements HomeRepository {
   }) => remoteDataSource
       .getRecentlyViewed(page: page, limit: limit)
       .mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, SearchResultsModel>> search(SearchQuery query) =>
+      remoteDataSource.search(query).mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, List<SearchSuggestionModel>>>
+  getSearchSuggestions(String query) =>
+      remoteDataSource.getSearchSuggestions(query).mapEntity((data) => data);
 
   @override
   Future<Either<AppException, List<WishlistModel>>> getWishlists() =>

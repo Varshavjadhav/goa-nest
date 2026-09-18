@@ -14,6 +14,7 @@ import '../../features/home/data/repository/home_repository_impl.dart';
 import '../../features/home/domain/usecase/get_home.dart';
 import '../../features/home/domain/usecase/get_recently_viewed.dart';
 import '../../features/home/domain/usecase/get_wishlists.dart';
+import '../../features/home/domain/usecase/search_properties.dart';
 
 final sl = GetIt.instance;
 
@@ -72,5 +73,11 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<RemovePropertyFromWishlistUseCase>(
     () => RemovePropertyFromWishlistUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<SearchPropertiesUseCase>(
+    () => SearchPropertiesUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<GetSearchSuggestionsUseCase>(
+    () => GetSearchSuggestionsUseCase(sl<HomeRepositoryImpl>()),
   );
 }
