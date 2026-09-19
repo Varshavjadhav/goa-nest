@@ -5,6 +5,7 @@ import 'package:goanest/features/home/data/model/booking_model.dart';
 import 'package:goanest/features/home/domain/usecase/check_availability.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/extensions/provide_theme_extension.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 
@@ -59,12 +60,7 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     body: ListView(
       padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 110.h),
       children: [
-        AppTextWidget.titleLarge(text: widget.propertyTitle),
-        SizedBox(height: 5.h),
-        AppTextWidget.bodySmall(
-          text: 'Check availability before booking this stay.',
-          color: AppColor.textSecondary,
-        ),
+        _heroHeader(),
         SizedBox(height: 18.h),
         _section(
           title: 'Dates',
@@ -110,6 +106,14 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     ),
     bottomNavigationBar: SafeArea(
       child: CommonWidgets.bottomBar(
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.black.withValues(alpha: .12),
+            blurRadius: 24,
+            spreadRadius: -4,
+            offset: const Offset(0, -8),
+          ),
+        ],
         child: Row(
           children: [
             Expanded(
@@ -165,24 +169,127 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     ),
   );
 
+  Widget _heroHeader() {
+    final theme = context.themeExt;
+    return Container(
+      padding: EdgeInsets.fromLTRB(18.w, 20.h, 18.w, 18.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.brandPrimary,
+            theme.brandPrimary.withValues(alpha: .78),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+          BoxShadow(
+            color: theme.brandPrimary.withValues(alpha: .22),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -18.w,
+            top: -28.h,
+            child: Icon(
+              Icons.home_work_rounded,
+              size: 118.sp,
+              color: AppColor.white.withValues(alpha: .1),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.p),
+                    decoration: BoxDecoration(
+                      color: AppColor.white.withValues(alpha: .16),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: const Icon(
+                      Icons.luggage_rounded,
+                      color: AppColor.white,
+                      size: 20,
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  AppTextWidget(
+                    text: 'PLAN YOUR STAY',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.1,
+                    color: AppColor.white.withValues(alpha: .82),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              AppTextWidget(
+                text: widget.propertyTitle,
+                fontSize: 21,
+                fontWeight: FontWeight.w800,
+                color: AppColor.white,
+                maxLines: 2,
+                textOverflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 5.h),
+              AppTextWidget(
+                text: 'Choose dates and guests to see your total',
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppColor.white.withValues(alpha: .84),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _section({required String title, required Widget child}) => Container(
     decoration: BoxDecoration(
       color: AppColor.white,
-      borderRadius: BorderRadius.circular(18.r),
+      borderRadius: BorderRadius.circular(20.r),
+      border: Border.all(color: AppColor.divider.withValues(alpha: .7)),
       boxShadow: [
         BoxShadow(
-          color: AppColor.black.withValues(alpha: .06),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
+          color: AppColor.black.withValues(alpha: .075),
+          blurRadius: 20,
+          spreadRadius: -5,
+          offset: const Offset(0, 9),
+        ),
+        BoxShadow(
+          color: AppColor.black.withValues(alpha: .025),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
         ),
       ],
     ),
-    padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 8.h),
+    padding: EdgeInsets.fromLTRB(15.w, 15.h, 15.w, 9.h),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppTextWidget.titleMedium(text: title),
-        SizedBox(height: 8.h),
+        Row(
+          children: [
+            Container(
+              width: 4.w,
+              height: 18.h,
+              decoration: BoxDecoration(
+                color: context.themeExt.brandPrimary,
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+            ),
+            SizedBox(width: 8.w),
+            AppTextWidget.titleMedium(text: title),
+          ],
+        ),
+        SizedBox(height: 10.h),
         child,
       ],
     ),
@@ -200,13 +307,33 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     padding: EdgeInsets.all(13.w),
     decoration: BoxDecoration(
       color: AppColor.white,
-      borderRadius: BorderRadius.circular(14.r),
-      border: Border.all(color: AppColor.divider),
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(color: AppColor.primaryLight.withValues(alpha: .7)),
+      boxShadow: [
+        BoxShadow(
+          color: AppColor.primary.withValues(alpha: .07),
+          blurRadius: 12,
+          offset: const Offset(0, 5),
+        ),
+      ],
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppTextWidget.labelSmall(text: label, color: AppColor.textSecondary),
+        Row(
+          children: [
+            Icon(
+              label == 'Check-in' ? Icons.login_rounded : Icons.logout_rounded,
+              color: AppColor.primary,
+              size: 14.sp,
+            ),
+            SizedBox(width: 5.w),
+            AppTextWidget.labelSmall(
+              text: label,
+              color: AppColor.textSecondary,
+            ),
+          ],
+        ),
         SizedBox(height: 4.h),
         AppTextWidget.titleSmall(text: date == null ? 'Add date' : _date(date)),
       ],
@@ -223,16 +350,41 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     child: Row(
       children: [
         Expanded(child: AppTextWidget.bodyLarge(text: label)),
-        IconButton(
-          onPressed: onMinus,
-          icon: const Icon(Icons.remove_circle_outline),
+        _counterButton(icon: Icons.remove_rounded, onPressed: onMinus),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: AppTextWidget.titleMedium(text: '$value'),
         ),
-        AppTextWidget.titleMedium(text: '$value'),
-        IconButton(
-          onPressed: onPlus,
-          icon: const Icon(Icons.add_circle_outline),
-        ),
+        _counterButton(icon: Icons.add_rounded, onPressed: onPlus),
       ],
+    ),
+  );
+
+  Widget _counterButton({
+    required IconData icon,
+    required VoidCallback? onPressed,
+  }) => Container(
+    width: 34.w,
+    height: 34.w,
+    decoration: BoxDecoration(
+      color: onPressed == null
+          ? AppColor.greyLight
+          : AppColor.primary.withValues(alpha: .1),
+      shape: BoxShape.circle,
+      border: Border.all(
+        color: onPressed == null
+            ? AppColor.divider
+            : AppColor.primary.withValues(alpha: .2),
+      ),
+    ),
+    child: IconButton(
+      padding: EdgeInsets.zero,
+      onPressed: onPressed,
+      icon: Icon(
+        icon,
+        size: 18.sp,
+        color: onPressed == null ? AppColor.grey : AppColor.primary,
+      ),
     ),
   );
 
@@ -335,14 +487,14 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
         );
       });
       if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const AppTextWidget.legacy(
-                'Dates available. You can reserve this stay.',
-              ),
-              backgroundColor: AppColor.success,
-              behavior: SnackBarBehavior.floating,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const AppTextWidget.legacy(
+              'Dates available. You can reserve this stay.',
             ),
+            backgroundColor: AppColor.success,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
       return;
@@ -418,12 +570,12 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
   void _continueToCheckout() {
     final result = availability!;
     final query = <String, String>{
-        'checkIn': _date(checkIn!),
-        'checkOut': _date(checkOut!),
-        'guests': guests.toString(),
-        'total': result.totalAmount.toStringAsFixed(0),
-        'title': widget.propertyTitle,
-      };
+      'checkIn': _isoDate(checkIn!),
+      'checkOut': _isoDate(checkOut!),
+      'guests': guests.toString(),
+      'total': result.totalAmount.toStringAsFixed(0),
+      'title': widget.propertyTitle,
+    };
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const AppTextWidget.legacy(
@@ -443,6 +595,11 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
       );
     });
   }
+
+  static String _isoDate(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-'
+      '${value.month.toString().padLeft(2, '0')}-'
+      '${value.day.toString().padLeft(2, '0')}';
 
   static String _date(DateTime value) =>
       '${value.day}/${value.month}/${value.year}';

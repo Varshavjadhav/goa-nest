@@ -18,7 +18,12 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ThemeBloc()),
+        BlocProvider(create: (_) => LanguageBloc()),
+      ],
+      child: LayoutBuilder(
       builder: (context, constraints) {
         return OrientationBuilder(
           builder: (context, orientation) {
@@ -56,6 +61,7 @@ class App extends StatelessWidget {
           },
         );
       },
+      ),
     );
   }
 }

@@ -24,23 +24,33 @@ class _HomeWidgetState extends State<HomeWidget> {
   int selectedTab = 0;
 
   @override
-  Widget build(BuildContext context) => BlocBuilder<HomeBloc, HomeState>(
-    builder: (context, state) {
-      if (state is HomeLoading || state is HomeInitial) {
-        return const ColoredBox(
-          color: AppColor.white,
-          child: Center(child: CircularProgressIndicator()),
-        );
-      }
-      if (state is HomeError) {
-        return _ErrorView(
-          message: state.message,
-          onRetry: () => context.read<HomeBloc>().add(LoadHome()),
-        );
-      }
-      return _content(context, (state as HomeLoaded).home);
-    },
-  );
+  Widget build(BuildContext context) {
+    try {
+      context.read<HomeBloc>();
+    } catch (_) {
+      return const ColoredBox(
+        color: AppColor.white,
+        child: Center(child: AppTextWidget.bodyMedium(text: 'Explore stays')),
+      );
+    }
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state is HomeLoading || state is HomeInitial) {
+          return const ColoredBox(
+            color: AppColor.white,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (state is HomeError) {
+          return _ErrorView(
+            message: state.message,
+            onRetry: () => context.read<HomeBloc>().add(LoadHome()),
+          );
+        }
+        return _content(context, (state as HomeLoaded).home);
+      },
+    );
+  }
 
   Widget _content(BuildContext context, ExploreModel data) => ColoredBox(
     color: const Color(0xFFF7F7F7),

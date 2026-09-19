@@ -39,8 +39,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final roomAmount = total * .87;
     final cleaningFee = total * .05;
     final serviceFee = total * .08;
-    return WillPopScope(
-      onWillPop: _confirmExit,
+    return PopScope(
+      canPop: paymentStarted,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) await _leaveCheckout(context);
+      },
       child: Scaffold(
         backgroundColor: AppColor.scaffoldBackground,
         appBar: CommonWidgets.appBar(
@@ -441,7 +444,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return leave ?? false;
   }
 
-  void _leaveCheckout(BuildContext context) async {
+  Future<void> _leaveCheckout(BuildContext context) async {
     if (await _confirmExit() && context.mounted) context.pop();
   }
 

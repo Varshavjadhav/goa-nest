@@ -114,89 +114,103 @@ class _PropertyDetailContent extends StatelessWidget {
               ),
             ),
           ),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(16.w, 22.h, 16.w, 105.h),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                AppTextWidget.headlineLarge(text: property.title),
-                SizedBox(height: 7.h),
-                AppTextWidget.bodyMedium(
-                  text: location.isEmpty ? property.location : location,
-                  color: AppColor.textSecondary,
-                ),
-                SizedBox(height: 14.h),
-                CommonWidgets.starRatingRow(
-                  rating: property.rating.toStringAsFixed(2),
-                  reviewCount: property.totalReviews.toString(),
-                ),
-                SizedBox(height: 18.h),
-                _StaySummary(property: property),
-                CommonWidgets.divider(),
-                _HostInfo(property: property),
-                CommonWidgets.divider(),
-                AppTextWidget.headlineSmall(text: 'What this place offers'),
-                SizedBox(height: 14.h),
-                _AmenityGrid(amenities: property.amenities),
-                if (property.amenities.length > 4) ...[
-                  SizedBox(height: 14.h),
-                  CommonWidgets.showMoreLink(
-                    text: 'Show all ${property.amenities.length} amenities',
+          SliverToBoxAdapter(
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(48.r)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColor.black.withValues(alpha: .08),
+                    blurRadius: 22,
+                    spreadRadius: -8,
+                    offset: const Offset(0, -8),
                   ),
                 ],
-                CommonWidgets.divider(),
-                AppTextWidget.headlineSmall(text: 'About this place'),
-                SizedBox(height: 10.h),
-                AppTextWidget.bodyMedium(
-                  text: property.description.isEmpty
-                      ? 'No description available.'
-                      : property.description,
-                  height: 1.55,
-                  color: AppColor.textSecondary,
-                ),
-                CommonWidgets.divider(height: 40),
-                AppTextWidget.headlineSmall(text: 'Where you\'ll be'),
-                SizedBox(height: 5.h),
-                AppTextWidget.bodyMedium(
-                  text: property.location.isEmpty
-                      ? location
-                      : property.location,
-                  color: AppColor.textSecondary,
-                ),
-                SizedBox(height: 14.h),
-                _MapPlaceholder(),
-                CommonWidgets.divider(height: 40),
-                AppTextWidget.headlineSmall(text: 'Guest reviews'),
-                SizedBox(height: 14.h),
-                AppTextWidget.bodyMedium(
-                  text: property.totalReviews == 0
-                      ? 'No reviews yet.'
-                      : '${property.rating.toStringAsFixed(2)} average rating from ${property.totalReviews} reviews.',
-                  color: AppColor.textSecondary,
-                ),
-                CommonWidgets.divider(height: 40),
-                AppTextWidget.headlineSmall(text: 'Things to know'),
-                SizedBox(height: 14.h),
-                CommonWidgets.infoRow(
-                  icon: Icons.access_time,
-                  title: detail.checkInTime.isEmpty
-                      ? 'Check-in time unavailable'
-                      : 'Check-in after ${detail.checkInTime}',
-                  subtitle: detail.checkOutTime.isEmpty
-                      ? 'Checkout time unavailable'
-                      : 'Checkout before ${detail.checkOutTime}',
-                ),
-                CommonWidgets.infoRow(
-                  icon: Icons.nightlight_outlined,
-                  title: '${detail.minimumNights} night minimum',
-                  subtitle: '${detail.maximumNights} night maximum',
-                ),
-                if (detail.houseRules.isNotEmpty)
-                  CommonWidgets.infoRow(
-                    icon: Icons.rule,
-                    title: 'House rules',
-                    subtitle: detail.houseRules,
+              ),
+              padding: EdgeInsets.fromLTRB(16.w, 22.h, 16.w, 105.h),
+              child: Column(
+                children: [
+                  AppTextWidget.headlineLarge(text: property.title),
+                  SizedBox(height: 7.h),
+                  AppTextWidget.bodyMedium(
+                    text: location.isEmpty ? property.location : location,
+                    color: AppColor.textSecondary,
                   ),
-              ]),
+                  SizedBox(height: 14.h),
+                  CommonWidgets.starRatingRow(
+                    rating: property.rating.toStringAsFixed(2),
+                    reviewCount: property.totalReviews.toString(),
+                  ),
+                  SizedBox(height: 18.h),
+                  _StaySummary(property: property),
+                  CommonWidgets.divider(),
+                  _HostInfo(property: property),
+                  CommonWidgets.divider(),
+                  AppTextWidget.headlineSmall(text: 'What this place offers'),
+                  SizedBox(height: 14.h),
+                  _AmenityGrid(amenities: property.amenities),
+                  if (property.amenities.length > 4) ...[
+                    SizedBox(height: 14.h),
+                    CommonWidgets.showMoreLink(
+                      text: 'Show all ${property.amenities.length} amenities',
+                    ),
+                  ],
+                  CommonWidgets.divider(),
+                  AppTextWidget.headlineSmall(text: 'About this place'),
+                  SizedBox(height: 10.h),
+                  AppTextWidget.bodyMedium(
+                    text: property.description.isEmpty
+                        ? 'No description available.'
+                        : property.description,
+                    height: 1.55,
+                    color: AppColor.textSecondary,
+                  ),
+                  CommonWidgets.divider(height: 40),
+                  AppTextWidget.headlineSmall(text: 'Where you\'ll be'),
+                  SizedBox(height: 5.h),
+                  AppTextWidget.bodyMedium(
+                    text: property.location.isEmpty
+                        ? location
+                        : property.location,
+                    color: AppColor.textSecondary,
+                  ),
+                  SizedBox(height: 14.h),
+                  _MapPlaceholder(),
+                  CommonWidgets.divider(height: 40),
+                  AppTextWidget.headlineSmall(text: 'Guest reviews'),
+                  SizedBox(height: 14.h),
+                  AppTextWidget.bodyMedium(
+                    text: property.totalReviews == 0
+                        ? 'No reviews yet.'
+                        : '${property.rating.toStringAsFixed(2)} average rating from ${property.totalReviews} reviews.',
+                    color: AppColor.textSecondary,
+                  ),
+                  CommonWidgets.divider(height: 40),
+                  AppTextWidget.headlineSmall(text: 'Things to know'),
+                  SizedBox(height: 14.h),
+                  CommonWidgets.infoRow(
+                    icon: Icons.access_time,
+                    title: detail.checkInTime.isEmpty
+                        ? 'Check-in time unavailable'
+                        : 'Check-in after ${detail.checkInTime}',
+                    subtitle: detail.checkOutTime.isEmpty
+                        ? 'Checkout time unavailable'
+                        : 'Checkout before ${detail.checkOutTime}',
+                  ),
+                  CommonWidgets.infoRow(
+                    icon: Icons.nightlight_outlined,
+                    title: '${detail.minimumNights} night minimum',
+                    subtitle: '${detail.maximumNights} night maximum',
+                  ),
+                  if (detail.houseRules.isNotEmpty)
+                    CommonWidgets.infoRow(
+                      icon: Icons.rule,
+                      title: 'House rules',
+                      subtitle: detail.houseRules,
+                    ),
+                ],
+              ),
             ),
           ),
         ],
@@ -216,8 +230,8 @@ class _PropertyDetailContent extends StatelessWidget {
                         queryParameters: {
                           'title': property.title,
                           'nightlyPrice': property.pricePerNight,
-                          if (checkIn != null) 'checkIn': _date(checkIn!),
-                          if (checkOut != null) 'checkOut': _date(checkOut!),
+                          if (checkIn != null) 'checkIn': _isoDate(checkIn!),
+                          if (checkOut != null) 'checkOut': _isoDate(checkOut!),
                           if (guests != null) 'guests': guests.toString(),
                         },
                       )
@@ -232,11 +246,16 @@ class _PropertyDetailContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
-                child: AppTextWidget(
-                  text: actionLabel,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.white,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: AppTextWidget(
+                    text: actionLabel,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.white,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
                 ),
               ),
             ),
@@ -246,8 +265,10 @@ class _PropertyDetailContent extends StatelessWidget {
     );
   }
 
-  static String _date(DateTime value) =>
-      '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
+  static String _isoDate(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-'
+      '${value.month.toString().padLeft(2, '0')}-'
+      '${value.day.toString().padLeft(2, '0')}';
 }
 
 class _HeroImage extends StatelessWidget {

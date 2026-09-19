@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
@@ -34,6 +35,7 @@ class SearchWidget extends StatefulWidget {
 
 class _SearchWidgetState extends State<SearchWidget> {
   _SearchStage stage = _SearchStage.destination;
+  int _selectedCategory = 0;
   String destination = '';
   DateTime? checkIn, checkOut;
   bool flexibleDates = false;
@@ -54,18 +56,23 @@ class _SearchWidgetState extends State<SearchWidget> {
     body: SafeArea(
       child: Column(
         children: [
-          _SearchCategoryHeader(
-            onClose: () {
-              if (stage != _SearchStage.destination) {
-                setState(() => stage = _previous());
-              } else if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go(RouteName.homeView);
-              }
-            },
-          ),
-          if (stage != _SearchStage.destination)
+          if (stage != _SearchStage.results)
+            _SearchCategoryHeader(
+              selectedCategory: _selectedCategory,
+              onCategorySelected: (index) =>
+                  setState(() => _selectedCategory = index),
+              onClose: () {
+                if (stage != _SearchStage.destination) {
+                  setState(() => stage = _previous());
+                } else if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(RouteName.homeView);
+                }
+              },
+            ),
+          if (stage != _SearchStage.destination &&
+              stage != _SearchStage.results)
             _SearchSummary(
               stage: stage,
               onWhereTap: () =>
@@ -229,7 +236,11 @@ class _SearchWidgetState extends State<SearchWidget> {
           },
         );
       case _SearchStage.results:
-        return _ResultsStep(query: searchQuery, onFilter: _openFilters);
+        return _ResultsStep(
+          query: searchQuery,
+          onFilter: _openFilters,
+          onBack: () => context.go(RouteName.homeView),
+        );
     }
   }
 
@@ -457,8 +468,14 @@ class _SearchBottomBar extends StatelessWidget {
 }
 
 class _SearchCategoryHeader extends StatelessWidget {
+  final int selectedCategory;
+  final ValueChanged<int> onCategorySelected;
   final VoidCallback onClose;
-  const _SearchCategoryHeader({required this.onClose});
+  const _SearchCategoryHeader({
+    required this.selectedCategory,
+    required this.onCategorySelected,
+    required this.onClose,
+  });
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -467,14 +484,13 @@ class _SearchCategoryHeader extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(34.w, 8.h, 76.w, 15.h),
+          padding: EdgeInsets.fromLTRB(18.w, 8.h, 62.w, 15.h),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
-              _SearchCategory(icon: '🏠', label: 'Homes', active: true),
-              _SearchCategory(icon: '🎈', label: 'Experiences'),
-              _SearchCategory(icon: '🛎️', label: 'Services'),
+            children: [
+              _categoryButton(0, '🏠', 'Homes'),
+              _categoryButton(1, '🎈', 'Experiences'),
+              _categoryButton(2, '🛎️', 'Services'),
             ],
           ),
         ),
@@ -503,6 +519,20 @@ class _SearchCategoryHeader extends StatelessWidget {
           ),
         ),
       ],
+    ),
+  );
+
+  Widget _categoryButton(int index, String icon, String label) => Expanded(
+    child: GestureDetector(
+      onTap: () => onCategorySelected(index),
+      behavior: HitTestBehavior.opaque,
+      child: Center(
+        child: _SearchCategory(
+          icon: icon,
+          label: label,
+          active: selectedCategory == index,
+        ),
+      ),
     ),
   );
 }
@@ -1493,151 +1523,383 @@ class _CounterButton extends StatelessWidget {
 class _ResultsStep extends StatefulWidget {
   final SearchQuery query;
   final VoidCallback onFilter;
-  const _ResultsStep({required this.query, required this.onFilter});
+  final VoidCallback onBack;
+  const _ResultsStep({
+    required this.query,
+    required this.onFilter,
+    required this.onBack,
+  });
 
   @override
   State<_ResultsStep> createState() => _ResultsStepState();
 }
 
 class _ResultsStepState extends State<_ResultsStep> {
-  bool showMap = false;
-
   @override
-  Widget build(BuildContext context) => ListView(
-    padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 32.h),
+  Widget build(BuildContext context) => Stack(
     children: [
+      ListView(
+        padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 104.h),
+        children: [
+          _ResultsAppBar(onBack: widget.onBack),
+          SizedBox(height: 12.h),
+          BlocBuilder<SearchBloc, SearchState>(
+            builder: (context, state) {
+              if (state is SearchLoading || state is SearchInitial) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 60),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (state is SearchError) {
+                return _SearchMessage(
+                  message: state.message,
+                  onRetry: () => context.read<SearchBloc>().add(
+                    SearchProperties(widget.query),
+                  ),
+                );
+              }
+              final results = state is SearchLoaded
+                  ? state.results
+                  : const SearchResultsModel();
+              if (results.items.isEmpty) {
+                return const _SearchMessage(
+                  message: 'No search results found',
+                  showSearchIcon: true,
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppTextWidget.legacy(
+                              '${results.total} ${results.total == 1 ? 'stay' : 'stays'}',
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.textPrimary,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            AppTextWidget.legacy(
+                              'Homes that match your search',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: AppColor.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: widget.onFilter,
+                        icon: Icon(Icons.tune_rounded, size: 16.sp),
+                        label: AppTextWidget.legacy(
+                          'Filters',
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor.white,
+                          foregroundColor: AppColor.textPrimary,
+                          elevation: 2,
+                          shadowColor: AppColor.black.withValues(alpha: .12),
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
+                          minimumSize: Size(0, 40.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.r),
+                            side: const BorderSide(color: AppColor.divider),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  Container(
+                    padding: EdgeInsets.all(4.p),
+                    decoration: BoxDecoration(
+                      color: AppColor.white,
+                      borderRadius: BorderRadius.circular(26.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.black.withValues(alpha: .09),
+                          blurRadius: 20,
+                          spreadRadius: -5,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: _MapResults(
+                      properties: results.items,
+                      compact: true,
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+                  for (final item in results.items) _ResultCard(property: item),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
       BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
-          if (state is SearchLoading || state is SearchInitial) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 60),
-              child: Center(child: CircularProgressIndicator()),
-            );
+          if (state is! SearchLoaded || state.results.items.isEmpty) {
+            return const SizedBox.shrink();
           }
-          if (state is SearchError) {
-            return _SearchMessage(
-              message: state.message,
-              onRetry: () => context.read<SearchBloc>().add(
-                SearchProperties(widget.query),
+          return Positioned(
+            left: 0,
+            right: 0,
+            bottom: 18.h,
+            child: Center(
+              child: _MapFloatingButton(
+                onPressed: () =>
+                    _openFullScreenMap(context, state.results.items),
               ),
-            );
-          }
-          final results = state is SearchLoaded
-              ? state.results
-              : const SearchResultsModel();
-          if (results.items.isEmpty) {
-            return const _SearchMessage(
-              message: 'No stays found for this search.',
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: AppTextWidget.legacy(
-                      '${results.total} ${results.total == 1 ? 'place' : 'places'} to stay',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.textPrimary,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: 'List view',
-                    onPressed: () => setState(() => showMap = false),
-                    icon: Icon(
-                      Icons.view_list_rounded,
-                      color: showMap
-                          ? AppColor.textSecondary
-                          : AppColor.textPrimary,
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: 'Map view',
-                    onPressed: () => setState(() => showMap = true),
-                    icon: Icon(
-                      Icons.map_outlined,
-                      color: showMap
-                          ? AppColor.textPrimary
-                          : AppColor.textSecondary,
-                    ),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: widget.onFilter,
-                    icon: Icon(Icons.tune_rounded, size: 16.sp),
-                    label: AppTextWidget.legacy(
-                      'Filters',
-                      style: TextStyle(fontSize: 13.sp),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColor.textPrimary,
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      minimumSize: Size(0, 36.h),
-                      side: const BorderSide(color: AppColor.divider),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.r),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 18.h),
-              if (showMap)
-                _MapResults(properties: results.items)
-              else
-                for (final item in results.items) _ResultCard(property: item),
-            ],
+            ),
           );
         },
       ),
     ],
   );
+
+  void _openFullScreenMap(
+    BuildContext context,
+    List<ExploreProperty> properties,
+  ) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (_) => _FullScreenMapResults(properties: properties),
+      ),
+    );
+  }
+}
+
+class _ResultsAppBar extends StatelessWidget {
+  final VoidCallback onBack;
+
+  const _ResultsAppBar({required this.onBack});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 64.h,
+    child: Row(
+      children: [
+        Material(
+          color: AppColor.white,
+          elevation: 2,
+          shadowColor: AppColor.black.withValues(alpha: .12),
+          shape: const CircleBorder(),
+          child: SizedBox(
+            width: 42.w,
+            height: 42.w,
+            child: IconButton(
+              onPressed: onBack,
+              padding: EdgeInsets.zero,
+              tooltip: 'Back to home',
+              icon: Icon(Icons.arrow_back_rounded, size: 21.sp),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppTextWidget.legacy(
+                  'Search results',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                AppTextWidget.legacy(
+                  'Find a place you’ll love',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColor.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(width: 42.w),
+      ],
+    ),
+  );
+}
+
+class _MapFloatingButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _MapFloatingButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: AppColor.textPrimary,
+    elevation: 7,
+    shadowColor: AppColor.black.withValues(alpha: .28),
+    borderRadius: BorderRadius.circular(26.r),
+    child: InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(26.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.map_outlined, color: AppColor.white, size: 18.sp),
+            SizedBox(width: 8.w),
+            AppTextWidget.legacy(
+              'Map',
+              style: TextStyle(
+                color: AppColor.white,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _FullScreenMapResults extends StatelessWidget {
+  final List<ExploreProperty> properties;
+
+  const _FullScreenMapResults({required this.properties});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: const Color(0xFFE8E5DE),
+    appBar: AppBar(
+      title: AppTextWidget.titleMedium(text: 'Stays near your search'),
+      backgroundColor: AppColor.white,
+      foregroundColor: AppColor.textPrimary,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+    ),
+    body: _MapResults(properties: properties),
+  );
 }
 
 class _MapResults extends StatelessWidget {
   final List<ExploreProperty> properties;
-  const _MapResults({required this.properties});
+  final bool compact;
+
+  const _MapResults({required this.properties, this.compact = false});
+
+  Set<Marker> _markers() => {
+    for (var index = 0; index < properties.length; index++)
+      Marker(
+        markerId: MarkerId('property_$index'),
+        position: LatLng(
+          properties[index].latitude ?? 15.4909 + ((index % 4) - 1.5) * 0.035,
+          properties[index].longitude ?? 73.8278 + ((index ~/ 4) - 1) * 0.045,
+        ),
+        infoWindow: InfoWindow(
+          title: properties[index].title,
+          snippet:
+              '${properties[index].currency == 'INR' ? '₹' : '${properties[index].currency} '}${properties[index].pricePerNight.toStringAsFixed(0)} / night',
+        ),
+      ),
+  };
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 460.h,
+    height: compact ? 190.h : double.infinity,
     margin: EdgeInsets.only(top: 4.h),
     decoration: BoxDecoration(
       color: const Color(0xFFE8E5DE),
       borderRadius: BorderRadius.circular(22.r),
-      image: const DecorationImage(
-        image: NetworkImage(
-          'https://images.unsplash.com/photo-1524666041070-9f5b8c6c7f3d?auto=format&fit=crop&w=900&q=80',
+      border: Border.all(color: AppColor.white.withValues(alpha: .8)),
+      boxShadow: [
+        BoxShadow(
+          color: AppColor.black.withValues(alpha: .12),
+          blurRadius: 16,
+          spreadRadius: -4,
+          offset: const Offset(0, 7),
         ),
-        fit: BoxFit.cover,
-        opacity: .22,
-      ),
+      ],
     ),
+    clipBehavior: Clip.antiAlias,
     child: Stack(
       children: [
-        for (var index = 0; index < properties.length && index < 12; index++)
+        GoogleMap(
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(15.4909, 73.8278),
+            zoom: 10.8,
+          ),
+          markers: _markers(),
+          mapType: MapType.normal,
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          myLocationButtonEnabled: false,
+          compassEnabled: false,
+          rotateGesturesEnabled: !compact,
+          scrollGesturesEnabled: !compact,
+          tiltGesturesEnabled: !compact,
+          zoomGesturesEnabled: !compact,
+        ),
+        IgnorePointer(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColor.black.withValues(alpha: .04),
+                  AppColor.black.withValues(alpha: .16),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (compact)
           Positioned(
-            left: 20.w + ((index * 67.w) % 250.w),
-            top: 28.h + ((index * 89.h) % 330.h),
+            top: 12.h,
+            left: 12.w,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 7.h),
               decoration: BoxDecoration(
-                color: AppColor.white,
+                color: AppColor.white.withValues(alpha: .94),
                 borderRadius: BorderRadius.circular(18.r),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColor.black.withValues(alpha: .16),
+                    color: AppColor.black.withValues(alpha: .12),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
                 ],
               ),
-              child: AppTextWidget.legacy(
-                '${properties[index].currency} ${properties[index].pricePerNight.toStringAsFixed(0)}',
-                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.open_in_full_rounded, size: 14.sp),
+                  SizedBox(width: 5.w),
+                  AppTextWidget.legacy(
+                    'Open map with ${properties.length} stays',
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -1666,22 +1928,61 @@ class _MapResults extends StatelessWidget {
 class _SearchMessage extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
-  const _SearchMessage({required this.message, this.onRetry});
+  final bool showSearchIcon;
+
+  const _SearchMessage({
+    required this.message,
+    this.onRetry,
+    this.showSearchIcon = false,
+  });
+
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(vertical: 60.h),
-    child: Center(
-      child: Column(
-        children: [
-          AppTextWidget.legacy(message, textAlign: TextAlign.center),
-          if (onRetry != null) ...[
-            SizedBox(height: 12.h),
-            TextButton(
-              onPressed: onRetry,
-              child: const AppTextWidget.legacy('Retry'),
+    padding: EdgeInsets.symmetric(vertical: 36.h),
+    child: ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: showSearchIcon
+            ? MediaQuery.sizeOf(context).height - 170.h
+            : 0,
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showSearchIcon) ...[
+              Container(
+                width: 72.w,
+                height: 72.w,
+                decoration: BoxDecoration(
+                  color: AppColor.primary.withValues(alpha: .10),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.search_rounded,
+                  size: 36.sp,
+                  color: AppColor.primary,
+                ),
+              ),
+              SizedBox(height: 18.h),
+            ],
+            AppTextWidget.legacy(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColor.textPrimary,
+              ),
             ),
+            if (onRetry != null) ...[
+              SizedBox(height: 12.h),
+              TextButton(
+                onPressed: onRetry,
+                child: const AppTextWidget.legacy('Retry'),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     ),
   );
@@ -1699,73 +2000,186 @@ class _ResultCard extends StatelessWidget {
           ),
     child: Padding(
       padding: EdgeInsets.only(bottom: 24.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14.r),
-                child: AspectRatio(
-                  aspectRatio: 1.08,
-                  child: Image.network(
-                    property.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColor.greyExtraLight,
-                      child: Icon(Icons.home_outlined, size: 42.sp),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: AppColor.divider.withValues(alpha: .65)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.black.withValues(alpha: .08),
+              blurRadius: 18,
+              spreadRadius: -5,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                SizedBox(
+                  height: 228.h,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        property.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: AppColor.greyExtraLight,
+                          child: Icon(Icons.home_outlined, size: 42.sp),
+                        ),
+                      ),
+                      const DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.transparent, Color(0x66000000)],
+                          ),
+                        ),
+                      ),
+                      if (property.isLiked)
+                        Positioned(
+                          left: 12.w,
+                          bottom: 12.h,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColor.white.withValues(alpha: .92),
+                              borderRadius: BorderRadius.circular(18.r),
+                            ),
+                            child: AppTextWidget.legacy(
+                              'Guest favourite',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 12.h,
+                  right: 12.w,
+                  child: Container(
+                    width: 38.w,
+                    height: 38.w,
+                    decoration: const BoxDecoration(
+                      color: AppColor.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      property.isLiked
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      size: 20.sp,
+                      color: property.isLiked
+                          ? AppColor.primary
+                          : AppColor.textPrimary,
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 12.h,
-                right: 12.w,
-                child: Container(
-                  width: 38.w,
-                  height: 38.w,
-                  decoration: const BoxDecoration(
-                    color: AppColor.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    property.isLiked
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    size: 20.sp,
-                    color: property.isLiked
-                        ? AppColor.primary
-                        : AppColor.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          AppTextWidget.legacy(
-            property.title,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColor.textPrimary,
+              ],
             ),
-          ),
-          SizedBox(height: 4.h),
-          AppTextWidget.legacy(
-            property.location,
-            style: TextStyle(fontSize: 13.sp, color: AppColor.textSecondary),
-          ),
-          SizedBox(height: 5.h),
-          AppTextWidget.legacy(
-            '${property.currency} ${property.pricePerNight.toStringAsFixed(0)} / night',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColor.textPrimary,
+            Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 13.h, 14.w, 16.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: AppTextWidget.legacy(
+                          property.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.textPrimary,
+                          ),
+                        ),
+                      ),
+                      if (property.rating > 0) ...[
+                        SizedBox(width: 8.w),
+                        _ResultRatingPill(
+                          rating: property.rating,
+                          reviewCount: property.reviewCount,
+                        ),
+                      ],
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                  AppTextWidget.legacy(
+                    property.location,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: AppColor.textSecondary,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  AppTextWidget.legacy(
+                    '${property.currency == 'INR' ? '₹' : '${property.currency} '}${property.pricePerNight.toStringAsFixed(0)} / night',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _ResultRatingPill extends StatelessWidget {
+  final double rating;
+  final int reviewCount;
+
+  const _ResultRatingPill({required this.rating, required this.reviewCount});
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 5.h),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF1F5F2),
+      borderRadius: BorderRadius.circular(8.r),
+      border: Border.all(color: const Color(0xFFDCE9E0)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.star_rounded, size: 13.sp, color: const Color(0xFF176044)),
+        SizedBox(width: 3.w),
+        AppTextWidget.legacy(
+          rating.toStringAsFixed(1),
+          style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700),
+        ),
+        if (reviewCount > 0) ...[
+          SizedBox(width: 3.w),
+          AppTextWidget.legacy(
+            '($reviewCount)',
+            style: TextStyle(fontSize: 9.sp, color: AppColor.textSecondary),
           ),
         ],
-      ),
+      ],
     ),
   );
 }

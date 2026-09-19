@@ -147,12 +147,12 @@ class _RegistrationView extends StatelessWidget {
               CommonWidgets.providerButton(
                 icon: Icons.phone_iphone,
                 label: 'Continue with Phone',
-                onTap: () {},
+                onTap: () => _googleSignInUnavailable(context, 'Phone'),
               ),
               CommonWidgets.providerButton(
                 icon: Icons.apple,
                 label: 'Continue with Apple',
-                onTap: () {},
+                onTap: () => _googleSignInUnavailable(context, 'Apple'),
               ),
               SizedBox(height: 12.h),
               Wrap(
@@ -177,11 +177,12 @@ class _RegistrationView extends StatelessWidget {
   }
 
   void _googleSignInUnavailable(
-    BuildContext context,
-  ) => ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
+    BuildContext context, [
+    String provider = 'Google',
+  ]) => ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
       content: AppTextWidget.legacy(
-        'Google sign-in needs an OAuth endpoint and platform configuration.',
+        '$provider sign-in needs an OAuth endpoint and platform configuration.',
       ),
     ),
   );

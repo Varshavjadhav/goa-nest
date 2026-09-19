@@ -70,18 +70,18 @@ class _LoginView extends StatelessWidget {
                 CommonWidgets.providerButton(
                   icon: Icons.phone_iphone,
                   label: 'Continue with Phone',
-                  onTap: () {},
+                  onTap: () => _socialSignInUnavailable(context, 'Phone'),
                 ),
                 CommonWidgets.providerButton(
                   icon: Icons.g_mobiledata,
                   label: 'Continue with Google',
                   iconColor: Colors.red,
-                  onTap: () {},
+                  onTap: () => _socialSignInUnavailable(context, 'Google'),
                 ),
                 CommonWidgets.providerButton(
                   icon: Icons.apple,
                   label: 'Continue with Apple',
-                  onTap: () {},
+                  onTap: () => _socialSignInUnavailable(context, 'Apple'),
                 ),
                 SizedBox(height: 5.h),
                 Center(
@@ -121,6 +121,16 @@ class _LoginView extends StatelessWidget {
   );
   void _submit(BuildContext context) {
     context.read<LoginBloc>().add(const LoginSubmitted());
+  }
+
+  void _socialSignInUnavailable(BuildContext context, String provider) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: AppTextWidget.legacy(
+          '$provider sign-in is not configured yet.',
+        ),
+      ),
+    );
   }
 }
 

@@ -165,6 +165,8 @@ class ExploreProperty {
   final double pricePerNight;
   final String currency;
   final bool isLiked;
+  final double? latitude;
+  final double? longitude;
 
   const ExploreProperty({
     this.id = '',
@@ -178,6 +180,8 @@ class ExploreProperty {
     this.pricePerNight = 0,
     this.currency = 'INR',
     this.isLiked = false,
+    this.latitude,
+    this.longitude,
   });
 
   factory ExploreProperty.fromJson(Map<String, dynamic> json) {
@@ -204,6 +208,12 @@ class ExploreProperty {
       pricePerNight: _double(json['pricePerNight']),
       currency: _string(json['currency'], fallback: 'INR'),
       isLiked: json['isLiked'] == true,
+      latitude: _nullableDouble(
+        json['latitude'] ?? location['latitude'] ?? location['lat'],
+      ),
+      longitude: _nullableDouble(
+        json['longitude'] ?? location['longitude'] ?? location['lng'],
+      ),
     );
   }
 }
@@ -308,6 +318,11 @@ int _int(dynamic value) =>
     value is num ? value.toInt() : int.tryParse(_string(value)) ?? 0;
 double _double(dynamic value) =>
     value is num ? value.toDouble() : double.tryParse(_string(value)) ?? 0;
+double? _nullableDouble(dynamic value) => value == null
+    ? null
+    : value is num
+    ? value.toDouble()
+    : double.tryParse(_string(value));
 List<T> _list<T>(dynamic value, T Function(Map<String, dynamic>) mapper) =>
     value is List
     ? value
