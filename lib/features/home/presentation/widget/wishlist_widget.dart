@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goanest/core.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../data/model/home_model.dart';
 import '../../data/model/wishlist_model.dart';
@@ -18,9 +19,9 @@ class WishlistWidget extends StatelessWidget {
       listenWhen: (_, state) => state is WishlistActionError,
       listener: (context, state) {
         if (state is WishlistActionError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: AppTextWidget.legacy(state.message)),
+          );
         }
       },
       child: BlocBuilder<WishlistBloc, WishlistState>(
@@ -62,7 +63,7 @@ class _Content extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         pinned: true,
         elevation: 0,
-        title: Text(
+        title: AppTextWidget.legacy(
           'Wishlists',
           style: TextStyle(
             color: AppColor.textPrimary,
@@ -73,7 +74,7 @@ class _Content extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => _showCreateDialog(context),
-            child: Text(
+            child: AppTextWidget.legacy(
               'Create',
               style: TextStyle(color: AppColor.textPrimary, fontSize: 12.sp),
             ),
@@ -92,7 +93,7 @@ class _Content extends StatelessWidget {
                 onTap: () => _showWishlistDetails(context, wishlist),
               ),
             SizedBox(height: 4.h),
-            Text(
+            AppTextWidget.legacy(
               'Create new',
               style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600),
             ),
@@ -144,12 +145,12 @@ class _CollectionCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8.h),
-            Text(
+            AppTextWidget.legacy(
               wishlist.name,
               style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 2.h),
-            Text(
+            AppTextWidget.legacy(
               '${wishlist.properties.where((item) => item.property != null).length} saved',
               style: TextStyle(fontSize: 11.sp, color: AppColor.textQuaternary),
             ),
@@ -216,12 +217,12 @@ class _EmptyWishlists extends StatelessWidget {
           color: AppColor.greyMedium,
         ),
         SizedBox(height: 12.h),
-        Text(
+        AppTextWidget.legacy(
           'No wishlists yet',
           style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700),
         ),
         SizedBox(height: 5.h),
-        Text(
+        AppTextWidget.legacy(
           'Create one to save your favourite stays.',
           style: TextStyle(fontSize: 12.sp, color: AppColor.textSecondary),
         ),
@@ -239,9 +240,12 @@ class _MessageView extends StatelessWidget {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(message, textAlign: TextAlign.center),
+        AppTextWidget.legacy(message, textAlign: TextAlign.center),
         SizedBox(height: 12.h),
-        TextButton(onPressed: action, child: const Text('Retry')),
+        TextButton(
+          onPressed: action,
+          child: const AppTextWidget.legacy('Retry'),
+        ),
       ],
     ),
   );
@@ -274,7 +278,7 @@ class _CreateWishlistDialogState extends State<_CreateWishlistDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Create wishlist'),
+    title: const AppTextWidget.legacy('Create wishlist'),
     content: TextField(
       controller: _controller,
       autofocus: true,
@@ -284,14 +288,14 @@ class _CreateWishlistDialogState extends State<_CreateWishlistDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
+        child: const AppTextWidget.legacy('Cancel'),
       ),
       FilledButton(
         onPressed: () {
           final value = _controller.text.trim();
           if (value.isNotEmpty) Navigator.pop(context, value);
         },
-        child: const Text('Create'),
+        child: const AppTextWidget.legacy('Create'),
       ),
     ],
   );
@@ -332,12 +336,12 @@ class _WishlistDetails extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AppTextWidget.legacy(
                 current.name,
                 style: TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w700),
               ),
               SizedBox(height: 4.h),
-              Text(
+              AppTextWidget.legacy(
                 '${current.properties.length} saved properties',
                 style: TextStyle(
                   color: AppColor.textSecondary,
@@ -348,7 +352,9 @@ class _WishlistDetails extends StatelessWidget {
               if (current.properties.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(child: Text('No properties saved yet.')),
+                  child: Center(
+                    child: AppTextWidget.legacy('No properties saved yet.'),
+                  ),
                 )
               else
                 Flexible(
@@ -373,7 +379,7 @@ class _WishlistDetails extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: () => _showAddPropertyDialog(context, current),
                 icon: const Icon(Icons.add),
-                label: const Text('Add property'),
+                label: const AppTextWidget.legacy('Add property'),
               ),
             ],
           );
@@ -412,14 +418,14 @@ class _PropertyRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AppTextWidget.legacy(
                 property.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 3.h),
-              Text(
+              AppTextWidget.legacy(
                 property.location,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -429,7 +435,7 @@ class _PropertyRow extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 3.h),
-              Text(
+              AppTextWidget.legacy(
                 '₹${property.pricePerNight} / night',
                 style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600),
               ),
@@ -477,7 +483,7 @@ class _AddPropertyDialogState extends State<_AddPropertyDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Add property'),
+    title: const AppTextWidget.legacy('Add property'),
     content: TextField(
       controller: _controller,
       decoration: const InputDecoration(labelText: 'Property ID'),
@@ -485,14 +491,14 @@ class _AddPropertyDialogState extends State<_AddPropertyDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('Cancel'),
+        child: const AppTextWidget.legacy('Cancel'),
       ),
       FilledButton(
         onPressed: () {
           final value = _controller.text.trim();
           if (value.isNotEmpty) Navigator.pop(context, value);
         },
-        child: const Text('Add'),
+        child: const AppTextWidget.legacy('Add'),
       ),
     ],
   );

@@ -16,7 +16,8 @@ class ApiUrl {
   static const String recentlyViewed = 'recently-viewed';
   static const String recentlyViewedProperty = 'recently-viewed/{id}';
   static const String wishlists = 'wishlists';
-  static const String wishlistProperties = 'wishlists/{wishlistId}/properties/{propertyId}';
+  static const String wishlistProperties =
+      'wishlists/{wishlistId}/properties/{propertyId}';
   static const String search = 'search';
   static const String searchSuggestions = 'search/suggestions';
   static const String userProfile = 'user/profile';

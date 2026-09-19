@@ -6,6 +6,7 @@ import 'package:goanest/features/home/data/model/profile_model.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/resources/constants/flags.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../../../core/services/local_secure_storage/secure_storage_service.dart';
 import '../bloc/profile_bloc.dart';
@@ -17,12 +18,18 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocListener<ProfileBloc, ProfileState>(
-    listenWhen: (_, state) => state is ProfileLoaded && state.message != null || state is ProfileError,
+    listenWhen: (_, state) =>
+        state is ProfileLoaded && state.message != null ||
+        state is ProfileError,
     listener: (context, state) {
       if (state is ProfileLoaded && state.message != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message!)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: AppTextWidget.legacy(state.message!)));
       } else if (state is ProfileError) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: AppTextWidget.legacy(state.message)));
       }
     },
     child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -45,7 +52,7 @@ class ProfileWidget extends StatelessWidget {
             child: Center(
               child: TextButton(
                 onPressed: () => context.read<ProfileBloc>().add(LoadProfile()),
-                child: Text('Unable to load profile. Retry'),
+                child: AppTextWidget.legacy('Unable to load profile. Retry'),
               ),
             ),
           );
@@ -66,14 +73,23 @@ class _ProfileContent extends StatelessWidget {
   final bool updating;
   final VoidCallback onEdit;
   final VoidCallback onLogout;
-  const _ProfileContent({required this.profile, required this.updating, required this.onEdit, required this.onLogout});
+  const _ProfileContent({
+    required this.profile,
+    required this.updating,
+    required this.onEdit,
+    required this.onLogout,
+  });
 
   @override
   Widget build(BuildContext context) => ColoredBox(
     color: AppColor.surface,
     child: Stack(
       children: [
-        _ProfileScrollContent(profile: profile, onEdit: onEdit, onLogout: onLogout),
+        _ProfileScrollContent(
+          profile: profile,
+          onEdit: onEdit,
+          onLogout: onLogout,
+        ),
         if (updating)
           const Positioned.fill(
             child: ColoredBox(
@@ -90,7 +106,11 @@ class _ProfileScrollContent extends StatelessWidget {
   final ProfileModel profile;
   final VoidCallback onEdit;
   final VoidCallback onLogout;
-  const _ProfileScrollContent({required this.profile, required this.onEdit, required this.onLogout});
+  const _ProfileScrollContent({
+    required this.profile,
+    required this.onEdit,
+    required this.onLogout,
+  });
 
   @override
   Widget build(BuildContext context) => CustomScrollView(
@@ -100,9 +120,13 @@ class _ProfileScrollContent extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 105.h),
         sliver: SliverList(
           delegate: SliverChildListDelegate([
-            Text(
+            AppTextWidget.legacy(
               'Profile',
-              style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.w700, color: AppColor.textPrimary),
+              style: TextStyle(
+                fontSize: 26.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColor.textPrimary,
+              ),
             ),
             SizedBox(height: 20.h),
             _ProfileCard(profile: profile, onEdit: onEdit),
@@ -113,7 +137,9 @@ class _ProfileScrollContent extends StatelessWidget {
                 _ActionItem(
                   Icons.person_outline_rounded,
                   'Personal information',
-                  profile.email.isEmpty ? 'Add your email and phone number' : profile.email,
+                  profile.email.isEmpty
+                      ? 'Add your email and phone number'
+                      : profile.email,
                   onTap: onEdit,
                 ),
               ],
@@ -121,27 +147,51 @@ class _ProfileScrollContent extends StatelessWidget {
             _Section(
               title: 'Settings',
               items: [
-                _ActionItem(Icons.language_rounded, 'Language and currency', '${profile.language.toUpperCase()} · ${profile.currency}'),
-                const _ActionItem(Icons.notifications_none_rounded, 'Notifications', 'Manage your notification preferences'),
+                _ActionItem(
+                  Icons.language_rounded,
+                  'Language and currency',
+                  '${profile.language.toUpperCase()} · ${profile.currency}',
+                ),
+                const _ActionItem(
+                  Icons.notifications_none_rounded,
+                  'Notifications',
+                  'Manage your notification preferences',
+                ),
                 _ActionItem(
                   Icons.description_outlined,
                   'Terms & Conditions',
                   'Read the terms of using GoaNest',
-                  onTap: () => _showLegalDocument(context, title: 'Terms & Conditions', body: _termsText),
+                  onTap: () => _showLegalDocument(
+                    context,
+                    title: 'Terms & Conditions',
+                    body: _termsText,
+                  ),
                 ),
                 _ActionItem(
                   Icons.privacy_tip_outlined,
                   'Privacy Policy',
                   'Learn how your data is handled',
-                  onTap: () => _showLegalDocument(context, title: 'Privacy Policy', body: _privacyText),
+                  onTap: () => _showLegalDocument(
+                    context,
+                    title: 'Privacy Policy',
+                    body: _privacyText,
+                  ),
                 ),
               ],
             ),
             _Section(
               title: 'Support',
               items: const [
-                _ActionItem(Icons.help_outline_rounded, 'Help Center', 'Get help with your reservation'),
-                _ActionItem(Icons.info_outline_rounded, 'About GoaNest', 'App information and support'),
+                _ActionItem(
+                  Icons.help_outline_rounded,
+                  'Help Center',
+                  'Get help with your reservation',
+                ),
+                _ActionItem(
+                  Icons.info_outline_rounded,
+                  'About GoaNest',
+                  'App information and support',
+                ),
               ],
             ),
             OutlinedButton(
@@ -150,18 +200,23 @@ class _ProfileScrollContent extends StatelessWidget {
                 foregroundColor: AppColor.textPrimary,
                 minimumSize: Size.fromHeight(52.h),
                 side: const BorderSide(color: AppColor.divider),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
               ),
-              child: Text(
+              child: AppTextWidget.legacy(
                 'Log out',
                 style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
             ),
             SizedBox(height: 18.h),
             Center(
-              child: Text(
+              child: AppTextWidget.legacy(
                 'GoaNest v1.0.0',
-                style: TextStyle(fontSize: 11.sp, color: AppColor.textSecondary),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: AppColor.textSecondary,
+                ),
               ),
             ),
           ]),
@@ -172,9 +227,9 @@ class _ProfileScrollContent extends StatelessWidget {
 }
 
 Future<void> _editProfile(BuildContext context, ProfileModel profile) async {
-  final request = await Navigator.of(
-    context,
-  ).push<ProfileUpdateRequest>(MaterialPageRoute(builder: (_) => EditProfileScreen(profile: profile)));
+  final request = await Navigator.of(context).push<ProfileUpdateRequest>(
+    MaterialPageRoute(builder: (_) => EditProfileScreen(profile: profile)),
+  );
   if (request != null && context.mounted) {
     context.read<ProfileBloc>().add(UpdateProfile(request));
   }
@@ -212,26 +267,39 @@ class _ProfileCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppTextWidget.legacy(
                   profile.name.isEmpty ? 'GoaNest guest' : profile.name,
-                  style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700, color: AppColor.textPrimary),
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.textPrimary,
+                  ),
                 ),
                 SizedBox(height: 5.h),
-                Text(
+                AppTextWidget.legacy(
                   profile.email.isEmpty ? 'Email not added' : profile.email,
-                  style: TextStyle(fontSize: 12.sp, color: AppColor.textSecondary),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColor.textSecondary,
+                  ),
                 ),
                 if (profile.phone.isNotEmpty) ...[
                   SizedBox(height: 4.h),
-                  Text(
+                  AppTextWidget.legacy(
                     profile.phone,
-                    style: TextStyle(fontSize: 12.sp, color: AppColor.textSecondary),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColor.textSecondary,
+                    ),
                   ),
                 ],
               ],
             ),
           ),
-          TextButton(onPressed: onEdit, child: const Text('Edit')),
+          TextButton(
+            onPressed: onEdit,
+            child: const AppTextWidget.legacy('Edit'),
+          ),
         ],
       ),
     ),
@@ -247,12 +315,18 @@ class _ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) => CircleAvatar(
     radius: radius,
     backgroundColor: AppColor.tertiary,
-    backgroundImage: profile.profileImage.isEmpty ? null : NetworkImage(profile.profileImage),
+    backgroundImage: profile.profileImage.isEmpty
+        ? null
+        : NetworkImage(profile.profileImage),
     onBackgroundImageError: profile.profileImage.isEmpty ? null : (_, __) {},
     child: profile.profileImage.isEmpty
-        ? Text(
+        ? AppTextWidget.legacy(
             profile.initials,
-            style: TextStyle(color: AppColor.primary, fontSize: radius * .65, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              color: AppColor.primary,
+              fontSize: radius * .65,
+              fontWeight: FontWeight.w700,
+            ),
           )
         : null,
   );
@@ -269,9 +343,13 @@ class _Section extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppTextWidget.legacy(
           title,
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: AppColor.textPrimary),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColor.textPrimary,
+          ),
         ),
         SizedBox(height: 10.h),
         Container(
@@ -280,7 +358,12 @@ class _Section extends StatelessWidget {
             border: Border.all(color: AppColor.divider),
             borderRadius: BorderRadius.circular(14.r),
           ),
-          child: Column(children: [for (var i = 0; i < items.length; i++) items[i].build(i != items.length - 1)]),
+          child: Column(
+            children: [
+              for (var i = 0; i < items.length; i++)
+                items[i].build(i != items.length - 1),
+            ],
+          ),
         ),
       ],
     ),
@@ -302,21 +385,28 @@ class _ActionItem {
         leading: Container(
           width: 38.w,
           height: 38.w,
-          decoration: BoxDecoration(color: AppColor.tertiary, borderRadius: BorderRadius.circular(10.r)),
+          decoration: BoxDecoration(
+            color: AppColor.tertiary,
+            borderRadius: BorderRadius.circular(10.r),
+          ),
           child: Icon(icon, size: 20.sp, color: AppColor.primary),
         ),
-        title: Text(
+        title: AppTextWidget.legacy(
           title,
           style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
         ),
         subtitle: Padding(
           padding: EdgeInsets.only(top: 3.h),
-          child: Text(
+          child: AppTextWidget.legacy(
             subtitle,
             style: TextStyle(fontSize: 11.sp, color: AppColor.textSecondary),
           ),
         ),
-        trailing: Icon(Icons.chevron_right_rounded, size: 21.sp, color: AppColor.textSecondary),
+        trailing: Icon(
+          Icons.chevron_right_rounded,
+          size: 21.sp,
+          color: AppColor.textSecondary,
+        ),
       ),
       if (divider) Divider(height: 1, indent: 66.w, endIndent: 14.w),
     ],
@@ -359,21 +449,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     if (name.isEmpty || email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Name and email are required')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: AppTextWidget.legacy('Name and email are required'),
+        ),
+      );
       return;
     }
-    Navigator.pop(context, ProfileUpdateRequest(name: name, phone: _phoneController.text.trim(), bio: _bioController.text.trim()));
+    Navigator.pop(
+      context,
+      ProfileUpdateRequest(
+        name: name,
+        phone: _phoneController.text.trim(),
+        bio: _bioController.text.trim(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColor.scaffoldBackground,
     appBar: AppBar(
-      title: const Text('Edit profile'),
+      title: const AppTextWidget.legacy('Edit profile'),
       backgroundColor: AppColor.scaffoldBackground,
       foregroundColor: AppColor.textPrimary,
       elevation: 0,
-      actions: [TextButton(onPressed: _save, child: const Text('Save'))],
+      actions: [
+        TextButton(onPressed: _save, child: const AppTextWidget.legacy('Save')),
+      ],
     ),
     body: ListView(
       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
@@ -384,13 +487,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         SizedBox(height: 26.h),
         _EditField(controller: _nameController, label: 'Name'),
         SizedBox(height: 14.h),
-        _EditField(controller: _emailController, label: 'Email', keyboardType: TextInputType.emailAddress, readOnly: true),
+        _EditField(
+          controller: _emailController,
+          label: 'Email',
+          keyboardType: TextInputType.emailAddress,
+          readOnly: true,
+        ),
         SizedBox(height: 14.h),
-        _EditField(controller: _phoneController, label: 'Phone number', keyboardType: TextInputType.phone),
+        _EditField(
+          controller: _phoneController,
+          label: 'Phone number',
+          keyboardType: TextInputType.phone,
+        ),
         SizedBox(height: 14.h),
         _EditField(controller: _bioController, label: 'Bio', maxLines: 3),
         SizedBox(height: 10.h),
-        Text(
+        AppTextWidget.legacy(
           'Email is managed by your account and cannot be changed here.',
           style: TextStyle(fontSize: 11.sp, color: AppColor.textSecondary),
         ),
@@ -405,7 +517,13 @@ class _EditField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool readOnly;
   final int maxLines;
-  const _EditField({required this.controller, required this.label, this.keyboardType, this.readOnly = false, this.maxLines = 1});
+  const _EditField({
+    required this.controller,
+    required this.label,
+    this.keyboardType,
+    this.readOnly = false,
+    this.maxLines = 1,
+  });
 
   @override
   Widget build(BuildContext context) => TextField(
@@ -422,13 +540,22 @@ class _EditField extends StatelessWidget {
   );
 }
 
-void _showLegalDocument(BuildContext context, {required String title, required String body}) {
+void _showLegalDocument(
+  BuildContext context, {
+  required String title,
+  required String body,
+}) {
   showDialog<void>(
     context: context,
     builder: (_) => AlertDialog(
-      title: Text(title),
-      content: SingleChildScrollView(child: Text(body)),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
+      title: AppTextWidget.legacy(title),
+      content: SingleChildScrollView(child: AppTextWidget.legacy(body)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const AppTextWidget.legacy('Close'),
+        ),
+      ],
     ),
   );
 }

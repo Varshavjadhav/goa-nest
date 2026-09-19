@@ -134,46 +134,51 @@ class _RecentlyCardState extends State<_RecentlyCard> {
                           ),
                   ),
                 ),
-            Positioned(
-              top: 8.h,
-              right: 8.w,
-              child: BlocListener<WishlistBloc, WishlistState>(
-                listenWhen: (_, state) => state is FavoriteUpdated || state is FavoriteError,
-                listener: (_, state) {
-                  if (state is FavoriteUpdated && state.propertyId == property.id) {
-                    setState(() => liked = state.isLiked);
-                  } else if (state is FavoriteError && state.propertyId == property.id) {
-                    setState(() => liked = state.previousIsLiked);
-                  }
-                },
-                child: GestureDetector(
-                    onTap: property.id.isEmpty
-                        ? null
-                        : () {
-                            final wasLiked = liked;
-                            setState(() => liked = !liked);
-                            context.read<WishlistBloc>().add(
-                              ToggleFavorite(property.id, isLiked: wasLiked),
-                            );
-                          },
-                    child: Container(
-                      width: 30.w,
-                      height: 30.w,
-                      decoration: BoxDecoration(
-                        color: AppColor.white.withValues(alpha: .92),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        liked
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 17.sp,
-                        color: liked ? AppColor.primary : AppColor.textPrimary,
+                Positioned(
+                  top: 8.h,
+                  right: 8.w,
+                  child: BlocListener<WishlistBloc, WishlistState>(
+                    listenWhen: (_, state) =>
+                        state is FavoriteUpdated || state is FavoriteError,
+                    listener: (_, state) {
+                      if (state is FavoriteUpdated &&
+                          state.propertyId == property.id) {
+                        setState(() => liked = state.isLiked);
+                      } else if (state is FavoriteError &&
+                          state.propertyId == property.id) {
+                        setState(() => liked = state.previousIsLiked);
+                      }
+                    },
+                    child: GestureDetector(
+                      onTap: property.id.isEmpty
+                          ? null
+                          : () {
+                              final wasLiked = liked;
+                              setState(() => liked = !liked);
+                              context.read<WishlistBloc>().add(
+                                ToggleFavorite(property.id, isLiked: wasLiked),
+                              );
+                            },
+                      child: Container(
+                        width: 30.w,
+                        height: 30.w,
+                        decoration: BoxDecoration(
+                          color: AppColor.white.withValues(alpha: .92),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          liked
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          size: 17.sp,
+                          color: liked
+                              ? AppColor.primary
+                              : AppColor.textPrimary,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
               ],
             ),
           ),
@@ -244,7 +249,10 @@ class _MessageView extends StatelessWidget {
           ),
           if (action != null) ...[
             SizedBox(height: 14.h),
-            ElevatedButton(onPressed: action, child: const Text('Try again')),
+            ElevatedButton(
+              onPressed: action,
+              child: const AppTextWidget.legacy('Try again'),
+            ),
           ],
         ],
       ),

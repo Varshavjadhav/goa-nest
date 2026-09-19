@@ -21,9 +21,9 @@ class LoginScreen extends StatelessWidget {
       listener: (context, state) {
         if (state.status == LoginStatus.success) context.go(RouteName.homeView);
         if (state.status == LoginStatus.failure && state.message != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message!)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: AppTextWidget.legacy(state.message!)),
+          );
         }
       },
       child: const _LoginView(),

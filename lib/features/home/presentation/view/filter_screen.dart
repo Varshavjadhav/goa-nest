@@ -4,6 +4,7 @@ import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
+import '../../data/model/search_model.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
@@ -15,6 +16,8 @@ class _FilterScreenState extends State<FilterScreen> {
   RangeValues price = const RangeValues(1500, 30000);
   final selectedTypes = <String>{'Villa'};
   final selectedAmenities = <String>{'Pool', 'Wifi'};
+  int bedrooms = 0;
+  String minRating = '';
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +82,29 @@ class _FilterScreenState extends State<FilterScreen> {
           CommonWidgets.divider(height: 40),
           CommonWidgets.sectionTitle('Rooms and beds'),
           SizedBox(height: 12.h),
-          const _Counter(label: 'Bedrooms'),
-          const _Counter(label: 'Beds'),
-          const _Counter(label: 'Bathrooms'),
+          _Counter(
+            label: 'Bedrooms',
+            value: bedrooms,
+            onChanged: (value) => setState(() => bedrooms = value),
+          ),
+          CommonWidgets.divider(height: 20),
+          CommonWidgets.sectionTitle('Rating'),
+          SizedBox(height: 12.h),
+          Wrap(
+            spacing: 8.w,
+            children: ['4+', '4.5+']
+                .map(
+                  (value) => FilterChip(
+                    label: AppTextWidget.bodyMedium(text: value),
+                    selected: minRating == value,
+                    selectedColor: AppColor.tertiary,
+                    checkmarkColor: AppColor.primary,
+                    onSelected: (selected) =>
+                        setState(() => minRating = selected ? value : ''),
+                  ),
+                )
+                .toList(),
+          ),
         ],
       ),
       bottomNavigationBar: SafeArea(
@@ -89,7 +112,16 @@ class _FilterScreenState extends State<FilterScreen> {
           padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 14.h),
           child: CommonWidgets.primaryButton(
             label: 'Show 1,000+ stays',
-            onTap: () => context.pop(),
+            onTap: () => context.pop(
+              SearchFilters(
+                minPrice: price.start.round().toString(),
+                maxPrice: price.end.round().toString(),
+                propertyType: selectedTypes.join(','),
+                bedrooms: bedrooms == 0 ? '' : bedrooms.toString(),
+                amenities: selectedAmenities.join(','),
+                minRating: minRating,
+              ),
+            ),
           ),
         ),
       ),
@@ -120,12 +152,20 @@ class _FilterScreenState extends State<FilterScreen> {
     price = const RangeValues(1500, 30000);
     selectedTypes.clear();
     selectedAmenities.clear();
+    bedrooms = 0;
+    minRating = '';
   });
 }
 
 class _Counter extends StatelessWidget {
   final String label;
-  const _Counter({required this.label});
+  final int value;
+  final ValueChanged<int> onChanged;
+  const _Counter({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
   @override
   Widget build(BuildContext context) => Padding(
     padding: EdgeInsets.only(bottom: 12.h),
@@ -133,16 +173,16 @@ class _Counter extends StatelessWidget {
       children: [
         Expanded(child: AppTextWidget.titleSmall(text: label)),
         IconButton(
-          onPressed: () {},
+          onPressed: value > 0 ? () => onChanged(value - 1) : null,
           icon: Icon(
             Icons.remove_circle_outline,
             size: 24.sp,
             color: AppColor.textSecondary,
           ),
         ),
-        AppTextWidget.titleLarge(text: '0'),
+        AppTextWidget.titleLarge(text: '$value'),
         IconButton(
-          onPressed: () {},
+          onPressed: () => onChanged(value + 1),
           icon: Icon(
             Icons.add_circle_outline,
             size: 24.sp,

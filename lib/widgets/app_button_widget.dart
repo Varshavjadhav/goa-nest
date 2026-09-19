@@ -7,6 +7,7 @@ import '../utilities/extensions/extensions.dart';
 import '../utilities/extensions/provide_theme_extension.dart';
 import '../utilities/global.dart';
 import 'app_loading_widget.dart';
+import 'app_text_widget.dart';
 
 class AppButton extends StatelessWidget {
   final String title;
@@ -87,8 +88,11 @@ class AppButton extends StatelessWidget {
     }
 
     ButtonStyle getButtonStyle() {
-      final defaultPadding = padding ?? EdgeInsets.symmetric(horizontal: 16.p, vertical: 4.p);
-      final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius));
+      final defaultPadding =
+          padding ?? EdgeInsets.symmetric(horizontal: 16.p, vertical: 4.p);
+      final shape = RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      );
       final size = Size(width ?? 1.sp, height ?? 56.sp);
 
       switch (buttonStyleType) {
@@ -96,7 +100,8 @@ class AppButton extends StatelessWidget {
           return ButtonStyle(
             backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
               if (states.contains(WidgetState.disabled)) {
-                return backgroundColor ?? Global.navigatorKey.currentContext!.themeExt.card;
+                return backgroundColor ??
+                    Global.navigatorKey.currentContext!.themeExt.card;
               }
               return backgroundColor ?? context.themeExt.brandPrimary;
             }),
@@ -111,7 +116,10 @@ class AppButton extends StatelessWidget {
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
-                side: BorderSide(color: getBorderColor(), width: outlinedBorderWidth),
+                side: BorderSide(
+                  color: getBorderColor(),
+                  width: outlinedBorderWidth,
+                ),
               ),
             ),
             padding: WidgetStateProperty.all(defaultPadding),
@@ -125,19 +133,26 @@ class AppButton extends StatelessWidget {
 
         case ButtonStyleType.outlined:
           return OutlinedButton.styleFrom(
-            backgroundColor: isDisabled ? backgroundColor ?? AppColor.greyLight : Colors.transparent,
+            backgroundColor: isDisabled
+                ? backgroundColor ?? AppColor.greyLight
+                : Colors.transparent,
             foregroundColor: isDisabled ? AppColor.greyDark : getBorderColor(),
             padding: defaultPadding,
             minimumSize: size,
             fixedSize: size,
             maximumSize: size,
             shape: shape,
-            side: BorderSide(color: isDisabled ? AppColor.greyDark : getBorderColor(), width: outlinedBorderWidth),
+            side: BorderSide(
+              color: isDisabled ? AppColor.greyDark : getBorderColor(),
+              width: outlinedBorderWidth,
+            ),
           );
 
         case ButtonStyleType.text:
           return TextButton.styleFrom(
-            backgroundColor: isDisabled ? backgroundColor ?? AppColor.grey : Colors.transparent,
+            backgroundColor: isDisabled
+                ? backgroundColor ?? AppColor.grey
+                : Colors.transparent,
             foregroundColor: isDisabled ? AppColor.greyDark : getBorderColor(),
             padding: defaultPadding,
             minimumSize: size,
@@ -165,14 +180,21 @@ class AppButton extends StatelessWidget {
     }
 
     final style = getButtonStyle();
-    final isOutlinedOrText = buttonStyleType == ButtonStyleType.outlined || buttonStyleType == ButtonStyleType.text;
+    final isOutlinedOrText =
+        buttonStyleType == ButtonStyleType.outlined ||
+        buttonStyleType == ButtonStyleType.text;
     final textColor = isDisabled
         ? AppColor.greyDark
         : isOutlinedOrText
         ? (borderColor ?? context.themeExt.brandPrimary)
         : theme.colorScheme.onPrimary;
     final effectiveTextStyle =
-        (textStyle ?? TextStyle(fontSize: 16.sp, color: textStyle?.color ?? textColor, fontWeight: FontWeight.w600));
+        (textStyle ??
+        TextStyle(
+          fontSize: 16.sp,
+          color: textStyle?.color ?? textColor,
+          fontWeight: FontWeight.w600,
+        ));
 
     // final Color effectiveLoaderColor = loaderColor ?? (buttonStyleType == ButtonStyleType.elevated ? theme.colorScheme.onPrimary : (borderColor ?? theme.primaryColor));
 
@@ -210,11 +232,22 @@ class AppButton extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: isIconPrefix
-                  ? [iconWidget, SizedBox(width: iconTextSpacing), Text(title, style: effectiveTextStyle)]
-                  : [Text(title, style: effectiveTextStyle), SizedBox(width: iconTextSpacing), iconWidget],
+                  ? [
+                      iconWidget,
+                      SizedBox(width: iconTextSpacing),
+                      AppTextWidget.legacy(title, style: effectiveTextStyle),
+                    ]
+                  : [
+                      AppTextWidget.legacy(title, style: effectiveTextStyle),
+                      SizedBox(width: iconTextSpacing),
+                      iconWidget,
+                    ],
             );
           } else {
-            buttonChild = Text(title, style: effectiveTextStyle);
+            buttonChild = AppTextWidget.legacy(
+              title,
+              style: effectiveTextStyle,
+            );
           }
           break;
       }
@@ -232,17 +265,31 @@ class AppButton extends StatelessWidget {
     Widget button;
     switch (buttonStyleType) {
       case ButtonStyleType.elevated:
-        button = ElevatedButton(onPressed: (isDisabled || isLoading) ? null : onPressed, style: style, child: buttonChild);
+        button = ElevatedButton(
+          onPressed: (isDisabled || isLoading) ? null : onPressed,
+          style: style,
+          child: buttonChild,
+        );
         break;
       case ButtonStyleType.outlined:
-        button = OutlinedButton(onPressed: (isDisabled || isLoading) ? null : onPressed, style: style, child: buttonChild);
+        button = OutlinedButton(
+          onPressed: (isDisabled || isLoading) ? null : onPressed,
+          style: style,
+          child: buttonChild,
+        );
         break;
       case ButtonStyleType.text:
-        button = TextButton(onPressed: (isDisabled || isLoading) ? null : onPressed, style: style, child: buttonChild);
+        button = TextButton(
+          onPressed: (isDisabled || isLoading) ? null : onPressed,
+          style: style,
+          child: buttonChild,
+        );
         break;
     }
 
-    return alignment != null ? Align(alignment: alignment!, child: button) : button;
+    return alignment != null
+        ? Align(alignment: alignment!, child: button)
+        : button;
   }
 }
 
@@ -292,7 +339,12 @@ class _SwipeButtonState extends State<_SwipeButton> {
                 width: _drag + knobSize,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(widget.borderRadius),
-                  gradient: LinearGradient(colors: [context.themeExt.brandPrimary, context.themeExt.brandPrimary.withValues(alpha: 0.8)]),
+                  gradient: LinearGradient(
+                    colors: [
+                      context.themeExt.brandPrimary,
+                      context.themeExt.brandPrimary.withValues(alpha: 0.8),
+                    ],
+                  ),
                 ),
               ),
 
@@ -300,7 +352,7 @@ class _SwipeButtonState extends State<_SwipeButton> {
               Center(
                 child: Opacity(
                   opacity: 1 - progress,
-                  child: Text(
+                  child: AppTextWidget.legacy(
                     widget.title,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
@@ -340,11 +392,21 @@ class _SwipeButtonState extends State<_SwipeButton> {
                     height: knobSize,
                     width: knobSize,
                     decoration: BoxDecoration(
-                      color: widget.isDisabled ? Colors.grey : context.themeExt.brandPrimary,
+                      color: widget.isDisabled
+                          ? Colors.grey
+                          : context.themeExt.brandPrimary,
                       shape: BoxShape.circle,
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 6)],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 6,
+                        ),
+                      ],
                     ),
-                    child: const Icon(Icons.double_arrow_rounded, color: Colors.white),
+                    child: const Icon(
+                      Icons.double_arrow_rounded,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

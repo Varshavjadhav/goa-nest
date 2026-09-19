@@ -24,9 +24,9 @@ class RegistrationScreen extends StatelessWidget {
           context.go(RouteName.homeView);
         } else if (state.status == RegisterStatus.failure &&
             state.message != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message!)));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: AppTextWidget.legacy(state.message!)),
+          );
         }
       },
       child: const _RegistrationView(),
@@ -180,7 +180,7 @@ class _RegistrationView extends StatelessWidget {
     BuildContext context,
   ) => ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(
-      content: Text(
+      content: AppTextWidget.legacy(
         'Google sign-in needs an OAuth endpoint and platform configuration.',
       ),
     ),

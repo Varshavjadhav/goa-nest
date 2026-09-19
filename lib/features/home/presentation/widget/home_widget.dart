@@ -218,7 +218,7 @@ class _Tabs extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
+                  AppTextWidget.legacy(
                     _emoji(item.icon),
                     style: TextStyle(fontSize: 17.sp, height: 1),
                   ),
@@ -669,7 +669,10 @@ class _ExploreMore extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Text(item.icon, style: TextStyle(fontSize: 25.sp)),
+                    child: AppTextWidget.legacy(
+                      item.icon,
+                      style: TextStyle(fontSize: 25.sp),
+                    ),
                   ),
                   SizedBox(height: 7.h),
                   AppTextWidget(
@@ -799,7 +802,10 @@ class _ErrorView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 14.h),
-            ElevatedButton(onPressed: onRetry, child: const Text('Try again')),
+            ElevatedButton(
+              onPressed: onRetry,
+              child: const AppTextWidget.legacy('Try again'),
+            ),
           ],
         ),
       ),
