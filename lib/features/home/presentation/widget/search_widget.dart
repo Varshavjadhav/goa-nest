@@ -12,6 +12,18 @@ import '../bloc/search_state.dart';
 
 enum _SearchStage { destination, dates, guests, results }
 
+class _DestinationSelection {
+  final String label;
+  final String city;
+  final String country;
+
+  const _DestinationSelection({
+    required this.label,
+    this.city = '',
+    this.country = '',
+  });
+}
+
 class SearchWidget extends StatefulWidget {
   const SearchWidget({super.key});
   @override
@@ -22,8 +34,8 @@ class _SearchWidgetState extends State<SearchWidget> {
   _SearchStage stage = _SearchStage.destination;
   String destination = '';
   DateTime? checkIn, checkOut;
-  int guests = 0;
-  SearchQuery searchQuery = const SearchQuery();
+  int guests = 1;
+  SearchQuery searchQuery = const SearchQuery(maxGuests: 1);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -32,7 +44,13 @@ class _SearchWidgetState extends State<SearchWidget> {
       child: Column(
         children: [
           _TopBar(
-            title: stage == _SearchStage.results ? 'Stays in Goa' : 'Search',
+            title: switch (stage) {
+              _SearchStage.destination => 'Where to?',
+              _SearchStage.dates => 'When?',
+              _SearchStage.guests => 'Who?',
+              _SearchStage.results =>
+                destination.isEmpty ? 'Stays' : 'Stays in $destination',
+            },
             onBack: () {
               if (stage != _SearchStage.destination) {
                 setState(() => stage = _previous());
@@ -46,6 +64,13 @@ class _SearchWidgetState extends State<SearchWidget> {
                 ? () => context.push(RouteName.filterView)
                 : null,
           ),
+          if (stage != _SearchStage.destination)
+            _SearchSummary(
+              destination: destination,
+              checkIn: checkIn,
+              checkOut: checkOut,
+              guests: guests,
+            ),
           Expanded(child: _content()),
         ],
       ),
@@ -69,9 +94,13 @@ class _SearchWidgetState extends State<SearchWidget> {
     switch (stage) {
       case _SearchStage.destination:
         return _DestinationStep(
-          onSelect: (value) => setState(() {
-            destination = value;
-            searchQuery = searchQuery.copyWith(query: value);
+          onSelect: (selection) => setState(() {
+            destination = selection.label;
+            searchQuery = searchQuery.copyWith(
+              query: selection.label,
+              city: selection.city,
+              country: selection.country,
+            );
             stage = _SearchStage.dates;
           }),
         );
@@ -79,12 +108,13 @@ class _SearchWidgetState extends State<SearchWidget> {
         return _DatesStep(
           checkIn: checkIn,
           checkOut: checkOut,
-          onChanged: (range) => setState(() {
-            checkIn = range.start;
-            checkOut = range.end;
+          onChanged: (start, end) => setState(() {
+            checkIn = start;
+            checkOut = end;
             searchQuery = searchQuery.copyWith(
-              checkIn: range.start,
-              checkOut: range.end,
+              checkIn: start,
+              checkOut: end,
+              clearCheckOut: end == null,
             );
           }),
           onNext: () => setState(() => stage = _SearchStage.guests),
@@ -108,6 +138,100 @@ class _SearchWidgetState extends State<SearchWidget> {
         );
     }
   }
+}
+
+class _SearchSummary extends StatelessWidget {
+  final String destination;
+  final DateTime? checkIn;
+  final DateTime? checkOut;
+  final int guests;
+
+  const _SearchSummary({
+    required this.destination,
+    required this.checkIn,
+    required this.checkOut,
+    required this.guests,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+    margin: EdgeInsets.fromLTRB(20.w, 2.h, 20.w, 10.h),
+    padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+    decoration: BoxDecoration(
+      color: AppColor.white,
+      borderRadius: BorderRadius.circular(18.r),
+      border: Border.all(color: AppColor.divider),
+      boxShadow: [
+        BoxShadow(
+          color: AppColor.black.withValues(alpha: .05),
+          blurRadius: 8,
+          offset: const Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        _SummaryItem(
+          icon: Icons.location_on_outlined,
+          label: destination.isEmpty ? 'Anywhere' : destination,
+        ),
+        const _SummaryDivider(),
+        _SummaryItem(
+          icon: Icons.calendar_today_outlined,
+          label: checkIn == null
+              ? 'Any week'
+              : checkOut == null
+              ? '${_shortDate(checkIn!)} · Add checkout'
+              : '${_shortDate(checkIn!)} – ${_shortDate(checkOut!)}',
+        ),
+        const _SummaryDivider(),
+        _SummaryItem(
+          icon: Icons.person_outline_rounded,
+          label: '$guests ${guests == 1 ? 'guest' : 'guests'}',
+        ),
+      ],
+    ),
+  );
+
+  static String _shortDate(DateTime value) => '${value.day}/${value.month}';
+}
+
+class _SummaryItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _SummaryItem({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) => Expanded(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 15.sp, color: AppColor.textPrimary),
+        SizedBox(width: 4.w),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColor.textPrimary,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _SummaryDivider extends StatelessWidget {
+  const _SummaryDivider();
+
+  @override
+  Widget build(BuildContext context) =>
+      Container(width: 1, height: 20.h, color: AppColor.divider);
 }
 
 class _TopBar extends StatelessWidget {
@@ -149,7 +273,7 @@ class _TopBar extends StatelessWidget {
 }
 
 class _DestinationStep extends StatefulWidget {
-  final ValueChanged<String> onSelect;
+  final ValueChanged<_DestinationSelection> onSelect;
   const _DestinationStep({required this.onSelect});
 
   @override
@@ -189,7 +313,8 @@ class _DestinationStepState extends State<_DestinationStep> {
         onChanged: (value) =>
             context.read<SearchBloc>().add(SearchSuggestionsChanged(value)),
         onSubmitted: (value) {
-          if (value.trim().isNotEmpty) widget.onSelect(value.trim());
+          final label = value.trim();
+          if (label.isNotEmpty) widget.onSelect(_parseDestination(label));
         },
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
@@ -236,7 +361,13 @@ class _DestinationStepState extends State<_DestinationStep> {
                       subtitle: Text('${suggestion.propertyCount} stays'),
                       onTap: () {
                         _controller.text = suggestion.label;
-                        widget.onSelect(suggestion.label);
+                        widget.onSelect(
+                          _DestinationSelection(
+                            label: suggestion.label,
+                            city: suggestion.city,
+                            country: suggestion.country,
+                          ),
+                        );
                       },
                     ),
                   )
@@ -281,10 +412,19 @@ class _DestinationStepState extends State<_DestinationStep> {
           title: item.$1,
           subtitle: item.$2,
           icon: item.$3,
-          onTap: () => widget.onSelect(item.$1),
+          onTap: () => widget.onSelect(_parseDestination(item.$1)),
         ),
     ],
   );
+
+  static _DestinationSelection _parseDestination(String value) {
+    final parts = value.split(',').map((part) => part.trim()).toList();
+    return _DestinationSelection(
+      label: value,
+      city: parts.first,
+      country: parts.length > 1 ? parts.last : '',
+    );
+  }
 }
 
 class _DestinationTile extends StatelessWidget {
@@ -344,9 +484,9 @@ class _DestinationTile extends StatelessWidget {
   );
 }
 
-class _DatesStep extends StatelessWidget {
+class _DatesStep extends StatefulWidget {
   final DateTime? checkIn, checkOut;
-  final ValueChanged<DateTimeRange> onChanged;
+  final void Function(DateTime start, DateTime? end) onChanged;
   final VoidCallback onNext;
   const _DatesStep({
     required this.checkIn,
@@ -354,14 +494,41 @@ class _DatesStep extends StatelessWidget {
     required this.onChanged,
     required this.onNext,
   });
+
+  @override
+  State<_DatesStep> createState() => _DatesStepState();
+}
+
+class _DatesStepState extends State<_DatesStep> {
+  late bool selectingCheckout;
+
+  @override
+  void initState() {
+    super.initState();
+    selectingCheckout = widget.checkIn != null && widget.checkOut == null;
+  }
+
+  void _selectDate(DateTime date) {
+    final start = widget.checkIn;
+    if (start == null || widget.checkOut != null) {
+      widget.onChanged(date, null);
+      setState(() => selectingCheckout = true);
+    } else if (date.isAfter(start)) {
+      widget.onChanged(start, date);
+      setState(() => selectingCheckout = false);
+    } else {
+      widget.onChanged(date, null);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => ListView(
-    padding: EdgeInsets.fromLTRB(24.w, 22.h, 24.w, 32.h),
+    padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 32.h),
     children: [
       Text(
-        'When are you going?',
+        'When do you want to stay?',
         style: TextStyle(
-          fontSize: 24.sp,
+          fontSize: 23.sp,
           height: 1.2,
           fontWeight: FontWeight.w700,
           color: AppColor.textPrimary,
@@ -372,36 +539,73 @@ class _DatesStep extends StatelessWidget {
         'Choose your dates to see available stays',
         style: TextStyle(fontSize: 14.sp, color: AppColor.textSecondary),
       ),
-      SizedBox(height: 22.h),
-      _DateBox(label: 'CHECK-IN', value: _format(checkIn)),
-      SizedBox(height: 12.h),
-      _DateBox(label: 'CHECK-OUT', value: _format(checkOut)),
-      SizedBox(height: 20.h),
-      OutlinedButton.icon(
-        onPressed: () async {
-          final range = await showDateRangePicker(
-            context: context,
-            firstDate: DateTime.now(),
-            lastDate: DateTime(2027, 12, 31),
-          );
-          if (range != null) onChanged(range);
-        },
-        icon: const Icon(Icons.date_range_rounded),
-        label: Text('Choose dates', style: TextStyle(fontSize: 14.sp)),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColor.textPrimary,
-          minimumSize: Size.fromHeight(50.h),
-          side: const BorderSide(color: AppColor.divider),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
-          ),
+      SizedBox(height: 18.h),
+      Container(
+        padding: EdgeInsets.all(4.p),
+        decoration: BoxDecoration(
+          color: AppColor.greyExtraLight,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
+          children: [
+            _DateMode(label: 'Dates', active: true),
+            _DateMode(label: 'Months'),
+            _DateMode(label: 'Flexible'),
+          ],
         ),
       ),
-      SizedBox(height: 18.h),
+      SizedBox(height: 16.h),
+      Row(
+        children: [
+          Expanded(
+            child: _DateBox(
+              label: 'CHECK-IN',
+              value: _format(widget.checkIn),
+              active: !selectingCheckout,
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: _DateBox(
+              label: 'CHECK-OUT',
+              value: _format(widget.checkOut),
+              active: selectingCheckout,
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 14.h),
+      Container(
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(color: AppColor.divider),
+        ),
+        child: CalendarDatePicker(
+          key: ValueKey(widget.checkIn ?? DateTime.now()),
+          initialDate: widget.checkIn ?? DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime.now().add(const Duration(days: 730)),
+          onDateChanged: _selectDate,
+        ),
+      ),
+      SizedBox(height: 12.h),
+      Text(
+        selectingCheckout
+            ? 'Select your check-out date'
+            : 'Select your check-in date',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: AppColor.textSecondary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      SizedBox(height: 16.h),
       _PrimaryButton(
         label: 'Next',
-        enabled: checkIn != null && checkOut != null,
-        onPressed: onNext,
+        enabled: widget.checkIn != null && widget.checkOut != null,
+        onPressed: widget.onNext,
       ),
     ],
   );
@@ -409,15 +613,58 @@ class _DatesStep extends StatelessWidget {
       date == null ? 'Add date' : '${date.day}/${date.month}/${date.year}';
 }
 
+class _DateMode extends StatelessWidget {
+  final String label;
+  final bool active;
+
+  const _DateMode({required this.label, this.active = false});
+
+  @override
+  Widget build(BuildContext context) => Expanded(
+    child: Container(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      decoration: BoxDecoration(
+        color: active ? AppColor.white : Colors.transparent,
+        borderRadius: BorderRadius.circular(9.r),
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: AppColor.black.withValues(alpha: .08),
+                  blurRadius: 4,
+                ),
+              ]
+            : null,
+      ),
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w600,
+          color: active ? AppColor.textPrimary : AppColor.textSecondary,
+        ),
+      ),
+    ),
+  );
+}
+
 class _DateBox extends StatelessWidget {
   final String label, value;
-  const _DateBox({required this.label, required this.value});
+  final bool active;
+  const _DateBox({
+    required this.label,
+    required this.value,
+    this.active = false,
+  });
   @override
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.all(16.p),
     decoration: BoxDecoration(
       color: AppColor.white,
-      border: Border.all(color: AppColor.divider),
+      border: Border.all(
+        color: active ? AppColor.textPrimary : AppColor.divider,
+        width: active ? 1.5 : 1,
+      ),
       borderRadius: BorderRadius.circular(12.r),
     ),
     child: Row(
@@ -479,21 +726,46 @@ class _GuestsStep extends StatelessWidget {
         'Add guests to find the right space for your trip',
         style: TextStyle(fontSize: 14.sp, color: AppColor.textSecondary),
       ),
-      SizedBox(height: 28.h),
-      _GuestCounter(
-        label: 'Adults',
-        hint: 'Ages 13 or above',
-        count: guests,
-        onChanged: onChanged,
+      SizedBox(height: 20.h),
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(color: AppColor.divider),
+        ),
+        child: Column(
+          children: [
+            _GuestCounter(
+              label: 'Adults',
+              hint: 'Ages 13 or above',
+              count: guests,
+              onChanged: onChanged,
+            ),
+            const Divider(height: 1),
+            const _GuestCounter(label: 'Children', hint: 'Ages 2–12', count: 0),
+            const Divider(height: 1),
+            const _GuestCounter(label: 'Infants', hint: 'Under 2', count: 0),
+            const Divider(height: 1),
+            const _GuestCounter(
+              label: 'Pets',
+              hint: 'Bringing a service animal?',
+              count: 0,
+            ),
+          ],
+        ),
       ),
-      const _GuestCounter(label: 'Children', hint: 'Ages 2–12', count: 0),
-      const _GuestCounter(label: 'Infants', hint: 'Under 2', count: 0),
-      const _GuestCounter(
-        label: 'Pets',
-        hint: 'Bringing a service animal?',
-        count: 0,
+      SizedBox(height: 18.h),
+      Text(
+        '$guests ${guests == 1 ? 'guest' : 'guests'} selected',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: AppColor.textSecondary,
+          fontWeight: FontWeight.w600,
+        ),
       ),
-      SizedBox(height: 22.h),
+      SizedBox(height: 12.h),
       _PrimaryButton(
         label: 'Search stays',
         enabled: guests > 0,
@@ -537,21 +809,58 @@ class _GuestCounter extends StatelessWidget {
             ],
           ),
         ),
-        IconButton(
-          onPressed: count > 0 && onChanged != null
-              ? () => onChanged!(count - 1)
-              : null,
-          icon: const Icon(Icons.remove_circle_outline),
+        _CounterButton(
+          icon: Icons.remove,
+          enabled: count > 0 && onChanged != null,
+          onTap: () => onChanged?.call(count - 1),
         ),
-        Text(
-          '$count',
-          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
+        SizedBox(
+          width: 28.w,
+          child: Text(
+            '$count',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
+          ),
         ),
-        IconButton(
-          onPressed: onChanged == null ? null : () => onChanged!(count + 1),
-          icon: const Icon(Icons.add_circle_outline),
+        _CounterButton(
+          icon: Icons.add,
+          enabled: onChanged != null,
+          onTap: () => onChanged?.call(count + 1),
         ),
       ],
+    ),
+  );
+}
+
+class _CounterButton extends StatelessWidget {
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  const _CounterButton({
+    required this.icon,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: enabled ? onTap : null,
+    borderRadius: BorderRadius.circular(20.r),
+    child: Container(
+      width: 32.w,
+      height: 32.w,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: enabled ? AppColor.textSecondary : AppColor.divider,
+        ),
+      ),
+      child: Icon(
+        icon,
+        size: 17.sp,
+        color: enabled ? AppColor.textPrimary : AppColor.grey,
+      ),
     ),
   );
 }

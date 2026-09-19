@@ -42,6 +42,7 @@ class AppTheme {
       brightness: brightness,
       colorScheme: colorScheme,
       primarySwatch: AppColor.primarySwatch,
+      fontFamily: 'Inter',
       scaffoldBackgroundColor: surface,
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
@@ -163,28 +164,28 @@ class AppTheme {
         color: colorScheme.onSurface,
       ),
       bodyMedium: TextStyle(
-        fontSize: 13.sp,
+        fontSize: 14.sp,
         fontWeight: FontWeight.w400,
         color: colorScheme.onSurface,
       ),
       bodySmall: TextStyle(
-        fontSize: 12.sp,
+        fontSize: 13.sp,
         fontWeight: FontWeight.w400,
         color: colorScheme.onSurfaceVariant,
       ),
       labelLarge: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w700,
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
       ),
       labelMedium: TextStyle(
-        fontSize: 11.sp,
-        fontWeight: FontWeight.w600,
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w500,
         color: colorScheme.onSurfaceVariant,
       ),
       labelSmall: TextStyle(
-        fontSize: 10.sp,
-        fontWeight: FontWeight.w600,
+        fontSize: 11.sp,
+        fontWeight: FontWeight.w500,
         color: colorScheme.onSurfaceVariant,
       ),
     );

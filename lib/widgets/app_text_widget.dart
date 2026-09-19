@@ -19,7 +19,9 @@ class AppTextWidget extends StatelessWidget {
   final VoidCallback? onTap;
   final String? fontFamily;
 
-  static const String defaultFontFamily = 'Montserrat';
+  /// App-wide typeface. Keep all shared text on the same Inter family so
+  /// weights remain consistent across headings, body copy, and controls.
+  static const String defaultFontFamily = 'Inter';
 
   const AppTextWidget({
     super.key,
@@ -230,7 +232,7 @@ class AppTextWidget extends StatelessWidget {
   })  : fontSize = 15,
         fontWeight = FontWeight.w400;
 
-  /// Body medium – 13sp w400
+  /// Body medium – 14sp w400
   const AppTextWidget.bodyMedium({
     super.key,
     required String this.text,
@@ -246,10 +248,10 @@ class AppTextWidget extends StatelessWidget {
     this.softWrap,
     this.fontStyle,
     this.fontFamily,
-  })  : fontSize = 13,
+  })  : fontSize = 14,
         fontWeight = FontWeight.w400;
 
-  /// Body small – 12sp w400
+  /// Body small – 13sp w400
   const AppTextWidget.bodySmall({
     super.key,
     required String this.text,
@@ -265,10 +267,10 @@ class AppTextWidget extends StatelessWidget {
     this.softWrap,
     this.fontStyle,
     this.fontFamily,
-  })  : fontSize = 12,
+  })  : fontSize = 13,
         fontWeight = FontWeight.w400;
 
-  /// Label large – 13sp w700
+  /// Label large – 14sp w600
   const AppTextWidget.labelLarge({
     super.key,
     required String this.text,
@@ -284,10 +286,10 @@ class AppTextWidget extends StatelessWidget {
     this.softWrap,
     this.fontStyle,
     this.fontFamily,
-  })  : fontSize = 13,
-        fontWeight = FontWeight.w700;
+  })  : fontSize = 14,
+        fontWeight = FontWeight.w600;
 
-  /// Label medium – 11sp w600
+  /// Label medium – 12sp w500
   const AppTextWidget.labelMedium({
     super.key,
     required String this.text,
@@ -303,10 +305,10 @@ class AppTextWidget extends StatelessWidget {
     this.softWrap,
     this.fontStyle,
     this.fontFamily,
-  })  : fontSize = 11,
-        fontWeight = FontWeight.w600;
+  })  : fontSize = 12,
+        fontWeight = FontWeight.w500;
 
-  /// Label small – 10sp w600
+  /// Label small – 11sp w500
   const AppTextWidget.labelSmall({
     super.key,
     required String this.text,
@@ -322,8 +324,8 @@ class AppTextWidget extends StatelessWidget {
     this.softWrap,
     this.fontStyle,
     this.fontFamily,
-  })  : fontSize = 10,
-        fontWeight = FontWeight.w600;
+  })  : fontSize = 11,
+        fontWeight = FontWeight.w500;
 
   @override
   Widget build(BuildContext context) {
@@ -339,7 +341,7 @@ class AppTextWidget extends StatelessWidget {
         fontFamily: fontFamily ?? defaultFontFamily,
         decoration: textDecoration,
         decorationColor: textDecorationColor,
-        fontSize: fontSize ?? 12,
+        fontSize: fontSize ?? 14,
         color: color ?? context.themeExt.textPrimary,
         height: height,
         letterSpacing: letterSpacing,
