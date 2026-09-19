@@ -5,6 +5,7 @@ import 'package:goanest/features/home/presentation/view/home_screen.dart';
 import 'package:goanest/features/home/presentation/view/property_detail_screen.dart';
 import 'package:goanest/features/home/presentation/view/recently_viewed_screen.dart';
 import 'package:goanest/features/home/presentation/view/checkout_screen.dart';
+import 'package:goanest/features/home/presentation/view/booking_flow_screen.dart';
 import 'package:goanest/features/home/presentation/view/booking_confirmation_screen.dart';
 import 'package:goanest/features/login/presentation/view/login_screen.dart';
 import 'package:goanest/features/login/presentation/view/registration_screen.dart';
@@ -134,7 +135,44 @@ class AppRouter {
         pageBuilder: (context, state) => appCustomTransitionPage(
           state: state,
           transitionBuilder: slideInOutTransition,
-          child: const CheckoutScreen(),
+          child: CheckoutScreen(
+            checkIn: DateTime.tryParse(
+              state.uri.queryParameters['checkIn'] ?? '',
+            ),
+            checkOut: DateTime.tryParse(
+              state.uri.queryParameters['checkOut'] ?? '',
+            ),
+            guests: int.tryParse(state.uri.queryParameters['guests'] ?? ''),
+            total: double.tryParse(state.uri.queryParameters['total'] ?? ''),
+            propertyId: state.pathParameters['propertyId'] ?? '',
+            propertyTitle: state.uri.queryParameters['title'] ?? 'Your stay',
+          ),
+        ),
+      ),
+      GoRoute(
+        name: 'booking-flow',
+        path: RouteName.bookingFlowView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: BookingFlowScreen(
+            propertyId: state.pathParameters['propertyId'] ?? '',
+            propertyTitle: state.uri.queryParameters['title'] ?? 'Your stay',
+            nightlyPrice:
+                double.tryParse(
+                  state.uri.queryParameters['nightlyPrice'] ?? '',
+                ) ??
+                0,
+            initialCheckIn: DateTime.tryParse(
+              state.uri.queryParameters['checkIn'] ?? '',
+            ),
+            initialCheckOut: DateTime.tryParse(
+              state.uri.queryParameters['checkOut'] ?? '',
+            ),
+            initialGuests:
+                int.tryParse(state.uri.queryParameters['guests'] ?? '') ?? 1,
+            useAvailabilityApi: state.uri.queryParameters['api'] == 'true',
+          ),
         ),
       ),
       GoRoute(

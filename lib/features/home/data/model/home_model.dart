@@ -54,6 +54,10 @@ class PropertyModel {
   final double rating;
   final int totalReviews;
   final bool isLiked;
+  final bool isAvailable;
+  final bool instantBooking;
+  final bool requiresApproval;
+  final String bookingType;
   final DateTime? viewedAt;
 
   const PropertyModel({
@@ -83,6 +87,10 @@ class PropertyModel {
     this.rating = 0,
     this.totalReviews = 0,
     this.isLiked = false,
+    this.isAvailable = true,
+    this.instantBooking = true,
+    this.requiresApproval = false,
+    this.bookingType = 'instant',
     this.viewedAt,
   });
 
@@ -128,6 +136,18 @@ class PropertyModel {
       rating: _double(json['averageRating']),
       totalReviews: _int(json['totalReviews']),
       isLiked: json['isLiked'] == true,
+      isAvailable: json['isAvailable'] == false || json['available'] == false
+          ? false
+          : true,
+      instantBooking:
+          json['instantBooking'] == true ||
+          _string(json['bookingType']).toLowerCase() == 'instant',
+      requiresApproval:
+          json['requiresApproval'] == true ||
+          _string(json['bookingType']).toLowerCase() == 'request',
+      bookingType: _string(json['bookingType']).isEmpty
+          ? (json['instantBooking'] == false ? 'request' : 'instant')
+          : _string(json['bookingType']),
       viewedAt: DateTime.tryParse(_string(json['viewedAt'])),
     );
   }

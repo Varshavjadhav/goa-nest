@@ -9,6 +9,7 @@ class RouteName {
   static const String recentlyViewedView = '/recently-viewed';
   static const String propertyView = '/property/:propertyId';
   static const String checkoutView = '/checkout/:propertyId';
+  static const String bookingFlowView = '/booking-flow/:propertyId';
   static const String bookingConfirmationView =
       '/booking-confirmation/:propertyId';
 

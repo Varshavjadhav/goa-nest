@@ -8,6 +8,7 @@ import '../../data/model/wishlist_model.dart';
 import '../../data/model/favorite_model.dart';
 import '../../data/model/search_model.dart';
 import '../../data/model/profile_model.dart';
+import '../../data/model/booking_model.dart';
 
 abstract class HomeRepository {
   Future<Either<AppException, ExploreModel>> getExplore();
@@ -16,6 +17,9 @@ abstract class HomeRepository {
     ProfileUpdateRequest request,
   );
   Future<Either<AppException, PropertyDetailModel>> getProperty(String id);
+  Future<Either<AppException, AvailabilityResult>> checkAvailability(
+    AvailabilityRequest request,
+  );
   Future<Either<AppException, PropertyCollection>> getRecentlyViewed({
     int page = 1,
     int limit = 20,

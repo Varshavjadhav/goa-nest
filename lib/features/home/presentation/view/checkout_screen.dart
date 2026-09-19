@@ -7,143 +7,461 @@ import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final DateTime? checkIn;
+  final DateTime? checkOut;
+  final int? guests;
+  final double? total;
+  final String propertyId;
+  final String propertyTitle;
+
+  const CheckoutScreen({
+    super.key,
+    this.checkIn,
+    this.checkOut,
+    this.guests,
+    this.total,
+    this.propertyId = '',
+    this.propertyTitle = 'Your stay',
+  });
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   int paymentMethod = 0;
+  bool paymentStarted = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.scaffoldBackground,
-      appBar: CommonWidgets.appBar(
-        title: 'Confirm and pay',
-        onBackTap: () => context.pop(),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 96.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CommonWidgets.stayCard(
-              imageUrl:
-                  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
-              title: 'Modern villa with pool',
-              subtitle: 'Entire villa · North Goa',
-              rating: '4.9 · 24 reviews',
-            ),
-            SizedBox(height: 26.h),
-            CommonWidgets.sectionTitle('Your trip'),
-            SizedBox(height: 14.h),
-            CommonWidgets.tripRow(
-              icon: Icons.calendar_month_outlined,
-              title: 'Dates',
-              value: 'Aug 28 – Sep 1, 2026',
-            ),
-            CommonWidgets.tripRow(
-              icon: Icons.group_outlined,
-              title: 'Guests',
-              value: '2 guests',
-            ),
-            CommonWidgets.divider(),
-            CommonWidgets.sectionTitle('Payment method'),
-            SizedBox(height: 12.h),
-            _PaymentOption(
-              icon: Icons.credit_card,
-              title: 'Credit or debit card',
-              subtitle: 'Visa, Mastercard, RuPay',
-              selected: paymentMethod == 0,
-              onTap: () => setState(() => paymentMethod = 0),
-              child: const _CardFields(),
-            ),
-            _PaymentOption(
-              icon: Icons.account_balance_wallet_outlined,
-              title: 'UPI',
-              subtitle: 'Google Pay, PhonePe, Paytm',
-              selected: paymentMethod == 1,
-              onTap: () => setState(() => paymentMethod = 1),
-            ),
-            _PaymentOption(
-              icon: Icons.payments_outlined,
-              title: 'Cash or bank transfer',
-              subtitle: 'Pay securely at confirmation',
-              selected: paymentMethod == 2,
-              onTap: () => setState(() => paymentMethod = 2),
-            ),
-            SizedBox(height: 20.h),
-            CommonWidgets.sectionTitle('Price details'),
-            SizedBox(height: 14.h),
-            CommonWidgets.priceRow(
-              label: '₹18,500 × 4 nights',
-              value: '₹74,000',
-            ),
-            CommonWidgets.priceRow(label: 'Cleaning fee', value: '₹2,500'),
-            CommonWidgets.priceRow(label: 'Service fee', value: '₹4,250'),
-            CommonWidgets.divider(height: 25),
-            CommonWidgets.priceRow(
-              label: 'Total (INR)',
-              value: '₹80,750',
-              bold: true,
-            ),
-            SizedBox(height: 22.h),
-            AppTextWidget.labelMedium(
-              text:
-                  'By selecting the button below, I agree to the house rules, cancellation policy, and Havenstay terms.',
-              color: AppColor.textSecondary,
-              height: 1.45,
+    final checkIn = widget.checkIn ?? DateTime.now();
+    final checkOut = widget.checkOut ?? checkIn.add(const Duration(days: 1));
+    final nights = checkOut.difference(checkIn).inDays.clamp(1, 365);
+    final total = widget.total ?? 0;
+    final roomAmount = total * .87;
+    final cleaningFee = total * .05;
+    final serviceFee = total * .08;
+    return WillPopScope(
+      onWillPop: _confirmExit,
+      child: Scaffold(
+        backgroundColor: AppColor.scaffoldBackground,
+        appBar: CommonWidgets.appBar(
+          title: 'Confirm and pay',
+          showBack: false,
+          actions: [
+            IconButton(
+              onPressed: () => _leaveCheckout(context),
+              icon: const Icon(Icons.close_rounded),
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CommonWidgets.bottomBar(
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 96.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _summaryCard(checkIn, checkOut, total, nights),
+              SizedBox(height: 22.h),
+              AppTextWidget.headlineSmall(text: 'Price details'),
+              SizedBox(height: 14.h),
+              CommonWidgets.priceRow(
+                label: '$nights nights × ₹${(roomAmount / nights).round()}',
+                value: '₹${roomAmount.round()}',
+              ),
+              TextButton(
+                onPressed: () => _showPriceDetails(
+                  roomAmount,
+                  cleaningFee,
+                  serviceFee,
+                  total,
+                ),
+                child: AppTextWidget.bodyMedium(
+                  text: 'Price breakdown',
+                  textDecoration: TextDecoration.underline,
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 13.h, horizontal: 12.w),
+                color: const Color(0xFFF1F1F1),
+                child: Row(
+                  children: [
+                    Icon(Icons.check, size: 18.sp),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: AppTextWidget.bodyMedium(
+                        text:
+                            'Free cancellation before ${_shortDate(checkIn.subtract(const Duration(days: 1)))}',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.h),
+              AppTextWidget.bodyMedium(
+                text:
+                    'You’ll be directed to payment to complete your reservation.',
+                color: AppColor.textSecondary,
+              ),
+              SizedBox(height: 14.h),
+              AppTextWidget.labelMedium(
+                text:
+                    'By selecting the button below, I agree to the booking terms.',
+                color: AppColor.textSecondary,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: CommonWidgets.bottomBar(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppTextWidget.titleLarge(text: '₹80,750'),
-                  AppTextWidget.labelMedium(
-                    text: 'Total (INR)',
-                    color: AppColor.textSecondary,
-                  ),
+                  AppTextWidget.labelLarge(text: 'Total (INR)'),
+                  AppTextWidget.titleLarge(text: '₹${total.round()}'),
                 ],
               ),
-            ),
-            SizedBox(
-              width: 150.w,
-              height: 50.h,
-              child: ElevatedButton(
-                onPressed: () => context.push(
-                  RouteName.bookingConfirmationView.replaceFirst(
-                    ':propertyId',
-                    'modern-villa',
+              SizedBox(height: 10.h),
+              SizedBox(
+                width: double.infinity,
+                height: 52.h,
+                child: ElevatedButton(
+                  onPressed: () => _continueToPayment(total, checkIn, checkOut),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primary,
+                    foregroundColor: AppColor.white,
+                    elevation: 0,
+                    minimumSize: Size(double.infinity, 52.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14.r),
+                    ),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.primary,
-                  foregroundColor: AppColor.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r),
+                  child: AppTextWidget(
+                    text: 'Continue to payment',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.white,
                   ),
-                ),
-                child: AppTextWidget(
-                  text: 'Confirm and pay',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.white,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _summaryCard(
+    DateTime checkIn,
+    DateTime checkOut,
+    double total,
+    int nights,
+  ) => Container(
+    padding: EdgeInsets.all(14.w),
+    decoration: BoxDecoration(
+      color: AppColor.white,
+      borderRadius: BorderRadius.circular(18.r),
+      border: Border.all(color: AppColor.divider),
+    ),
+    child: Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.r),
+              child: Image.network(
+                'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
+                width: 92.w,
+                height: 92.w,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 92.w,
+                  height: 92.w,
+                  color: AppColor.greyExtraLight,
+                  child: Icon(Icons.home_outlined, size: 28.sp),
+                ),
+              ),
+            ),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppTextWidget.titleLarge(
+                    text: widget.propertyTitle,
+                    maxLines: 3,
+                    textOverflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Icon(Icons.star_rounded, size: 17.sp),
+                      SizedBox(width: 4.w),
+                      AppTextWidget.bodyMedium(text: '5.0 (6)'),
+                      SizedBox(width: 12.w),
+                      Icon(Icons.workspace_premium_outlined, size: 17.sp),
+                      SizedBox(width: 4.w),
+                      Flexible(
+                        child: AppTextWidget.bodyMedium(
+                          text: 'Guest favourite',
+                          maxLines: 1,
+                          textOverflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Divider(height: 28.h),
+        _changeRow(
+          'Dates',
+          '${_shortDate(checkIn)} – ${_shortDate(checkOut)}',
+          () => context.pop(),
+        ),
+        Divider(height: 24.h),
+        _changeRow(
+          'Guests',
+          '${widget.guests ?? 1} guest${(widget.guests ?? 1) == 1 ? '' : 's'}',
+          () => context.pop(),
+        ),
+        Divider(height: 24.h),
+        _changeRow(
+          'Total price',
+          '₹${total.toStringAsFixed(2)} including taxes INR',
+          () => _showPriceDetails(total * .87, total * .05, total * .08, total),
+        ),
+        Divider(height: 24.h),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppTextWidget.titleMedium(text: 'Free cancellation'),
+              SizedBox(height: 5.h),
+              AppTextWidget.bodyMedium(
+                text:
+                    'Cancel before ${_shortDate(checkIn.subtract(const Duration(days: 1)))} for a full refund.',
+              ),
+              SizedBox(height: 4.h),
+              AppTextWidget.bodyMedium(
+                text: 'Full policy',
+                textDecoration: TextDecoration.underline,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _changeRow(String label, String value, VoidCallback onChange) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppTextWidget.titleMedium(text: label),
+            SizedBox(height: 5.h),
+            AppTextWidget.bodyLarge(text: value),
+          ],
+        ),
+      ),
+      TextButton(
+        onPressed: onChange,
+        style: TextButton.styleFrom(
+          backgroundColor: const Color(0xFFF2F2F2),
+          foregroundColor: AppColor.textPrimary,
+          padding: EdgeInsets.symmetric(horizontal: 17.w, vertical: 11.h),
+        ),
+        child: AppTextWidget.titleSmall(
+          text: label == 'Total price' ? 'Details' : 'Change',
+        ),
+      ),
+    ],
+  );
+
+  Future<void> _showPriceDetails(
+    double roomAmount,
+    double cleaningFee,
+    double serviceFee,
+    double total,
+  ) => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColor.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+    ),
+    builder: (_) => SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 28.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: context.pop,
+                icon: const Icon(Icons.close),
+              ),
+            ),
+            AppTextWidget.headlineMedium(text: 'Price details'),
+            SizedBox(height: 24.h),
+            CommonWidgets.priceRow(
+              label: 'Accommodation',
+              value: '₹${roomAmount.toStringAsFixed(2)}',
+            ),
+            CommonWidgets.priceRow(
+              label: 'Cleaning fee',
+              value: '₹${cleaningFee.toStringAsFixed(2)}',
+            ),
+            CommonWidgets.priceRow(
+              label: 'Service fee',
+              value: '₹${serviceFee.toStringAsFixed(2)}',
+            ),
+            CommonWidgets.divider(height: 24),
+            CommonWidgets.priceRow(
+              label: 'Total INR',
+              value: '₹${total.toStringAsFixed(2)}',
+              bold: true,
+            ),
+            SizedBox(height: 8.h),
+            AppTextWidget.bodyMedium(
+              text: 'Price breakdown',
+              textDecoration: TextDecoration.underline,
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Future<void> _continueToPayment(
+    double total,
+    DateTime checkIn,
+    DateTime checkOut,
+  ) async {
+    setState(() => paymentStarted = true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: AppTextWidget.legacy('Opening secure payment...'),
+      ),
+    );
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColor.white,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 28.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppTextWidget.headlineSmall(text: 'Choose a payment method'),
+              SizedBox(height: 14.h),
+              _PaymentOption(
+                icon: Icons.credit_card,
+                title: 'Credit or debit card',
+                subtitle: 'Visa, Mastercard, RuPay',
+                selected: paymentMethod == 0,
+                onTap: () => setSheetState(() => paymentMethod = 0),
+                child: const _CardFields(),
+              ),
+              _PaymentOption(
+                icon: Icons.account_balance_wallet_outlined,
+                title: 'UPI',
+                subtitle: 'Google Pay, PhonePe, Paytm',
+                selected: paymentMethod == 1,
+                onTap: () => setSheetState(() => paymentMethod = 1),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 50.h,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.push(
+                      RouteName.bookingConfirmationView.replaceFirst(
+                        ':propertyId',
+                        widget.propertyId.isEmpty
+                            ? 'property'
+                            : widget.propertyId,
+                      ),
+                    );
+                  },
+                  child: AppTextWidget(
+                    text: 'Pay ₹${total.round()}',
+                    color: AppColor.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (mounted) setState(() => paymentStarted = false);
+  }
+
+  Future<bool> _confirmExit() async {
+    if (paymentStarted) return true;
+    final leave = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: AppTextWidget.titleLarge(text: 'Continue payment?'),
+        content: AppTextWidget.bodyMedium(
+          text:
+              'Your reservation is not paid yet. Do you want to continue payment?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: AppTextWidget.bodyMedium(text: 'Leave'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: AppTextWidget.bodyMedium(
+              text: 'Continue payment',
+              color: AppColor.white,
+            ),
+          ),
+        ],
+      ),
+    );
+    return leave ?? false;
+  }
+
+  void _leaveCheckout(BuildContext context) async {
+    if (await _confirmExit() && context.mounted) context.pop();
+  }
+
+  static String _shortDate(DateTime value) =>
+      '${_month(value.month)} ${value.day}, ${value.year}';
+
+  static String _month(int month) => const [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ][month - 1];
 }
 
 class _PaymentOption extends StatelessWidget {

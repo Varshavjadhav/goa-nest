@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
@@ -15,8 +14,17 @@ import '../bloc/property_detail_state.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
   final String propertyId;
+  final DateTime? checkIn;
+  final DateTime? checkOut;
+  final int? guests;
 
-  const PropertyDetailScreen({super.key, required this.propertyId});
+  const PropertyDetailScreen({
+    super.key,
+    required this.propertyId,
+    this.checkIn,
+    this.checkOut,
+    this.guests,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +53,9 @@ class PropertyDetailScreen extends StatelessWidget {
         }
         return _PropertyDetailContent(
           detail: (state as PropertyDetailLoaded).property,
+          checkIn: checkIn,
+          checkOut: checkOut,
+          guests: guests,
         );
       },
     );
@@ -53,8 +64,16 @@ class PropertyDetailScreen extends StatelessWidget {
 
 class _PropertyDetailContent extends StatelessWidget {
   final PropertyDetailModel detail;
+  final DateTime? checkIn;
+  final DateTime? checkOut;
+  final int? guests;
 
-  const _PropertyDetailContent({required this.detail});
+  const _PropertyDetailContent({
+    required this.detail,
+    this.checkIn,
+    this.checkOut,
+    this.guests,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +87,14 @@ class _PropertyDetailContent extends StatelessWidget {
     final price = property.pricePerNight.isEmpty
         ? 'Price unavailable'
         : '₹${property.pricePerNight} night';
+    final canBook = detail.isAvailable && property.isAvailable;
+    final actionLabel = !canBook
+        ? 'Not available'
+        : checkIn == null || checkOut == null
+        ? 'Check availability'
+        : property.requiresApproval
+        ? 'Request to book'
+        : 'Reserve';
 
     return Scaffold(
       backgroundColor: AppColor.scaffoldBackground,
@@ -182,14 +209,23 @@ class _PropertyDetailContent extends StatelessWidget {
               width: 140.w,
               height: 50.h,
               child: ElevatedButton(
-                onPressed: () => context.push(
-                  RouteName.checkoutView.replaceFirst(
-                    ':propertyId',
-                    property.id,
-                  ),
-                ),
+                onPressed: canBook
+                    ? () => context.pushNamed(
+                        'booking-flow',
+                        pathParameters: {'propertyId': property.id},
+                        queryParameters: {
+                          'title': property.title,
+                          'nightlyPrice': property.pricePerNight,
+                          if (checkIn != null) 'checkIn': _date(checkIn!),
+                          if (checkOut != null) 'checkOut': _date(checkOut!),
+                          if (guests != null) 'guests': guests.toString(),
+                        },
+                      )
+                    : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.primary,
+                  backgroundColor: canBook
+                      ? AppColor.primary
+                      : AppColor.greyMedium,
                   foregroundColor: AppColor.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -197,7 +233,7 @@ class _PropertyDetailContent extends StatelessWidget {
                   ),
                 ),
                 child: AppTextWidget(
-                  text: 'Reserve',
+                  text: actionLabel,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: AppColor.white,
@@ -209,6 +245,9 @@ class _PropertyDetailContent extends StatelessWidget {
       ),
     );
   }
+
+  static String _date(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
 }
 
 class _HeroImage extends StatelessWidget {

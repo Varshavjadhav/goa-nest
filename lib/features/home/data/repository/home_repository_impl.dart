@@ -10,6 +10,7 @@ import '../model/wishlist_model.dart';
 import '../model/favorite_model.dart';
 import '../model/search_model.dart';
 import '../model/profile_model.dart';
+import '../model/booking_model.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
@@ -32,6 +33,11 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppException, PropertyDetailModel>> getProperty(String id) =>
       remoteDataSource.getProperty(id).mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, AvailabilityResult>> checkAvailability(
+    AvailabilityRequest request,
+  ) => remoteDataSource.checkAvailability(request).mapEntity((data) => data);
 
   @override
   Future<Either<AppException, PropertyCollection>> getRecentlyViewed({

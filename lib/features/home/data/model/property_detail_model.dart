@@ -7,6 +7,7 @@ class PropertyDetailModel {
   final String checkOutTime;
   final int minimumNights;
   final int maximumNights;
+  final bool isAvailable;
 
   const PropertyDetailModel({
     required this.property,
@@ -15,6 +16,7 @@ class PropertyDetailModel {
     this.checkOutTime = '',
     this.minimumNights = 1,
     this.maximumNights = 365,
+    this.isAvailable = true,
   });
 
   factory PropertyDetailModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,9 @@ class PropertyDetailModel {
       maximumNights: raw['maximumNights'] is num
           ? raw['maximumNights'].toInt()
           : 365,
+      isAvailable: raw['isAvailable'] == false || raw['available'] == false
+          ? false
+          : true,
     );
   }
 }
