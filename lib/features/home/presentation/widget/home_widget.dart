@@ -43,14 +43,14 @@ class _HomeWidgetState extends State<HomeWidget> {
   );
 
   Widget _content(BuildContext context, ExploreModel data) => ColoredBox(
-    color: AppColor.white,
+    color: const Color(0xFFF7F7F7),
     child: CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
         SliverToBoxAdapter(child: _SearchBar(data.search)),
         SliverToBoxAdapter(
           child: _Tabs(
-            data.tabs,
+            _tabsFor(data.tabs),
             selectedTab,
             (index) => setState(() => selectedTab = index),
           ),
@@ -93,6 +93,42 @@ class _HomeWidgetState extends State<HomeWidget> {
       ],
     ),
   );
+
+  static const _fallbackTabs = <ExploreTab>[
+    ExploreTab(key: 'homes', label: 'Homes', icon: 'home'),
+    ExploreTab(key: 'villas', label: 'Villas', icon: 'home'),
+    ExploreTab(key: 'beach', label: 'Beach', icon: 'beach'),
+    ExploreTab(key: 'experiences', label: 'Experiences', icon: 'camera'),
+    ExploreTab(key: 'services', label: 'Services', icon: 'settings'),
+  ];
+
+  List<ExploreTab> _tabsFor(List<ExploreTab> apiTabs) {
+    if (apiTabs.isEmpty) return _fallbackTabs;
+    final result = <ExploreTab>[];
+    for (final tab in apiTabs) {
+      final value = '${tab.key} ${tab.label}'.toLowerCase();
+      if (value.contains('beach') && value.contains('villa')) {
+        result.add(
+          const ExploreTab(key: 'villas', label: 'Villas', icon: 'home'),
+        );
+        result.add(
+          const ExploreTab(key: 'beach', label: 'Beach', icon: 'beach'),
+        );
+      } else {
+        result.add(tab);
+      }
+    }
+    for (final fallback in _fallbackTabs) {
+      if (!result.any(
+        (tab) =>
+            tab.key.toLowerCase() == fallback.key ||
+            tab.label.toLowerCase() == fallback.label.toLowerCase(),
+      )) {
+        result.add(fallback);
+      }
+    }
+    return result;
+  }
 }
 
 class _SearchBar extends StatelessWidget {
@@ -101,44 +137,38 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 0),
+    padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
     child: GestureDetector(
       onTap: () => context.push(RouteName.searchView),
       child: Container(
-        height: 50.h,
-        padding: EdgeInsets.symmetric(horizontal: 14.w),
+        height: 54.h,
+        padding: EdgeInsets.symmetric(horizontal: 22.w),
         decoration: BoxDecoration(
           color: AppColor.white,
-          borderRadius: BorderRadius.circular(26.r),
-          border: Border.all(color: AppColor.homeDivider),
+          borderRadius: BorderRadius.circular(38.r),
           boxShadow: [
             BoxShadow(
-              color: AppColor.black.withValues(alpha: .06),
-              blurRadius: 8,
+              color: AppColor.black.withValues(alpha: .16),
+              blurRadius: 12,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_rounded, size: 20.sp),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: AppTextWidget(
-                text: data.placeholder,
-                fontSize: 14,
-                color: AppColor.textSecondary,
-              ),
+            Icon(
+              Icons.search_rounded,
+              size: 21.sp,
+              color: AppColor.textPrimary,
             ),
-            if (data.filtersAvailable)
-              Container(
-                width: 34.w,
-                height: 34.w,
-                decoration: BoxDecoration(
-                  color: AppColor.greyExtraLight,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.tune_rounded, size: 16.sp),
-              ),
+            SizedBox(width: 10.w),
+            AppTextWidget(
+              text: data.placeholder,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: AppColor.textPrimary,
+            ),
           ],
         ),
       ),
@@ -154,10 +184,10 @@ class _Tabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 54.h,
+    height: 58.h,
     child: ListView.separated(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 0),
+      padding: EdgeInsets.fromLTRB(20.w, 13.h, 20.w, 0),
       itemCount: tabs.length,
       separatorBuilder: (_, __) => SizedBox(width: 8.w),
       itemBuilder: (_, index) {
@@ -165,30 +195,44 @@ class _Tabs extends StatelessWidget {
         final active = index == selected;
         return GestureDetector(
           onTap: () => onTap(index),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: active ? AppColor.textPrimary : AppColor.white,
-              borderRadius: BorderRadius.circular(18.r),
-              border: Border.all(
-                color: active ? AppColor.textPrimary : AppColor.homeDivider,
+          child: AnimatedScale(
+            scale: active ? 1.03 : 1,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: active ? const Color(0xFFF4F4F4) : AppColor.white,
+                borderRadius: BorderRadius.circular(28.r),
+                border: Border.all(color: const Color(0xFFE7E7E7)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColor.black.withValues(alpha: active ? .16 : .08),
+                    blurRadius: active ? 7 : 3,
+                    offset: Offset(0, active ? 3 : 1),
+                  ),
+                ],
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _icon(item.icon),
-                  size: 14.sp,
-                  color: active ? AppColor.white : AppColor.textPrimary,
-                ),
-                SizedBox(width: 5.w),
-                AppTextWidget(
-                  text: item.label,
-                  fontSize: 12,
-                  color: active ? AppColor.white : AppColor.textPrimary,
-                ),
-              ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _emoji(item.icon),
+                    style: TextStyle(fontSize: 17.sp, height: 1),
+                  ),
+                  SizedBox(width: 5.w),
+                  AppTextWidget(
+                    text: item.label,
+                    fontSize: 15,
+                    color: AppColor.textPrimary,
+                    fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                    maxLines: 1,
+                    textOverflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -196,11 +240,12 @@ class _Tabs extends StatelessWidget {
     ),
   );
 
-  static IconData _icon(String value) => switch (value.toLowerCase()) {
-    'home' => Icons.home_outlined,
-    'camera' => Icons.camera_alt_outlined,
-    'settings' => Icons.settings_outlined,
-    _ => Icons.auto_awesome,
+  static String _emoji(String value) => switch (value.toLowerCase()) {
+    'home' || 'homes' => '🏠',
+    'camera' || 'experience' || 'experiences' => '🎈',
+    'settings' || 'service' || 'services' => '🛎️',
+    'beach' => '🏖️',
+    _ => '✨',
   };
 }
 
@@ -210,12 +255,19 @@ class _ContinueSearching extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
+    padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
     child: Container(
-      padding: EdgeInsets.all(12.p),
+      padding: EdgeInsets.fromLTRB(16.w, 14.h, 12.w, 14.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: AppColor.homeDivider),
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(28.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.black.withValues(alpha: .11),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -225,8 +277,9 @@ class _ContinueSearching extends StatelessWidget {
               children: [
                 AppTextWidget(
                   text: data.title,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  maxLines: 2,
                 ),
                 SizedBox(height: 4.h),
                 AppTextWidget(
@@ -237,22 +290,35 @@ class _ContinueSearching extends StatelessWidget {
               ],
             ),
           ),
-          if (data.imageUrl.isNotEmpty) _Image(data.imageUrl, 70.w, 62.h),
+          if (data.imageUrl.isNotEmpty) _Image(data.imageUrl, 80.w, 80.h),
         ],
       ),
     ),
   );
 }
 
-class _PropertySection extends StatelessWidget {
+class _PropertySection extends StatefulWidget {
   final String title;
   final ExplorePropertySection data;
   final bool seeAll;
   const _PropertySection(this.title, this.data, {this.seeAll = false});
 
   @override
+  State<_PropertySection> createState() => _PropertySectionState();
+}
+
+class _PropertySectionState extends State<_PropertySection> {
+  final _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(top: 28.h),
+    padding: EdgeInsets.only(top: 12.h),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -262,40 +328,76 @@ class _PropertySection extends StatelessWidget {
             children: [
               Expanded(
                 child: AppTextWidget(
-                  text: title,
+                  text: widget.title,
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              if (seeAll)
+              if (widget.seeAll)
                 GestureDetector(
                   onTap: () => context.push(RouteName.recentlyViewedView),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AppTextWidget(
-                        text: 'See all',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.textSecondary,
-                      ),
-                      SizedBox(width: 2.w),
-                      Icon(Icons.chevron_right_rounded, size: 20.sp),
-                    ],
+                  child: Container(
+                    width: 34.w,
+                    height: 34.w,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColor.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.black.withValues(alpha: .12),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Icon(Icons.arrow_forward_rounded, size: 18.sp),
                   ),
                 ),
             ],
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         SizedBox(
-          height: 236.h,
+          height: 228.h,
           child: ListView.separated(
+            controller: _scrollController,
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            itemCount: data.items.length,
+            itemCount: widget.data.items.length,
             separatorBuilder: (_, __) => SizedBox(width: 12.w),
-            itemBuilder: (_, index) => _PropertyCard(data.items[index]),
+            itemBuilder: (_, index) => AnimatedBuilder(
+              animation: _scrollController,
+              builder: (_, child) {
+                final offset = _scrollController.hasClients
+                    ? _scrollController.offset
+                    : 0.0;
+                final cardCenter =
+                    (index * (156.w + 12.w)) + (156.w / 2) - offset;
+                final viewportCenter = MediaQuery.sizeOf(context).width / 2;
+                final distance = (cardCenter - viewportCenter).abs();
+                final factor = (1 - (distance / viewportCenter) * .12)
+                    .clamp(.88, 1.0)
+                    .toDouble();
+                return Opacity(
+                  opacity: factor,
+                  child: Transform.scale(scale: factor, child: child),
+                );
+              },
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.94, end: 1),
+                duration: Duration(milliseconds: 280 + (index * 45)),
+                curve: Curves.easeOutCubic,
+                builder: (_, value, child) => Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset((1 - value) * 18, 0),
+                    child: child,
+                  ),
+                ),
+                child: _PropertyCard(widget.data.items[index]),
+              ),
+            ),
           ),
         ),
       ],
@@ -315,29 +417,73 @@ class _PropertyCard extends StatelessWidget {
             RouteName.propertyView.replaceFirst(':propertyId', data.id),
           ),
     child: SizedBox(
-      width: 185.w,
+      width: 156.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
-              _Image(data.imageUrl, 185.w, 132.h),
-              Positioned(top: 8.h, right: 8.w, child: _Heart(data)),
+              _Image(data.imageUrl, 156.w, 140.h),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColor.black.withValues(alpha: .14),
+                          AppColor.transparent,
+                          AppColor.black.withValues(alpha: .18),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(top: 9.h, right: 9.w, child: _Heart(data)),
+              if (data.propertyType.isNotEmpty)
+                Positioned(
+                  left: 10.w,
+                  bottom: 10.h,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColor.black.withValues(alpha: .72),
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                    child: AppTextWidget(
+                      text: data.propertyType.toUpperCase(),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      color: AppColor.white,
+                      letterSpacing: .5,
+                    ),
+                  ),
+                ),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 10.h),
           Row(
             children: [
               Expanded(
                 child: AppTextWidget(
                   text: data.title,
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   maxLines: 1,
                   textOverflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(Icons.star_rounded, size: 12.sp, color: AppColor.primary),
+              Icon(
+                Icons.star_rounded,
+                size: 12.sp,
+                color: AppColor.textPrimary,
+              ),
               SizedBox(width: 2.w),
               AppTextWidget(text: data.rating.toStringAsFixed(2), fontSize: 10),
             ],
@@ -354,8 +500,9 @@ class _PropertyCard extends StatelessWidget {
           AppTextWidget(
             text:
                 '${data.currency} ${data.pricePerNight.toStringAsFixed(0)} / night',
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: AppColor.textPrimary,
           ),
         ],
       ),
@@ -399,8 +546,15 @@ class _HeartState extends State<_Heart> {
             width: 32.w,
             height: 32.w,
             decoration: BoxDecoration(
-              color: AppColor.white.withValues(alpha: .92),
+              color: AppColor.white.withValues(alpha: .96),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColor.black.withValues(alpha: .12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Icon(
               selected ? Icons.favorite_rounded : Icons.favorite_border_rounded,
@@ -417,7 +571,7 @@ class _TripSection extends StatelessWidget {
   const _TripSection(this.items);
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(top: 30.h),
+    padding: EdgeInsets.only(top: 18.h),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -429,7 +583,7 @@ class _TripSection extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 14.h),
+        SizedBox(height: 10.h),
         SizedBox(
           height: 160.h,
           child: ListView.separated(
@@ -482,7 +636,7 @@ class _ExploreMore extends StatelessWidget {
   const _ExploreMore(this.items);
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 0),
+    padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -491,7 +645,7 @@ class _ExploreMore extends StatelessWidget {
           fontSize: 18,
           fontWeight: FontWeight.w700,
         ),
-        SizedBox(height: 14.h),
+        SizedBox(height: 10.h),
         Wrap(
           spacing: 10.w,
           runSpacing: 14.h,
@@ -507,6 +661,13 @@ class _ExploreMore extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColor.greyExtraLight,
                       borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.black.withValues(alpha: .10),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Text(item.icon, style: TextStyle(fontSize: 25.sp)),
                   ),
@@ -533,13 +694,20 @@ class _ExperienceSection extends StatelessWidget {
   const _ExperienceSection(this.data);
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(20.w, 28.h, 20.w, 40.h),
+    padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 28.h),
     child: Container(
       width: double.infinity,
       padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: AppColor.textPrimary,
         borderRadius: BorderRadius.circular(14.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.black.withValues(alpha: .18),
+            blurRadius: 16,
+            offset: const Offset(0, 7),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,11 +744,21 @@ class _Image extends StatelessWidget {
   final double height;
   const _Image(this.url, this.width, this.height);
   @override
-  Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(10.r),
-    child: SizedBox(
-      width: width,
-      height: height,
+  Widget build(BuildContext context) => Container(
+    width: width,
+    height: height,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(15.r),
+      boxShadow: [
+        BoxShadow(
+          color: AppColor.black.withValues(alpha: .12),
+          blurRadius: 12,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(15.r),
       child: url.isEmpty
           ? _placeholder()
           : Image.network(
