@@ -18,8 +18,8 @@ class HomeRepositoryImpl implements HomeRepository {
   const HomeRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<AppException, ExploreModel>> getExplore() =>
-      remoteDataSource.getExplore().mapEntity((data) => data);
+  Future<Either<AppException, ExploreModel>> getExplore({String tab = 'all'}) =>
+      remoteDataSource.getExplore(tab: tab).mapEntity((data) => data);
 
   @override
   Future<Either<AppException, ProfileModel>> getProfile() =>
@@ -38,6 +38,28 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<AppException, AvailabilityResult>> checkAvailability(
     AvailabilityRequest request,
   ) => remoteDataSource.checkAvailability(request).mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, BookingCollection>> getBookings({
+    String? status,
+    int page = 1,
+    int limit = 20,
+  }) => remoteDataSource
+      .getBookings(status: status, page: page, limit: limit)
+      .mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, BookingModel>> createBooking(
+    CreateBookingRequest request,
+  ) => remoteDataSource.createBooking(request).mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, BookingModel>> cancelBooking(
+    String bookingId,
+    String reason,
+  ) => remoteDataSource
+      .cancelBooking(bookingId, reason)
+      .mapEntity((data) => data);
 
   @override
   Future<Either<AppException, PropertyCollection>> getRecentlyViewed({

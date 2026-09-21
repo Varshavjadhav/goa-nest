@@ -30,15 +30,16 @@ class ProfileModel {
     name: (json['name'] ?? json['fullName'] ?? '').toString(),
     email: (json['email'] ?? '').toString(),
     phone: (json['phone'] ?? json['phoneNumber'] ?? '').toString(),
-    profileImage: (json['profileImage'] ??
-            json['profilePhoto'] ??
-            json['profilePicture'] ??
-            json['avatar'] ??
-            json['photo'] ??
-            json['picture'] ??
-            json['imageUrl'] ??
-            '')
-        .toString(),
+    profileImage:
+        (json['profileImage'] ??
+                json['profilePhoto'] ??
+                json['profilePicture'] ??
+                json['avatar'] ??
+                json['photo'] ??
+                json['picture'] ??
+                json['imageUrl'] ??
+                '')
+            .toString(),
     bio: (json['bio'] ?? '').toString(),
     role: (json['role'] ?? 'user').toString(),
     isEmailVerified: json['isEmailVerified'] == true,
@@ -88,7 +89,10 @@ class ProfileModel {
   };
 
   String get initials {
-    final parts = name.trim().split(RegExp(r'\s+')).where((item) => item.isNotEmpty);
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((item) => item.isNotEmpty);
     final values = parts.toList();
     if (values.isEmpty) return '?';
     if (values.length == 1) return values.first.substring(0, 1).toUpperCase();
@@ -107,9 +111,5 @@ class ProfileUpdateRequest {
     required this.bio,
   });
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'phone': phone,
-    'bio': bio,
-  };
+  Map<String, dynamic> toJson() => {'name': name, 'phone': phone, 'bio': bio};
 }

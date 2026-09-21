@@ -13,7 +13,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<LoadProfile>((event, emit) async {
       emit(ProfileLoading());
       final result = await getProfile();
-      result.fold((error) => emit(ProfileError(error.message)), (profile) => emit(ProfileLoaded(profile)));
+      result.fold(
+        (error) => emit(ProfileError(error.message)),
+        (profile) => emit(ProfileLoaded(profile)),
+      );
     });
     on<UpdateProfile>((event, emit) async {
       final current = _currentProfile;
@@ -21,7 +24,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final result = await updateProfile(event.request);
       result.fold(
         (error) => emit(ProfileError(error.message, profile: current)),
-        (profile) => emit(ProfileLoaded(profile, message: 'Profile updated successfully')),
+        (profile) => emit(
+          ProfileLoaded(profile, message: 'Profile updated successfully'),
+        ),
       );
     });
   }

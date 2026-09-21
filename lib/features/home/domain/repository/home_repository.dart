@@ -11,7 +11,7 @@ import '../../data/model/profile_model.dart';
 import '../../data/model/booking_model.dart';
 
 abstract class HomeRepository {
-  Future<Either<AppException, ExploreModel>> getExplore();
+  Future<Either<AppException, ExploreModel>> getExplore({String tab = 'all'});
   Future<Either<AppException, ProfileModel>> getProfile();
   Future<Either<AppException, ProfileModel>> updateProfile(
     ProfileUpdateRequest request,
@@ -19,6 +19,18 @@ abstract class HomeRepository {
   Future<Either<AppException, PropertyDetailModel>> getProperty(String id);
   Future<Either<AppException, AvailabilityResult>> checkAvailability(
     AvailabilityRequest request,
+  );
+  Future<Either<AppException, BookingCollection>> getBookings({
+    String? status,
+    int page = 1,
+    int limit = 20,
+  });
+  Future<Either<AppException, BookingModel>> createBooking(
+    CreateBookingRequest request,
+  );
+  Future<Either<AppException, BookingModel>> cancelBooking(
+    String bookingId,
+    String reason,
   );
   Future<Either<AppException, PropertyCollection>> getRecentlyViewed({
     int page = 1,

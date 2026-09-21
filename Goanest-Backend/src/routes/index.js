@@ -1,0 +1,36 @@
+const express = require('express');
+const router = express.Router();
+const authRoutes = require('../modules/auth/auth.routes');
+const userRoutes = require('../modules/user/user.routes');
+const propertyRoutes = require('../modules/property/property.routes');
+const categoryRoutes = require('../modules/category/category.routes');
+const searchRoutes = require('../modules/search/search.routes');
+const bookingRoutes = require('../modules/booking/booking.routes');
+const reviewRoutes = require('../modules/review/review.routes');
+const wishlistRoutes = require('../modules/wishlist/wishlist.routes');
+const conversationRoutes = require('../modules/conversation/conversation.routes');
+const helpRoutes = require('../modules/help/help.routes');
+const homeRoutes = require('../modules/home/home.routes');
+const favoriteRoutes = require('../modules/favorite/favorite.routes');
+const recentlyViewedRoutes = require('../modules/recentlyViewed/recentlyViewed.routes');
+const exploreRoutes = require('../modules/explore/explore.routes');
+const propertyController = require('../modules/property/property.controller');
+const optionalAuth = require('../middlewares/optionalAuth');
+
+router.use('/auth', authRoutes);
+router.use('/user', userRoutes);
+router.use('/properties', propertyRoutes);
+router.use('/categories', categoryRoutes);
+router.use('/search', searchRoutes);
+router.use('/bookings', bookingRoutes);
+router.use('/reviews', reviewRoutes);
+router.use('/wishlists', wishlistRoutes);
+router.use('/conversations', conversationRoutes);
+router.use('/help', helpRoutes);
+router.use('/home', homeRoutes);
+router.use('/favorites', favoriteRoutes);
+router.use('/recently-viewed', recentlyViewedRoutes);
+router.use('/explore', exploreRoutes);
+router.post('/availability/check', optionalAuth, propertyController.checkAvailabilityPost);
+
+module.exports = router;

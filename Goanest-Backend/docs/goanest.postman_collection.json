@@ -1,0 +1,510 @@
+{
+  "info": {
+    "name": "Goanest API",
+    "description": "Goanest guest mobile app API collection mapped to the Stitch UI screens",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "guestEmail",
+      "value": "guest@goanest.com"
+    },
+    {
+      "key": "guestPassword",
+      "value": "guest123"
+    },
+    {
+      "key": "propertyId",
+      "value": "PROPERTY_ID"
+    },
+    {
+      "key": "wishlistId",
+      "value": "WISHLIST_ID"
+    },
+    {
+      "key": "bookingId",
+      "value": "BOOKING_ID"
+    },
+    {
+      "key": "conversationId",
+      "value": "CONVERSATION_ID"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Home & Tabs",
+      "item": [
+        {
+          "name": "Get Home - All",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/home?tab=all", "host": ["{{baseUrl}}"], "path": ["home"], "query": [{ "key": "tab", "value": "all" }] }
+          }
+        },
+        {
+          "name": "Get Home - Villas",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/home?tab=villas", "host": ["{{baseUrl}}"], "path": ["home"], "query": [{ "key": "tab", "value": "villas" }] }
+          }
+        },
+        {
+          "name": "Get Home - Beach",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/home?tab=beach", "host": ["{{baseUrl}}"], "path": ["home"], "query": [{ "key": "tab", "value": "beach" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Availability",
+      "item": [
+        {
+          "name": "Check Availability",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/availability/check", "host": ["{{baseUrl}}"], "path": ["availability", "check"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"{{propertyId}}\",\n  \"checkIn\": \"2026-10-12\",\n  \"checkOut\": \"2026-10-15\",\n  \"guests\": 2,\n  \"rooms\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"phone\": \"+1-555-0102\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{guestEmail}}\",\n  \"password\": \"{{guestPassword}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/refresh-token", "host": ["{{baseUrl}}"], "path": ["auth", "refresh-token"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/user/profile", "host": ["{{baseUrl}}"], "path": ["user", "profile"] }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/user/profile", "host": ["{{baseUrl}}"], "path": ["user", "profile"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"+1-555-0100\",\n  \"bio\": \"Travel lover\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Explore & Personalization",
+      "item": [
+        {
+          "name": "Get Explore Data",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/explore", "host": ["{{baseUrl}}"], "path": ["explore"] }
+          }
+        },
+        {
+          "name": "Get Recently Viewed",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/recently-viewed?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["recently-viewed"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Record Property View",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/recently-viewed/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["recently-viewed", "{{propertyId}}"] }
+          }
+        },
+        {
+          "name": "Like Property",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/favorites/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["favorites", "{{propertyId}}"] }
+          }
+        },
+        {
+          "name": "Unlike Property",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/favorites/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["favorites", "{{propertyId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "Get Property by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/properties/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["properties", "{{propertyId}}"] }
+          }
+        },
+        {
+          "name": "Check Availability",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}/availability?checkIn=2026-09-15&checkOut=2026-09-20",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", "{{propertyId}}", "availability"],
+              "query": [
+                { "key": "checkIn", "value": "2026-09-15" },
+                { "key": "checkOut", "value": "2026-09-20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Properties",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/search?query=Arpora&tab=all&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["search"],
+              "query": [
+                { "key": "query", "value": "Arpora" },
+                { "key": "tab", "value": "all" },
+                { "key": "city", "value": "", "disabled": true },
+                { "key": "country", "value": "", "disabled": true },
+                { "key": "propertyType", "value": "", "disabled": true },
+                { "key": "category", "value": "", "disabled": true },
+                { "key": "minPrice", "value": "", "disabled": true },
+                { "key": "maxPrice", "value": "", "disabled": true },
+                { "key": "maxGuests", "value": "", "disabled": true },
+                { "key": "bedrooms", "value": "", "disabled": true },
+                { "key": "amenities", "value": "", "disabled": true },
+                { "key": "minRating", "value": "", "disabled": true },
+                { "key": "checkIn", "value": "", "disabled": true },
+                { "key": "checkOut", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Suggestions",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/search/suggestions?q=Mia", "host": ["{{baseUrl}}"], "path": ["search", "suggestions"], "query": [{ "key": "q", "value": "Mia" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property\": \"{{propertyId}}\",\n  \"checkIn\": \"2026-09-15\",\n  \"checkOut\": \"2026-09-20\",\n  \"guests\": {\n    \"adults\": 2,\n    \"children\": 1,\n    \"infants\": 0\n  },\n  \"specialRequests\": \"Late check-in please\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Bookings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/bookings?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "status", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}"] }
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "cancel"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Change of plans\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get Reviews for Property",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/reviews/{{propertyId}}?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["reviews", "{{propertyId}}"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wishlists",
+      "item": [
+        {
+          "name": "Get Wishlists",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/wishlists", "host": ["{{baseUrl}}"], "path": ["wishlists"] }
+          }
+        },
+        {
+          "name": "Create Wishlist",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/wishlists", "host": ["{{baseUrl}}"], "path": ["wishlists"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Favorites\"\n}" }
+          }
+        },
+        {
+          "name": "Add Property to Wishlist",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/wishlists/{{wishlistId}}/properties/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["wishlists", "{{wishlistId}}", "properties", "{{propertyId}}"] }
+          }
+        },
+        {
+          "name": "Remove Property from Wishlist",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/wishlists/{{wishlistId}}/properties/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["wishlists", "{{wishlistId}}", "properties", "{{propertyId}}"] }
+          }
+        },
+        {
+          "name": "Delete Wishlist",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/wishlists/{{wishlistId}}", "host": ["{{baseUrl}}"], "path": ["wishlists", "{{wishlistId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conversations",
+      "item": [
+        {
+          "name": "Get Conversations",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/conversations", "host": ["{{baseUrl}}"], "path": ["conversations"] }
+          }
+        },
+        {
+          "name": "Start Conversation",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/conversations", "host": ["{{baseUrl}}"], "path": ["conversations"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipientId\": \"HOST_USER_ID\",\n  \"propertyId\": \"{{propertyId}}\",\n  \"message\": \"Hi, I'm interested in your property!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Conversation",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}"] }
+          }
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}/messages?page=1&limit=50", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}", "messages"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "50" }] }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}/messages", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}", "messages"] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Hello! Is this available?\"\n}" }
+          }
+        },
+        {
+          "name": "Mark as Read",
+          "request": {
+            "method": "PUT",
+            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}/read", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}", "read"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Help",
+      "item": [
+        {
+          "name": "Get FAQs",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/help/faqs", "host": ["{{baseUrl}}"], "path": ["help", "faqs"] }
+          }
+        },
+        {
+          "name": "Get Contact Info",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/help/contact", "host": ["{{baseUrl}}"], "path": ["help", "contact"] }
+          }
+        }
+      ]
+    }
+  ]
+}

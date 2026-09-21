@@ -59,11 +59,11 @@ class _HomeWidgetState extends State<HomeWidget> {
       slivers: [
         SliverToBoxAdapter(child: _SearchBar(data.search)),
         SliverToBoxAdapter(
-          child: _Tabs(
-            _tabsFor(data.tabs),
-            selectedTab,
-            (index) => setState(() => selectedTab = index),
-          ),
+          child: _Tabs(_tabsFor(data.tabs), selectedTab, (index) {
+            final tab = _tabsFor(data.tabs)[index];
+            setState(() => selectedTab = index);
+            context.read<HomeBloc>().add(LoadHome(tab: tab.key));
+          }),
         ),
         SliverPadding(
           padding: EdgeInsets.only(bottom: 100.h),
@@ -105,6 +105,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   );
 
   static const _fallbackTabs = <ExploreTab>[
+    ExploreTab(key: 'all', label: 'All', icon: 'sparkles'),
     ExploreTab(key: 'homes', label: 'Homes', icon: 'home'),
     ExploreTab(key: 'villas', label: 'Villas', icon: 'home'),
     ExploreTab(key: 'beach', label: 'Beach', icon: 'beach'),

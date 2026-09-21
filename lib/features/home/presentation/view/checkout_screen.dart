@@ -5,6 +5,9 @@ import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
+import 'package:goanest/core/di/injector.dart';
+import 'package:goanest/features/home/data/model/booking_model.dart';
+import 'package:goanest/features/home/domain/usecase/booking_usecases.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final DateTime? checkIn;
@@ -392,14 +395,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    context.push(
-                      RouteName.bookingConfirmationView.replaceFirst(
-                        ':propertyId',
-                        widget.propertyId.isEmpty
-                            ? 'property'
-                            : widget.propertyId,
-                      ),
-                    );
+                    _createBooking(checkIn, checkOut);
                   },
                   child: AppTextWidget(
                     text: 'Pay ₹${total.round()}',
@@ -414,6 +410,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ),
     );
     if (mounted) setState(() => paymentStarted = false);
+  }
+
+  Future<void> _createBooking(DateTime checkIn, DateTime checkOut) async {
+    final result = await sl<CreateBookingUseCase>()(
+      CreateBookingRequest(
+        propertyId: widget.propertyId,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        adults: widget.guests ?? 1,
+      ),
+    );
+    if (!mounted) return;
+    result.fold(
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: AppTextWidget.legacy(failure.message),
+          backgroundColor: AppColor.error,
+        ),
+      ),
+      (_) => context.push(
+        RouteName.bookingConfirmationView.replaceFirst(
+          ':propertyId',
+          widget.propertyId.isEmpty ? 'property' : widget.propertyId,
+        ),
+      ),
+    );
   }
 
   Future<bool> _confirmExit() async {

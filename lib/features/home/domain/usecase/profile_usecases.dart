@@ -14,6 +14,7 @@ class UpdateProfileUseCase {
   final HomeRepository repository;
   const UpdateProfileUseCase(this.repository);
 
-  Future<Either<AppException, ProfileModel>> call(ProfileUpdateRequest request) =>
-      repository.updateProfile(request);
+  Future<Either<AppException, ProfileModel>> call(
+    ProfileUpdateRequest request,
+  ) => repository.updateProfile(request);
 }

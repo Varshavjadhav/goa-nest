@@ -1,13 +1,17 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goanest/core.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/utilities/extensions/provide_theme_extension.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
+import '../../data/model/booking_model.dart';
+import '../bloc/bookings_bloc.dart';
+import '../bloc/bookings_event.dart';
+import '../bloc/bookings_state.dart';
 
 const _screenAsset = 'assets/images/bookings_figma_reference.png';
 const _screenWidth = 464.0;
 const _screenHeight = 1108.0;
-const _confirmedBg = Color(0xFFE9F6E9);
 
 class BookingsWidget extends StatefulWidget {
   const BookingsWidget({super.key});
@@ -55,7 +59,34 @@ class _BookingsWidgetState extends State<BookingsWidget> {
                     },
                   ),
                   Gap(30.h),
-                  const _BookingsList(),
+                  BlocBuilder<BookingsBloc, BookingsState>(
+                    builder: (context, state) {
+                      if (state is BookingsInitial ||
+                          state is BookingsLoading) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 60),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      if (state is BookingsError && state.previous == null) {
+                        return _BookingsMessage(
+                          message: state.message,
+                          onRetry: () =>
+                              context.read<BookingsBloc>().add(LoadBookings()),
+                        );
+                      }
+                      final collection = state is BookingsLoaded
+                          ? state.collection
+                          : state is BookingsUpdating
+                          ? state.collection
+                          : (state as BookingsError).previous ??
+                                const BookingCollection();
+                      return _ApiBookingsList(
+                        bookings: collection.bookings,
+                        selectedTab: _selectedTab,
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -64,6 +95,190 @@ class _BookingsWidgetState extends State<BookingsWidget> {
       ),
     );
   }
+}
+
+class _ApiBookingsList extends StatelessWidget {
+  final List<BookingModel> bookings;
+  final int selectedTab;
+
+  const _ApiBookingsList({required this.bookings, required this.selectedTab});
+
+  @override
+  Widget build(BuildContext context) {
+    final visible = bookings.where((booking) {
+      final status = booking.status.toLowerCase();
+      return selectedTab == 0
+          ? status == 'pending' || status == 'confirmed'
+          : selectedTab == 1
+          ? status == 'completed'
+          : status == 'cancelled';
+    }).toList();
+    if (visible.isEmpty) {
+      return _BookingsMessage(
+        message: selectedTab == 0
+            ? 'No upcoming bookings'
+            : selectedTab == 1
+            ? 'No past bookings'
+            : 'No cancelled bookings',
+      );
+    }
+    return Column(
+      children: [
+        for (var index = 0; index < visible.length; index++) ...[
+          _ApiBookingCard(booking: visible[index]),
+          if (index != visible.length - 1) Gap(18.h),
+        ],
+      ],
+    );
+  }
+}
+
+class _ApiBookingCard extends StatelessWidget {
+  final BookingModel booking;
+
+  const _ApiBookingCard({required this.booking});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.themeExt;
+    final start = booking.checkIn;
+    final end = booking.checkOut;
+    final dates = start == null || end == null
+        ? 'Dates not available'
+        : '${start.day}/${start.month}/${start.year} - ${end.day}/${end.month}/${end.year}';
+    final isUpcoming =
+        booking.status == 'pending' || booking.status == 'confirmed';
+    final statusColor = booking.status == 'cancelled'
+        ? AppColor.error
+        : booking.status == 'completed'
+        ? theme.textSecondary
+        : AppColor.success;
+    return Container(
+      height: 124.h,
+      decoration: BoxDecoration(
+        color: theme.surface,
+        borderRadius: BorderRadius.circular(18.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.black.withValues(alpha: .08),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 128.w,
+            height: double.infinity,
+            child: booking.propertyImage.isEmpty
+                ? const _Thumbnail(crop: Rect.fromLTWH(24, 258, 148, 137))
+                : Image.network(
+                    booking.propertyImage,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const _Thumbnail(
+                      crop: Rect.fromLTWH(24, 258, 148, 137),
+                    ),
+                  ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(13.w, 14.h, 12.w, 14.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppTextWidget(
+                          text: booking.propertyTitle.isEmpty
+                              ? 'Your stay'
+                              : booking.propertyTitle,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w800,
+                          color: theme.textPrimary,
+                          maxLines: 1,
+                          textOverflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      AppTextWidget(
+                        text: booking.status.toUpperCase(),
+                        fontSize: 8.sp,
+                        fontWeight: FontWeight.w900,
+                        color: statusColor,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  AppTextWidget(
+                    text: dates,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: theme.textSecondary,
+                  ),
+                  SizedBox(height: 7.h),
+                  AppTextWidget(
+                    text: booking.propertyLocation,
+                    fontSize: 10.sp,
+                    color: theme.textTertiary,
+                    maxLines: 1,
+                    textOverflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  AppTextWidget(
+                    text: isUpcoming
+                        ? '${booking.nights} ${booking.nights == 1 ? 'night' : 'nights'}'
+                        : '₹${booking.totalPrice.toStringAsFixed(0)} total',
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w800,
+                    color: isUpcoming
+                        ? theme.brandPrimary
+                        : theme.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BookingsMessage extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
+
+  const _BookingsMessage({required this.message, this.onRetry});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.symmetric(vertical: 48.h),
+    child: Center(
+      child: Column(
+        children: [
+          Icon(
+            Icons.calendar_month_outlined,
+            size: 44.sp,
+            color: AppColor.greyMedium,
+          ),
+          SizedBox(height: 12.h),
+          AppTextWidget(
+            text: message,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w700,
+            color: context.themeExt.textPrimary,
+          ),
+          if (onRetry != null) ...[
+            SizedBox(height: 10.h),
+            TextButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
+        ],
+      ),
+    ),
+  );
 }
 
 class _BookingsTopBar extends StatelessWidget {
@@ -179,203 +394,6 @@ class _StatusTabs extends StatelessWidget {
           ),
         );
       }),
-    );
-  }
-}
-
-class _BookingsList extends StatelessWidget {
-  const _BookingsList();
-
-  static const _bookings = [
-    (
-      crop: Rect.fromLTWH(24, 258, 148, 137),
-      title: 'Azure Wave Sanctuary',
-      dates: 'Oct 12 - Oct 15, 2023',
-      days: '3 days to go',
-      highlight: true,
-    ),
-    (
-      crop: Rect.fromLTWH(24, 425, 148, 137),
-      title: 'The Palms Boutique',
-      dates: 'Nov 04 - Nov 09, 2023',
-      days: '22 days to go',
-      highlight: false,
-    ),
-    (
-      crop: Rect.fromLTWH(24, 594, 148, 136),
-      title: 'Nomad Zen Studio',
-      dates: 'Dec 20 - Dec 24, 2023',
-      days: '68 days to go',
-      highlight: false,
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(_bookings.length, (index) {
-        final booking = _bookings[index];
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: index == _bookings.length - 1 ? 0 : 18.h,
-          ),
-          child: _BookingCard(
-            crop: booking.crop,
-            title: booking.title,
-            dates: booking.dates,
-            days: booking.days,
-            highlight: booking.highlight,
-          ),
-        );
-      }),
-    );
-  }
-}
-
-class _BookingCard extends StatelessWidget {
-  final Rect crop;
-  final String title;
-  final String dates;
-  final String days;
-  final bool highlight;
-
-  const _BookingCard({
-    required this.crop,
-    required this.title,
-    required this.dates,
-    required this.days,
-    this.highlight = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.themeExt;
-
-    return Container(
-      height: 118.h,
-      decoration: BoxDecoration(
-        color: theme.surface,
-        borderRadius: BorderRadius.circular(14.r),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 128.w,
-            height: double.infinity,
-            child: _Thumbnail(crop: crop),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(13.w, 16.h, 12.w, 15.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: AppTextWidget(
-                          text: title,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w800,
-                          color: theme.textPrimary,
-                          maxLines: 1,
-                          textOverflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Gap(8.w),
-                      const _StatusChip(),
-                    ],
-                  ),
-                  Gap(12.h),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_month_outlined,
-                        color: theme.textTertiary,
-                        size: 12.sp,
-                      ),
-                      Gap(5.w),
-                      Expanded(
-                        child: AppTextWidget(
-                          text: dates,
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w600,
-                          color: theme.textSecondary,
-                          maxLines: 1,
-                          textOverflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Gap(12.h),
-                  _DaysPill(text: days, highlight: highlight),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6.p, vertical: 3.h),
-      decoration: BoxDecoration(
-        color: _confirmedBg,
-        borderRadius: BorderRadius.circular(3.r),
-      ),
-      child: AppTextWidget(
-        text: 'CONFIRMED',
-        fontSize: 9.sp,
-        fontWeight: FontWeight.w900,
-        color: AppColor.success,
-        letterSpacing: 0.3,
-      ),
-    );
-  }
-}
-
-class _DaysPill extends StatelessWidget {
-  final String text;
-  final bool highlight;
-
-  const _DaysPill({required this.text, this.highlight = false});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.themeExt;
-    final background = highlight
-        ? theme.brandPrimary.withValues(alpha: 0.1)
-        : theme.divider;
-    final foreground = highlight ? theme.brandPrimary : theme.textSecondary;
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.p, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(5.r),
-      ),
-      child: AppTextWidget(
-        text: text,
-        fontSize: 10.sp,
-        fontWeight: FontWeight.w700,
-        color: foreground,
-      ),
     );
   }
 }

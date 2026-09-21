@@ -14,8 +14,8 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   RangeValues price = const RangeValues(1500, 30000);
-  final selectedTypes = <String>{'Villa'};
-  final selectedAmenities = <String>{'Pool', 'Wifi'};
+  final selectedTypes = <String>{};
+  final selectedAmenities = <String>{};
   int bedrooms = 0;
   String minRating = '';
 
@@ -99,8 +99,10 @@ class _FilterScreenState extends State<FilterScreen> {
                     selected: minRating == value,
                     selectedColor: AppColor.tertiary,
                     checkmarkColor: AppColor.primary,
-                    onSelected: (selected) =>
-                        setState(() => minRating = selected ? value : ''),
+                    onSelected: (selected) => setState(
+                      () =>
+                          minRating = selected ? value.replaceAll('+', '') : '',
+                    ),
                   ),
                 )
                 .toList(),
@@ -116,7 +118,9 @@ class _FilterScreenState extends State<FilterScreen> {
               SearchFilters(
                 minPrice: price.start.round().toString(),
                 maxPrice: price.end.round().toString(),
-                propertyType: selectedTypes.join(','),
+                propertyType: selectedTypes
+                    .map((value) => value.toLowerCase())
+                    .join(','),
                 bedrooms: bedrooms == 0 ? '' : bedrooms.toString(),
                 amenities: selectedAmenities.join(','),
                 minRating: minRating,

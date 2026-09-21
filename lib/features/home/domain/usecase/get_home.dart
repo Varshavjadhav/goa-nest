@@ -8,5 +8,6 @@ class GetHomeUseCase {
 
   const GetHomeUseCase(this.repository);
 
-  Future<Either<AppException, ExploreModel>> call() => repository.getExplore();
+  Future<Either<AppException, ExploreModel>> call({String tab = 'all'}) =>
+      repository.getExplore(tab: tab);
 }

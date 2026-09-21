@@ -16,6 +16,7 @@ import '../../features/home/domain/usecase/get_recently_viewed.dart';
 import '../../features/home/domain/usecase/get_wishlists.dart';
 import '../../features/home/domain/usecase/search_properties.dart';
 import '../../features/home/domain/usecase/check_availability.dart';
+import '../../features/home/domain/usecase/booking_usecases.dart';
 import '../../features/home/domain/usecase/profile_usecases.dart';
 
 final sl = GetIt.instance;
@@ -84,6 +85,15 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<CheckAvailabilityUseCase>(
     () => CheckAvailabilityUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<GetBookingsUseCase>(
+    () => GetBookingsUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<CreateBookingUseCase>(
+    () => CreateBookingUseCase(sl<HomeRepositoryImpl>()),
+  );
+  sl.registerLazySingleton<CancelBookingUseCase>(
+    () => CancelBookingUseCase(sl<HomeRepositoryImpl>()),
   );
   sl.registerLazySingleton<GetProfileUseCase>(
     () => GetProfileUseCase(sl<HomeRepositoryImpl>()),

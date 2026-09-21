@@ -6,6 +6,7 @@ class SearchQuery {
   final String country;
   final String propertyType;
   final String category;
+  final String tab;
   final String minPrice;
   final String maxPrice;
   final int? maxGuests;
@@ -29,6 +30,7 @@ class SearchQuery {
     this.country = '',
     this.propertyType = '',
     this.category = '',
+    this.tab = 'all',
     this.minPrice = '',
     this.maxPrice = '',
     this.maxGuests,
@@ -53,6 +55,7 @@ class SearchQuery {
     'country': country,
     'propertyType': propertyType,
     'category': category,
+    'tab': tab,
     'minPrice': minPrice,
     'maxPrice': maxPrice,
     'maxGuests': maxGuests?.toString() ?? '',
@@ -78,6 +81,7 @@ class SearchQuery {
     String? country,
     String? propertyType,
     String? category,
+    String? tab,
     String? minPrice,
     String? maxPrice,
     int? maxGuests,
@@ -102,6 +106,7 @@ class SearchQuery {
     country: country ?? this.country,
     propertyType: propertyType ?? this.propertyType,
     category: category ?? this.category,
+    tab: tab ?? this.tab,
     minPrice: minPrice ?? this.minPrice,
     maxPrice: maxPrice ?? this.maxPrice,
     maxGuests: maxGuests ?? this.maxGuests,

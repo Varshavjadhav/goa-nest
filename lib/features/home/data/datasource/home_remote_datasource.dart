@@ -18,8 +18,14 @@ class HomeRemoteDataSource {
 
   const HomeRemoteDataSource(this.apiService);
 
-  Future<Either<AppException, BaseResponseModel<ExploreModel>>> getExplore() =>
-      apiService.getApi(ApiUrl.home, const {}, ExploreModel.fromJson);
+  Future<Either<AppException, BaseResponseModel<ExploreModel>>> getExplore({
+    String tab = 'all',
+  }) => apiService.getApi(
+    ApiUrl.home,
+    const {},
+    ExploreModel.fromJson,
+    queryParams: {'tab': tab},
+  );
 
   Future<Either<AppException, BaseResponseModel<ProfileModel>>> getProfile() =>
       apiService.getApi(
@@ -50,6 +56,38 @@ class HomeRemoteDataSource {
     const {},
     AvailabilityResult.fromJson,
     body: request.toJson(),
+  );
+
+  Future<Either<AppException, BaseResponseModel<BookingCollection>>>
+  getBookings({String? status, int page = 1, int limit = 20}) =>
+      apiService.getApi(
+        ApiUrl.bookings,
+        const {},
+        BookingCollection.fromJson,
+        queryParams: {
+          if (status != null && status.isNotEmpty) 'status': status,
+          'page': page,
+          'limit': limit,
+        },
+      );
+
+  Future<Either<AppException, BaseResponseModel<BookingModel>>> createBooking(
+    CreateBookingRequest request,
+  ) => apiService.postApi(
+    ApiUrl.bookings,
+    const {},
+    BookingModel.fromResponseJson,
+    body: request.toJson(),
+  );
+
+  Future<Either<AppException, BaseResponseModel<BookingModel>>> cancelBooking(
+    String bookingId,
+    String reason,
+  ) => apiService.putApi(
+    ApiUrl.cancelBooking.replaceAll('{bookingId}', bookingId),
+    const {},
+    BookingModel.fromResponseJson,
+    body: {'reason': reason},
   );
 
   Future<Either<AppException, BaseResponseModel<PropertyCollection>>>

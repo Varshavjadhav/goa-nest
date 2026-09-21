@@ -171,7 +171,7 @@ class AppRouter {
             ),
             initialGuests:
                 int.tryParse(state.uri.queryParameters['guests'] ?? '') ?? 1,
-            useAvailabilityApi: state.uri.queryParameters['api'] == 'true',
+            useAvailabilityApi: true,
           ),
         ),
       ),

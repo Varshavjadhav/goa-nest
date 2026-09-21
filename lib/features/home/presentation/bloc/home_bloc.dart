@@ -9,7 +9,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this.getHome) : super(HomeInitial()) {
     on<LoadHome>((event, emit) async {
       emit(HomeLoading());
-      final result = await getHome();
+      final result = await getHome(tab: event.tab);
       result.fold(
         (error) => emit(HomeError(error.message)),
         (home) => emit(HomeLoaded(home)),

@@ -59,8 +59,16 @@ class _SearchWidgetState extends State<SearchWidget> {
           if (stage != _SearchStage.results)
             _SearchCategoryHeader(
               selectedCategory: _selectedCategory,
-              onCategorySelected: (index) =>
-                  setState(() => _selectedCategory = index),
+              onCategorySelected: (index) => setState(() {
+                _selectedCategory = index;
+                searchQuery = searchQuery.copyWith(
+                  tab: switch (index) {
+                    0 => 'homes',
+                    1 => 'experiences',
+                    _ => 'services',
+                  },
+                );
+              }),
               onClose: () {
                 if (stage != _SearchStage.destination) {
                   setState(() => stage = _previous());

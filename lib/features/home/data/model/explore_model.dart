@@ -203,8 +203,8 @@ class ExploreProperty {
       location: _string(location['label']).isNotEmpty
           ? _string(location['label'])
           : '${_string(location['city'])}, ${_string(location['country'])}',
-      rating: _double(json['rating']),
-      reviewCount: _int(json['reviewCount']),
+      rating: _double(json['rating'] ?? json['averageRating']),
+      reviewCount: _int(json['reviewCount'] ?? json['totalReviews']),
       pricePerNight: _double(json['pricePerNight']),
       currency: _string(json['currency'], fallback: 'INR'),
       isLiked: json['isLiked'] == true,
