@@ -169,7 +169,9 @@ class _ApiBookingCard extends StatelessWidget {
               pathParameters: {'bookingId': booking.id},
             ),
       child: Container(
-      height: isUpcoming ? 148.h : 124.h,
+      // Reserve enough vertical room for the status, dates, price and action
+      // button on compact devices without forcing the content column to overflow.
+      height: isUpcoming ? 160.h : 136.h,
       decoration: BoxDecoration(
         color: theme.surface,
         borderRadius: BorderRadius.circular(18.r),
