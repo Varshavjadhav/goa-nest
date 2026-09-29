@@ -8,6 +8,9 @@ import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../../../resources/constants/app_colors.dart';
 import '../../../../resources/constants/constants.dart';
+import '../../../../core/di/injector.dart';
+import '../../../../core/data/network/service/base_api_service.dart';
+import '../../../../core/services/local_secure_storage/secure_storage_service.dart';
 import '../../../../utilities/extensions/extensions.dart';
 import '../../../../widgets/app_scaffold.dart';
 import '../bloc/splash_bloc.dart';
@@ -20,7 +23,10 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SplashBloc()..add(const SplashStarted()),
+      create: (_) => SplashBloc(
+        sl<SecureStorageService>(),
+        sl<BaseApiServices>(),
+      )..add(const SplashStarted()),
       child: BlocListener<SplashBloc, SplashState>(
         listener: (context, state) {
           if (state is SplashReadyState) {

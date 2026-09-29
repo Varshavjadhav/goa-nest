@@ -26,6 +26,7 @@ const bookingSchema = new mongoose.Schema(
       children: { type: Number, min: 0, default: 0 },
       infants: { type: Number, min: 0, default: 0 },
     },
+    rooms: { type: Number, min: 1, default: 1 },
     nights: {
       type: Number,
       required: true,
@@ -46,6 +47,7 @@ const bookingSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    tax: { type: Number, default: 0 },
     status: {
       type: String,
       enum: Object.values(BOOKING_STATUS),

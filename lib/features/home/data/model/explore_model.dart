@@ -7,7 +7,6 @@ class ExploreModel {
   final ExplorePropertySection popularDestinationStays;
   final ExplorePropertySection guestFavourites;
   final List<TripInspiration> tripInspiration;
-  final ExploreCategorySection exploreMore;
   final ExploreExperiences experiences;
 
   const ExploreModel({
@@ -19,7 +18,6 @@ class ExploreModel {
     this.popularDestinationStays = const ExplorePropertySection(),
     this.guestFavourites = const ExplorePropertySection(),
     this.tripInspiration = const [],
-    this.exploreMore = const ExploreCategorySection(),
     this.experiences = const ExploreExperiences(),
   });
 
@@ -38,7 +36,6 @@ class ExploreModel {
     ),
     guestFavourites: ExplorePropertySection.fromJson(json['guestFavourites']),
     tripInspiration: _list(json['tripInspiration'], TripInspiration.fromJson),
-    exploreMore: ExploreCategorySection.fromJson(json['exploreMore']),
     experiences: ExploreExperiences.fromJson(json['experiences']),
   );
 }
@@ -165,6 +162,7 @@ class ExploreProperty {
   final double pricePerNight;
   final String currency;
   final bool isLiked;
+  final bool isAvailable;
   final double? latitude;
   final double? longitude;
 
@@ -180,6 +178,7 @@ class ExploreProperty {
     this.pricePerNight = 0,
     this.currency = 'INR',
     this.isLiked = false,
+    this.isAvailable = true,
     this.latitude,
     this.longitude,
   });
@@ -208,6 +207,7 @@ class ExploreProperty {
       pricePerNight: _double(json['pricePerNight']),
       currency: _string(json['currency'], fallback: 'INR'),
       isLiked: json['isLiked'] == true,
+      isAvailable: json['isAvailable'] != false,
       latitude: _nullableDouble(
         json['latitude'] ?? location['latitude'] ?? location['lat'],
       ),
@@ -243,44 +243,6 @@ class TripInspiration {
         country: _string(json['country']),
         title: _string(json['title']),
         subtitle: _string(json['subtitle']),
-      );
-}
-
-class ExploreCategorySection {
-  final List<ExploreCategory> items;
-  final int total;
-  const ExploreCategorySection({this.items = const [], this.total = 0});
-
-  factory ExploreCategorySection.fromJson(dynamic value) {
-    final json = _map(value);
-    return ExploreCategorySection(
-      items: _list(json['items'], ExploreCategory.fromJson),
-      total: _int(json['total']),
-    );
-  }
-}
-
-class ExploreCategory {
-  final String id;
-  final String name;
-  final String slug;
-  final String icon;
-  final String description;
-  const ExploreCategory({
-    this.id = '',
-    this.name = '',
-    this.slug = '',
-    this.icon = '',
-    this.description = '',
-  });
-
-  factory ExploreCategory.fromJson(Map<String, dynamic> json) =>
-      ExploreCategory(
-        id: _string(json['id'] ?? json['_id']),
-        name: _string(json['name']),
-        slug: _string(json['slug']),
-        icon: _string(json['icon']),
-        description: _string(json['description']),
       );
 }
 

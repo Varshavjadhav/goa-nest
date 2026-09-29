@@ -67,7 +67,7 @@ class _FilterScreenState extends State<FilterScreen> {
           CommonWidgets.divider(height: 40),
           CommonWidgets.sectionTitle('Property type'),
           SizedBox(height: 12.h),
-          _chips(['Villa', 'Apartment', 'Hotel', 'Guesthouse'], selectedTypes),
+          _chips(['Villa', 'Apartment', 'Hotel', 'House'], selectedTypes),
           CommonWidgets.divider(height: 40),
           CommonWidgets.sectionTitle('Amenities'),
           SizedBox(height: 12.h),

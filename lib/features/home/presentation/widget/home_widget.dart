@@ -3,6 +3,7 @@ import 'package:goanest/core.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../data/model/explore_model.dart';
@@ -93,8 +94,6 @@ class _HomeWidgetState extends State<HomeWidget> {
                 ),
               if (data.tripInspiration.isNotEmpty)
                 _TripSection(data.tripInspiration),
-              if (data.exploreMore.items.isNotEmpty)
-                _ExploreMore(data.exploreMore.items),
               if (data.experiences.enabled)
                 _ExperienceSection(data.experiences),
             ]),
@@ -215,16 +214,9 @@ class _Tabs extends StatelessWidget {
               curve: Curves.easeOutCubic,
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 4.h),
               decoration: BoxDecoration(
-                color: active ? const Color(0xFFF4F4F4) : AppColor.white,
+                color: active ? const Color(0xFFECECEC) : AppColor.white,
                 borderRadius: BorderRadius.circular(28.r),
                 border: Border.all(color: const Color(0xFFE7E7E7)),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColor.black.withValues(alpha: active ? .16 : .08),
-                    blurRadius: active ? 7 : 3,
-                    offset: Offset(0, active ? 3 : 1),
-                  ),
-                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -454,6 +446,22 @@ class _PropertyCard extends StatelessWidget {
                 ),
               ),
               Positioned(top: 9.h, right: 9.w, child: _Heart(data)),
+              if (!data.isAvailable)
+                Positioned(
+                  left: 9.w,
+                  top: 9.h,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE5484D),
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: AppTextWidget.legacy(
+                      'Not available',
+                      style: TextStyle(color: AppColor.white, fontSize: 9.sp, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
               if (data.propertyType.isNotEmpty)
                 Positioned(
                   left: 10.w,
@@ -538,9 +546,18 @@ class _HeartState extends State<_Heart> {
         listener: (_, state) {
           if (state is FavoriteUpdated && state.propertyId == widget.data.id) {
             setState(() => selected = state.isLiked);
+            Utils.showSnackBar(
+              state.message.isNotEmpty
+                  ? state.message
+                  : state.isLiked
+                  ? 'Added to your wishlist.'
+                  : 'Removed from your wishlist.',
+              result: Result.success,
+            );
           } else if (state is FavoriteError &&
               state.propertyId == widget.data.id) {
             setState(() => selected = state.previousIsLiked);
+            Utils.showSnackBar(state.message, result: Result.error);
           }
         },
         child: GestureDetector(
@@ -636,67 +653,6 @@ class _TripSection extends StatelessWidget {
               );
             },
           ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _ExploreMore extends StatelessWidget {
-  final List<ExploreCategory> items;
-  const _ExploreMore(this.items);
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(20.w, 18.h, 20.w, 0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppTextWidget(
-          text: 'Explore more',
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        SizedBox(height: 10.h),
-        Wrap(
-          spacing: 10.w,
-          runSpacing: 14.h,
-          children: items.map((item) {
-            return SizedBox(
-              width: 70.w,
-              child: Column(
-                children: [
-                  Container(
-                    width: 60.w,
-                    height: 60.w,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColor.greyExtraLight,
-                      borderRadius: BorderRadius.circular(12.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColor.black.withValues(alpha: .10),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: AppTextWidget.legacy(
-                      item.icon,
-                      style: TextStyle(fontSize: 25.sp),
-                    ),
-                  ),
-                  SizedBox(height: 7.h),
-                  AppTextWidget(
-                    text: item.name,
-                    fontSize: 10,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    textOverflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
         ),
       ],
     ),

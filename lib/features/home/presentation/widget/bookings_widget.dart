@@ -3,8 +3,11 @@ import 'package:goanest/core.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/utilities/extensions/provide_theme_extension.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import '../../data/model/booking_model.dart';
+import '../../data/repository/home_repository_impl.dart';
+import '../../../../core/di/injector.dart';
 import '../bloc/bookings_bloc.dart';
 import '../bloc/bookings_event.dart';
 import '../bloc/bookings_state.dart';
@@ -114,12 +117,16 @@ class _ApiBookingsList extends StatelessWidget {
           : status == 'cancelled';
     }).toList();
     if (visible.isEmpty) {
-      return _BookingsMessage(
-        message: selectedTab == 0
-            ? 'No upcoming bookings'
-            : selectedTab == 1
-            ? 'No past bookings'
-            : 'No cancelled bookings',
+      return SizedBox(
+        height: MediaQuery.sizeOf(context).height * .5,
+        child: _BookingsMessage(
+          message: selectedTab == 0
+              ? 'No upcoming bookings'
+              : selectedTab == 1
+              ? 'No past bookings'
+              : 'No cancelled bookings',
+          verticallyCentered: true,
+        ),
       );
     }
     return Column(
@@ -153,16 +160,34 @@ class _ApiBookingCard extends StatelessWidget {
         : booking.status == 'completed'
         ? theme.textSecondary
         : AppColor.success;
-    return Container(
-      height: 124.h,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: booking.id.isEmpty
+          ? null
+          : () => context.pushNamed(
+              'booking-detail',
+              pathParameters: {'bookingId': booking.id},
+            ),
+      child: Container(
+      height: isUpcoming ? 148.h : 124.h,
       decoration: BoxDecoration(
         color: theme.surface,
         borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(
+          color: theme.textPrimary.withValues(alpha: .045),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppColor.black.withValues(alpha: .08),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: AppColor.black.withValues(alpha: .055),
+            blurRadius: 20,
+            spreadRadius: 1,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: AppColor.black.withValues(alpha: .025),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -172,15 +197,67 @@ class _ApiBookingCard extends StatelessWidget {
           SizedBox(
             width: 128.w,
             height: double.infinity,
-            child: booking.propertyImage.isEmpty
-                ? const _Thumbnail(crop: Rect.fromLTWH(24, 258, 148, 137))
-                : Image.network(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (booking.propertyImage.isEmpty)
+                  const _Thumbnail(crop: Rect.fromLTWH(24, 258, 148, 137))
+                else
+                  Image.network(
                     booking.propertyImage,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => const _Thumbnail(
                       crop: Rect.fromLTWH(24, 258, 148, 137),
                     ),
                   ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColor.black.withValues(alpha: .02),
+                        AppColor.black.withValues(alpha: .30),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 10.w,
+                  bottom: 10.h,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColor.black.withValues(alpha: .30),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: AppColor.white.withValues(alpha: .28),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.hotel_rounded,
+                          color: AppColor.white,
+                          size: 11.sp,
+                        ),
+                        SizedBox(width: 4.w),
+                        AppTextWidget(
+                          text: 'YOUR STAY',
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Padding(
@@ -230,18 +307,147 @@ class _ApiBookingCard extends StatelessWidget {
                   AppTextWidget(
                     text: isUpcoming
                         ? '${booking.nights} ${booking.nights == 1 ? 'night' : 'nights'}'
-                        : '₹${booking.totalPrice.toStringAsFixed(0)} total',
+                        : '₹${(booking.totalPrice + booking.cleaningFee + booking.serviceFee + booking.tax).toStringAsFixed(0)} total',
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w800,
                     color: isUpcoming
                         ? theme.brandPrimary
                         : theme.textSecondary,
                   ),
+                  if (isUpcoming)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => _cancelBooking(context),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(0, 22.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: AppTextWidget.labelSmall(
+                          text: 'Cancel booking',
+                          color: AppColor.error,
+                        ),
+                      ),
+                    )
+                  else if (booking.status == 'completed')
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => _writeReview(context),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(0, 22.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: AppTextWidget.labelSmall(
+                          text: 'Write a review',
+                          color: theme.brandPrimary,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
         ],
+      ),
+      ),
+    );
+  }
+
+  Future<void> _cancelBooking(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Cancel this booking?'),
+        content: const Text('This will cancel your reservation.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Keep booking'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Cancel booking'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<BookingsBloc>().add(CancelBooking(booking.id));
+    }
+  }
+
+  Future<void> _writeReview(BuildContext context) async {
+    var rating = 5;
+    final commentController = TextEditingController();
+    final submit = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Review your stay'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Text('Rating'),
+                  Expanded(
+                    child: Slider(
+                      value: rating.toDouble(),
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      label: '$rating',
+                      onChanged: (value) =>
+                          setDialogState(() => rating = value.round()),
+                    ),
+                  ),
+                ],
+              ),
+              TextField(
+                controller: commentController,
+                maxLength: 1000,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  hintText: 'Share a few details',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Later'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Submit'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (submit != true || !context.mounted) {
+      commentController.dispose();
+      return;
+    }
+    final result = await sl<HomeRepositoryImpl>().createReview(
+      booking.propertyId,
+      booking.id,
+      rating,
+      commentController.text.trim(),
+    );
+    commentController.dispose();
+    if (!context.mounted) return;
+    result.fold(
+      (error) => Utils.showSnackBar(error.message, result: Result.error),
+      (review) => Utils.showSnackBar(
+        review.message.isEmpty
+            ? 'Thanks for sharing your review.'
+            : review.message,
+        result: Result.success,
       ),
     );
   }
@@ -250,14 +456,20 @@ class _ApiBookingCard extends StatelessWidget {
 class _BookingsMessage extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
+  final bool verticallyCentered;
 
-  const _BookingsMessage({required this.message, this.onRetry});
+  const _BookingsMessage({
+    required this.message,
+    this.onRetry,
+    this.verticallyCentered = false,
+  });
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.symmetric(vertical: 48.h),
-    child: Center(
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: EdgeInsets.symmetric(vertical: verticallyCentered ? 0 : 48.h),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.calendar_month_outlined,

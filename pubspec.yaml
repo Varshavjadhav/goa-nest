@@ -54,6 +54,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   talker_dio_logger: ^5.1.20
   google_maps_flutter: ^2.13.1
+  webview_flutter: ^4.14.1
 
 dependency_overrides:
   flutter_secure_storage: ^10.0.0

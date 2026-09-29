@@ -3,12 +3,14 @@ class LoginResponse {
   final String accessToken;
   final String refreshToken;
   final String phone;
+  final String message;
 
   const LoginResponse({
     required this.user,
     required this.accessToken,
     required this.refreshToken,
     required this.phone,
+    this.message = '',
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
@@ -27,4 +29,12 @@ class LoginResponse {
       phone: phone,
     );
   }
+
+  LoginResponse copyWith({String? message}) => LoginResponse(
+    user: user,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    phone: phone,
+    message: message ?? this.message,
+  );
 }

@@ -69,11 +69,15 @@ class BookingModel {
   final int adults;
   final int children;
   final int infants;
+  final int rooms;
   final int nights;
   final double pricePerNight;
   final double totalPrice;
   final double cleaningFee;
   final double serviceFee;
+  final double tax;
+  final String specialRequests;
+  final String cancellationReason;
 
   const BookingModel({
     this.id = '',
@@ -87,11 +91,15 @@ class BookingModel {
     this.adults = 1,
     this.children = 0,
     this.infants = 0,
+    this.rooms = 1,
     this.nights = 0,
     this.pricePerNight = 0,
     this.totalPrice = 0,
     this.cleaningFee = 0,
     this.serviceFee = 0,
+    this.tax = 0,
+    this.specialRequests = '',
+    this.cancellationReason = '',
   });
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {
@@ -128,11 +136,15 @@ class BookingModel {
       adults: _bookingInt(guests['adults'], fallback: 1),
       children: _bookingInt(guests['children']),
       infants: _bookingInt(guests['infants']),
+      rooms: _bookingInt(json['rooms'], fallback: 1),
       nights: _bookingInt(json['nights']),
       pricePerNight: _bookingNumber(json['pricePerNight']),
       totalPrice: _bookingNumber(json['totalPrice']),
       cleaningFee: _bookingNumber(json['cleaningFee']),
       serviceFee: _bookingNumber(json['serviceFee']),
+      tax: _bookingNumber(json['tax']),
+      specialRequests: _bookingString(json['specialRequests']),
+      cancellationReason: _bookingString(json['cancellationReason']),
     );
   }
 
@@ -151,6 +163,7 @@ class CreateBookingRequest {
   final int adults;
   final int children;
   final int infants;
+  final int rooms;
   final String specialRequests;
 
   const CreateBookingRequest({
@@ -160,6 +173,7 @@ class CreateBookingRequest {
     this.adults = 1,
     this.children = 0,
     this.infants = 0,
+    this.rooms = 1,
     this.specialRequests = '',
   });
 
@@ -168,6 +182,7 @@ class CreateBookingRequest {
     'checkIn': _bookingDate(checkIn),
     'checkOut': _bookingDate(checkOut),
     'guests': {'adults': adults, 'children': children, 'infants': infants},
+    'rooms': rooms,
     if (specialRequests.isNotEmpty) 'specialRequests': specialRequests,
   };
 }
@@ -205,6 +220,18 @@ class AvailabilityResult {
     this.totalAmount = 0,
     this.message = '',
   });
+
+  AvailabilityResult copyWith({String? message}) => AvailabilityResult(
+    available: available,
+    bookingType: bookingType,
+    nightlyAmount: nightlyAmount,
+    cleaningFee: cleaningFee,
+    serviceFee: serviceFee,
+    tax: tax,
+    discount: discount,
+    totalAmount: totalAmount,
+    message: message ?? this.message,
+  );
 
   factory AvailabilityResult.fromJson(Map<String, dynamic> json) {
     final price = json['price'] is Map

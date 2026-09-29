@@ -12,8 +12,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(
         state.copyWith(
           identifier: event.identifier,
-          identifierError: null,
           status: LoginStatus.initial,
+          clearIdentifierError: true,
+          clearMessage: true,
         ),
       );
     });
@@ -21,8 +22,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(
         state.copyWith(
           password: event.password,
-          passwordError: null,
           status: LoginStatus.initial,
+          clearPasswordError: true,
+          clearMessage: true,
         ),
       );
     });
@@ -45,6 +47,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           identifierError: identifierError,
           passwordError: passwordError,
           status: LoginStatus.failure,
+          clearMessage: true,
         ),
       );
       return;
@@ -54,8 +57,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       state.copyWith(
         status: LoginStatus.submitting,
         message: null,
-        identifierError: null,
-        passwordError: null,
+        clearIdentifierError: true,
+        clearPasswordError: true,
+        clearMessage: true,
       ),
     );
 
@@ -68,10 +72,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       (error) => emit(
         state.copyWith(status: LoginStatus.failure, message: error.message),
       ),
-      (_) => emit(
+      (response) => emit(
         state.copyWith(
           status: LoginStatus.success,
-          message: 'Login successful',
+          message: response.message.isEmpty
+              ? 'Login successful'
+              : response.message,
         ),
       ),
     );
@@ -81,7 +87,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (identifier.trim().isEmpty) {
       return 'Please enter your email address';
     }
-    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(identifier.trim())) {
+    final email = identifier.trim();
+    if (email.length > 254 ||
+        !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
       return 'Enter a valid email address';
     }
     return null;
@@ -90,9 +98,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   String? _validatePassword(String password) {
     if (password.isEmpty) {
       return 'Please enter your password';
-    }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters';
     }
     return null;
   }

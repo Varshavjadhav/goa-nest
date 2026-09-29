@@ -6,26 +6,37 @@ import 'package:goanest/features/home/domain/usecase/check_availability.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
 import 'package:goanest/utilities/extensions/provide_theme_extension.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 
 class BookingFlowScreen extends StatefulWidget {
   final String propertyId;
   final String propertyTitle;
+  final String imageUrl;
+  final double rating;
+  final int reviewCount;
+  final String location;
   final double nightlyPrice;
   final DateTime? initialCheckIn;
   final DateTime? initialCheckOut;
   final int initialGuests;
+  final int initialRooms;
   final bool useAvailabilityApi;
 
   const BookingFlowScreen({
     super.key,
     required this.propertyId,
     this.propertyTitle = 'Your stay',
+    this.imageUrl = '',
+    this.rating = 0,
+    this.reviewCount = 0,
+    this.location = '',
     this.nightlyPrice = 0,
     this.initialCheckIn,
     this.initialCheckOut,
     this.initialGuests = 1,
+    this.initialRooms = 1,
     this.useAvailabilityApi = false,
   });
 
@@ -48,6 +59,7 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     checkIn = widget.initialCheckIn;
     checkOut = widget.initialCheckOut;
     guests = widget.initialGuests < 1 ? 1 : widget.initialGuests;
+    rooms = widget.initialRooms < 1 ? 1 : widget.initialRooms;
   }
 
   @override
@@ -487,14 +499,9 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
         );
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const AppTextWidget.legacy(
-              'Dates available. You can reserve this stay.',
-            ),
-            backgroundColor: AppColor.success,
-            behavior: SnackBarBehavior.floating,
-          ),
+        Utils.showSnackBar(
+          'Dates available. You can reserve this stay.',
+          result: Result.success,
         );
       }
       return;
@@ -526,14 +533,11 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                 : value.message,
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: AppTextWidget.legacy(
-                'These dates are available to book.',
-              ),
-              backgroundColor: AppColor.success,
-              behavior: SnackBarBehavior.floating,
-            ),
+          Utils.showSnackBar(
+            value.message.isEmpty
+                ? 'These dates are available to book.'
+                : value.message,
+            result: Result.success,
           );
         }
       },
@@ -573,18 +577,24 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
       'checkIn': _isoDate(checkIn!),
       'checkOut': _isoDate(checkOut!),
       'guests': guests.toString(),
+      'rooms': rooms.toString(),
       'total': result.totalAmount.toStringAsFixed(0),
+      'accommodation':
+          (result.nightlyAmount * checkOut!.difference(checkIn!).inDays)
+              .toStringAsFixed(0),
+      'cleaningFee': result.cleaningFee.toStringAsFixed(0),
+      'serviceFee': result.serviceFee.toStringAsFixed(0),
+      'tax': result.tax.toStringAsFixed(0),
       'title': widget.propertyTitle,
+      if (widget.imageUrl.isNotEmpty) 'image': widget.imageUrl,
+      'rating': widget.rating.toString(),
+      'reviewCount': widget.reviewCount.toString(),
+      'location': widget.location,
     };
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const AppTextWidget.legacy(
-          'Reservation successful. Opening checkout.',
-        ),
-        backgroundColor: AppColor.success,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(milliseconds: 700),
-      ),
+    Utils.showSnackBar(
+      'Dates are available. Review your reservation.',
+      result: Result.success,
+      duration: 1,
     );
     Future<void>.delayed(const Duration(milliseconds: 250), () {
       if (!mounted) return;

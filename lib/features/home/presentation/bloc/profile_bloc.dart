@@ -25,7 +25,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       result.fold(
         (error) => emit(ProfileError(error.message, profile: current)),
         (profile) => emit(
-          ProfileLoaded(profile, message: 'Profile updated successfully'),
+          ProfileLoaded(
+            profile,
+            message: profile.message.isEmpty
+                ? 'Profile updated successfully'
+                : profile.message,
+          ),
         ),
       );
     });

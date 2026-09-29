@@ -14,7 +14,11 @@ class PropertyDetailBloc
         return;
       }
       emit(PropertyDetailLoading());
-      final result = await repository.getProperty(event.propertyId);
+      final result = await repository.getProperty(
+        event.propertyId,
+        checkIn: event.checkIn,
+        checkOut: event.checkOut,
+      );
       result.fold((error) => emit(PropertyDetailError(error.message)), (
         property,
       ) async {

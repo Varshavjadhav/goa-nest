@@ -4,6 +4,7 @@ const { MESSAGES } = require('../../config/constants');
 const asyncHandler = require('../../utils/asyncHandler');
 const recentlyViewedService = require('../recentlyViewed/recentlyViewed.service');
 const favoriteService = require('../favorite/favorite.service');
+const reviewService = require('../review/review.service');
 
 const createProperty = asyncHandler(async (req, res) => {
   const property = await propertyService.createProperty(req.user, req.body);
@@ -21,11 +22,28 @@ const getProperty = asyncHandler(async (req, res) => {
     }
   }
   const propertyData = property.toObject();
+  const { checkIn, checkOut } = req.query;
+  if (checkIn && checkOut) {
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const Booking = require('../booking/booking.model');
+    const overlapping = await Booking.exists({
+      property: property._id,
+      status: { $in: ['pending', 'confirmed'] },
+      checkIn: { $lt: end },
+      checkOut: { $gt: start },
+    });
+    propertyData.isAvailable = !overlapping;
+    propertyData.availabilityMessage = overlapping
+      ? 'Not available for selected dates'
+      : 'Available for selected dates';
+  }
+  const reviewData = await reviewService.getReviewsByProperty(req.params.id, 1, 5);
   if (req.user) {
     const likedIds = await favoriteService.getFavoritePropertyIds(req.user, [property._id]);
     propertyData.isLiked = likedIds.has(property._id.toString());
   }
-  return ApiResponse.success(res, MESSAGES.PROPERTY_FETCHED, { property: propertyData });
+  return ApiResponse.success(res, MESSAGES.PROPERTY_FETCHED, { property: propertyData, reviews: reviewData });
 });
 
 const updateProperty = asyncHandler(async (req, res) => {
@@ -69,7 +87,9 @@ const checkAvailabilityPost = asyncHandler(async (req, res) => {
   if (!propertyId || !checkIn || !checkOut) {
     return ApiResponse.error(res, MESSAGES.CHECK_IN_CHECK_OUT_REQUIRED, 400);
   }
-  const result = await propertyService.checkAvailability(propertyId, checkIn, checkOut, guests, rooms);
+  const result = await propertyService.checkAvailability(
+    propertyId, checkIn, checkOut, guests, rooms, req.user?._id,
+  );
   return ApiResponse.success(res, 'Availability checked successfully', result);
 });
 

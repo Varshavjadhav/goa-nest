@@ -6,6 +6,7 @@ class WishlistModel {
   final List<WishlistPropertyModel> properties;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String message;
 
   const WishlistModel({
     this.id = '',
@@ -13,6 +14,7 @@ class WishlistModel {
     this.properties = const [],
     this.createdAt,
     this.updatedAt,
+    this.message = '',
   });
 
   factory WishlistModel.fromJson(Map<String, dynamic> json) => WishlistModel(
@@ -38,6 +40,15 @@ class WishlistModel {
       value is Map ? Map<String, dynamic>.from(value) : json,
     );
   }
+
+  WishlistModel copyWith({String? message}) => WishlistModel(
+    id: id,
+    name: name,
+    properties: properties,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    message: message ?? this.message,
+  );
 }
 
 class WishlistPropertyModel {

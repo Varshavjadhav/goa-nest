@@ -32,16 +32,23 @@ class LoginState {
     bool? rememberMe,
     String? identifierError,
     String? passwordError,
+    bool clearIdentifierError = false,
+    bool clearPasswordError = false,
+    bool clearMessage = false,
   }) {
     return LoginState(
       status: status ?? this.status,
-      message: message ?? this.message,
+      message: clearMessage ? null : message ?? this.message,
       identifier: identifier ?? this.identifier,
       password: password ?? this.password,
       obscurePassword: obscurePassword ?? this.obscurePassword,
       rememberMe: rememberMe ?? this.rememberMe,
-      identifierError: identifierError ?? this.identifierError,
-      passwordError: passwordError ?? this.passwordError,
+      identifierError: clearIdentifierError
+          ? null
+          : identifierError ?? this.identifierError,
+      passwordError: clearPasswordError
+          ? null
+          : passwordError ?? this.passwordError,
     );
   }
 }

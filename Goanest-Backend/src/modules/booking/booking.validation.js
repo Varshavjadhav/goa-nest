@@ -17,6 +17,7 @@ const createBooking = Joi.object({
     children: Joi.number().min(0).default(0),
     infants: Joi.number().min(0).default(0),
   }).default({ adults: 1, children: 0, infants: 0 }),
+  rooms: Joi.number().integer().min(1).default(1),
   specialRequests: Joi.string().max(500).allow(null, ''),
 });
 

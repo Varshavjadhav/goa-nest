@@ -31,35 +31,55 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       final result = await createWishlist(event.name);
       result.fold(
         (error) => emit(WishlistActionError(error.message, _currentWishlists)),
-        (wishlist) => emit(WishlistLoaded([..._currentWishlists, wishlist])),
+        (wishlist) => emit(
+          WishlistLoaded(
+            [..._currentWishlists, wishlist],
+            message: wishlist.message,
+          ),
+        ),
       );
     });
     on<AddPropertyToWishlist>((event, emit) async {
       final result = await addProperty(event.wishlistId, event.propertyId);
       result.fold(
         (error) => emit(WishlistActionError(error.message, _currentWishlists)),
-        (wishlist) => emit(WishlistLoaded(_replaceWishlist(wishlist))),
+        (wishlist) => emit(
+          WishlistLoaded(
+            _replaceWishlist(wishlist),
+            message: wishlist.message,
+          ),
+        ),
       );
     });
     on<RemovePropertyFromWishlist>((event, emit) async {
       final result = await removeProperty(event.wishlistId, event.propertyId);
       result.fold(
         (error) => emit(WishlistActionError(error.message, _currentWishlists)),
-        (wishlist) => emit(WishlistLoaded(_replaceWishlist(wishlist))),
+        (wishlist) => emit(
+          WishlistLoaded(
+            _replaceWishlist(wishlist),
+            message: wishlist.message,
+          ),
+        ),
       );
     });
     on<ToggleFavorite>((event, emit) async {
-      final currentWishlist = _currentWishlists.isEmpty
-          ? null
-          : _currentWishlists.first;
+      final wishlists = _currentWishlists;
+      WishlistModel? containingWishlist;
+      for (final wishlist in wishlists) {
+        if (wishlist.properties.any(
+          (item) => item.property?.id == event.propertyId,
+        )) {
+          containingWishlist = wishlist;
+          break;
+        }
+      }
 
-      // A home-screen heart represents saving a stay to the user's first
-      // wishlist. Keep the legacy favorites endpoint as a fallback for users
-      // who do not have a wishlist yet.
-      if (currentWishlist != null && currentWishlist.id.isNotEmpty) {
-        final wishlistResult = event.isLiked
-            ? await removeProperty(currentWishlist.id, event.propertyId)
-            : await addProperty(currentWishlist.id, event.propertyId);
+      if (event.isLiked && containingWishlist != null) {
+        final wishlistResult = await removeProperty(
+          containingWishlist.id,
+          event.propertyId,
+        );
         wishlistResult.fold(
           (error) => emit(
             FavoriteError(
@@ -74,6 +94,74 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
               event.propertyId,
               !event.isLiked,
               _replaceWishlist(wishlist),
+              message: wishlist.message,
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (!event.isLiked && wishlists.isNotEmpty) {
+        final wishlist = wishlists.first;
+        final result = await addProperty(wishlist.id, event.propertyId);
+        result.fold(
+          (error) => emit(
+            FavoriteError(
+              event.propertyId,
+              event.isLiked,
+              error.message,
+              wishlists,
+            ),
+          ),
+          (updatedWishlist) => emit(
+            FavoriteUpdated(
+              event.propertyId,
+              true,
+              _replaceWishlist(updatedWishlist),
+              message: updatedWishlist.message,
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (!event.isLiked) {
+        final createdResult = await createWishlist('Saved stays');
+        final createdWishlist = createdResult.fold(
+          (error) {
+            emit(
+              FavoriteError(
+                event.propertyId,
+                event.isLiked,
+                error.message,
+                wishlists,
+              ),
+            );
+            return null;
+          },
+          (wishlist) => wishlist,
+        );
+        if (createdWishlist == null) return;
+
+        final addResult = await addProperty(
+          createdWishlist.id,
+          event.propertyId,
+        );
+        addResult.fold(
+          (error) => emit(
+            FavoriteError(
+              event.propertyId,
+              event.isLiked,
+              error.message,
+              [...wishlists, createdWishlist],
+            ),
+          ),
+          (updatedWishlist) => emit(
+            FavoriteUpdated(
+              event.propertyId,
+              true,
+              [updatedWishlist],
+              message: updatedWishlist.message,
             ),
           ),
         );

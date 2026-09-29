@@ -12,6 +12,7 @@ class RouteName {
   static const String bookingFlowView = '/booking-flow/:propertyId';
   static const String bookingConfirmationView =
       '/booking-confirmation/:propertyId';
+  static const String bookingDetailView = '/booking-detail/:bookingId';
 
   static const String appError = '/appError';
 }

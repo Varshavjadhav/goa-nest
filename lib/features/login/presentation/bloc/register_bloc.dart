@@ -12,6 +12,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           name: e.value,
           status: RegisterStatus.initial,
           clearErrors: true,
+          clearMessage: true,
         ),
       ),
     );
@@ -21,6 +22,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           email: e.value,
           status: RegisterStatus.initial,
           clearErrors: true,
+          clearMessage: true,
         ),
       ),
     );
@@ -30,6 +32,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           phone: e.value,
           status: RegisterStatus.initial,
           clearErrors: true,
+          clearMessage: true,
         ),
       ),
     );
@@ -39,6 +42,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           password: e.value,
           status: RegisterStatus.initial,
           clearErrors: true,
+          clearMessage: true,
         ),
       ),
     );
@@ -53,17 +57,25 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterSubmitted event,
     Emitter<RegisterState> emit,
   ) async {
-    final nameError = state.name.trim().isEmpty
+    final name = state.name.trim();
+    final email = state.email.trim();
+    final phone = state.phone.trim();
+    final nameError = name.isEmpty
         ? 'Please enter your name'
+        : name.length < 2
+        ? 'Name must be at least 2 characters'
+        : name.length > 50
+        ? 'Name cannot exceed 50 characters'
         : null;
-    final emailError = state.email.trim().isEmpty
+    final emailError = email.isEmpty
         ? 'Please enter your email address'
-        : (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(state.email.trim())
+        : (email.length > 254 ||
+                !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)
               ? 'Enter a valid email address'
               : null);
-    final phoneError = state.phone.trim().isEmpty
+    final phoneError = phone.isEmpty
         ? 'Please enter your phone number'
-        : (!RegExp(r'^\+?[0-9\s()\-]{7,20}$').hasMatch(state.phone.trim())
+        : (!RegExp(r'^\+?[0-9\s().-]{7,20}$').hasMatch(phone)
               ? 'Enter a valid phone number'
               : null);
     final passwordError = state.password.length < 6
@@ -80,6 +92,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           emailError: emailError,
           phoneError: phoneError,
           passwordError: passwordError,
+          clearMessage: true,
         ),
       );
       return;
@@ -89,6 +102,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         status: RegisterStatus.submitting,
         message: null,
         clearErrors: true,
+        clearMessage: true,
       ),
     );
     final result = await registerUser(
@@ -101,10 +115,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       (error) => emit(
         state.copyWith(status: RegisterStatus.failure, message: error.message),
       ),
-      (_) => emit(
+      (response) => emit(
         state.copyWith(
           status: RegisterStatus.success,
-          message: 'Registration successful',
+          message: response.message.isEmpty
+              ? 'Registration successful'
+              : response.message,
         ),
       ),
     );

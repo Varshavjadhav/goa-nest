@@ -53,7 +53,11 @@ class Failure {
 
     switch (statusCode) {
       case 400:
-        return const BadRequestError();
+        return ValidationError(
+          message: message,
+          fieldErrors: const {},
+          code: statusCode,
+        );
 
       case 401:
         return const SessionExpiry();

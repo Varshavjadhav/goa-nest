@@ -41,8 +41,15 @@ const toCard = (property, isLiked = false, extra = {}) => ({
 
 const mapProperties = async (properties, userId) => {
   const plainProperties = properties.map((property) => (property.toObject ? property.toObject() : property));
-  const likedIds = await favoriteService.getFavoritePropertyIds(userId, plainProperties.map((property) => property._id));
+  const propertyIds = plainProperties.map((property) => property._id);
+  const likedIds = await getLikedPropertyIds(userId, propertyIds);
   return plainProperties.map((property) => toCard(property, likedIds.has(property._id.toString())));
+};
+
+const getLikedPropertyIds = async (userId, propertyIds) => {
+  if (!userId || !propertyIds.length) return new Set();
+
+  return favoriteService.getFavoritePropertyIds(userId, propertyIds);
 };
 
 const getRecentRecords = async (userId) => {
@@ -101,28 +108,46 @@ const getExplore = async (userId, tab = 'all') => {
   const recentRecords = await getRecentRecords(userId);
   const recentPropertyIds = recentRecords.filter((record) => record.property).map((record) => record.property._id);
 
-  const [categories, recommended, popularDestinationStays, guestFavourites, tripInspiration] = await Promise.all([
-    Category.find({ isActive: true }).sort({ name: 1 }).lean(),
-    Property.find(propertyQuery).populate(propertyPopulate).sort({ averageRating: -1, totalReviews: -1, createdAt: -1 }).limit(6),
-    Property.find(propertyQuery).populate(propertyPopulate).sort({ totalBookings: -1, averageRating: -1 }).limit(6),
-    Property.find(propertyQuery).populate(propertyPopulate).sort({ averageRating: -1, totalReviews: -1 }).limit(6),
+  const [allProperties, tripInspiration] = await Promise.all([
+    Property.find(propertyQuery).populate(propertyPopulate).lean(),
     getTripInspiration(),
   ]);
 
-  const recentLikedIds = await favoriteService.getFavoritePropertyIds(userId, recentPropertyIds);
+  // Keep home sections distinct. With a small inventory, independent top-N
+  // queries made the same listings appear in every carousel.
+  const usedPropertyIds = new Set(
+    normalizedTab === 'all' ? recentPropertyIds.map((id) => id.toString()) : [],
+  );
+  const takeUnique = (properties, sort, limit = 6) => {
+    const selected = [];
+    for (const property of [...properties].sort(sort)) {
+      const id = property._id.toString();
+      if (usedPropertyIds.has(id)) continue;
+      usedPropertyIds.add(id);
+      selected.push(property);
+      if (selected.length === limit) break;
+    }
+    return selected;
+  };
+  const recommended = takeUnique(
+    allProperties,
+    (a, b) => b.averageRating - a.averageRating || b.totalReviews - a.totalReviews || b.createdAt - a.createdAt,
+  );
+  const popularDestinationStays = takeUnique(
+    allProperties,
+    (a, b) => b.totalBookings - a.totalBookings || b.averageRating - a.averageRating,
+  );
+  const guestFavourites = takeUnique(
+    allProperties,
+    (a, b) => b.averageRating - a.averageRating || b.totalReviews - a.totalReviews,
+  );
+
+  const recentLikedIds = await getLikedPropertyIds(userId, recentPropertyIds);
   const recentItems = normalizedTab === 'all'
     ? recentRecords
     .filter((record) => record.property)
     .map((record) => toCard(record.property, recentLikedIds.has(record.property._id.toString()), { viewedAt: record.viewedAt }))
     : [];
-
-  const exploreCategories = categories.map((category) => ({
-    id: category._id,
-    name: category.name,
-    slug: category.slug,
-    icon: category.icon,
-    description: category.description,
-  }));
 
   const lastViewed = recentItems[0];
 
@@ -162,7 +187,6 @@ const getExplore = async (userId, tab = 'all') => {
       total: guestFavourites.length,
     },
     tripInspiration,
-    exploreMore: { items: exploreCategories, total: exploreCategories.length },
     experiences: {
       title: normalizedTab === 'services' ? 'Goanest Services' : 'Airbnb Experiences',
       subtitle: normalizedTab === 'services'

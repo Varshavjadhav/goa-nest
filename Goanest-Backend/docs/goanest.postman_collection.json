@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:5000/api/v1"
+      "value": "http://192.168.31.105:5001/api/v1"
     },
     {
       "key": "accessToken",
@@ -60,37 +60,223 @@
           "name": "Get Home - All",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/home?tab=all", "host": ["{{baseUrl}}"], "path": ["home"], "query": [{ "key": "tab", "value": "all" }] }
+            "url": {
+              "raw": "{{baseUrl}}/home?tab=all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "home"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "all"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Get Home - Villas",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/home?tab=villas", "host": ["{{baseUrl}}"], "path": ["home"], "query": [{ "key": "tab", "value": "villas" }] }
+            "url": {
+              "raw": "{{baseUrl}}/home?tab=villas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "home"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "villas"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Get Home - Beach",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/home?tab=beach", "host": ["{{baseUrl}}"], "path": ["home"], "query": [{ "key": "tab", "value": "beach" }] }
+            "url": {
+              "raw": "{{baseUrl}}/home?tab=beach",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "home"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "beach"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Home - Homes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/home?tab=homes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "home"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "homes"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Home - Experiences",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/home?tab=experiences",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "home"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "experiences"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Home - Services",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/home?tab=services",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "home"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "services"
+                }
+              ]
+            }
           }
         }
       ]
     },
     {
-      "name": "Availability",
+      "name": "Availability & Host",
       "item": [
         {
           "name": "Check Availability",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/availability/check", "host": ["{{baseUrl}}"], "path": ["availability", "check"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/availability/check",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "availability",
+                "check"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"propertyId\": \"{{propertyId}}\",\n  \"checkIn\": \"2026-10-12\",\n  \"checkOut\": \"2026-10-15\",\n  \"guests\": 2,\n  \"rooms\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Property (Host)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Demo Goa Stay\",\n  \"description\": \"A comfortable stay in Goa\",\n  \"propertyType\": \"villa\",\n  \"location\": {\"address\": \"Beach Road\", \"city\": \"Candolim\", \"state\": \"Goa\", \"country\": \"India\"},\n  \"pricePerNight\": 4500,\n  \"maxGuests\": 4,\n  \"bedrooms\": 2,\n  \"beds\": 2,\n  \"bathrooms\": 2,\n  \"images\": [{\"url\": \"https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800\", \"isPrimary\": true}]\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Property (Host)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pricePerNight\": 4800,\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Property (Host)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}"
+              ]
             }
           }
         }
@@ -103,8 +289,22 @@
           "name": "Register",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"phone\": \"+1-555-0102\",\n  \"password\": \"password123\"\n}"
@@ -129,9 +329,23 @@
           "name": "Login",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-          "body": {
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{guestEmail}}\",\n  \"password\": \"{{guestPassword}}\"\n}"
             }
@@ -155,8 +369,22 @@
           "name": "Refresh Token",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/auth/refresh-token", "host": ["{{baseUrl}}"], "path": ["auth", "refresh-token"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
@@ -181,7 +409,16 @@
           "name": "Logout",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] }
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
           }
         }
       ]
@@ -193,15 +430,38 @@
           "name": "Get Profile",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/user/profile", "host": ["{{baseUrl}}"], "path": ["user", "profile"] }
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            }
           }
         },
         {
           "name": "Update Profile",
           "request": {
             "method": "PUT",
-            "url": { "raw": "{{baseUrl}}/user/profile", "host": ["{{baseUrl}}"], "path": ["user", "profile"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"+1-555-0100\",\n  \"bio\": \"Travel lover\"\n}"
@@ -217,7 +477,15 @@
           "name": "Get Explore Data",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/explore", "host": ["{{baseUrl}}"], "path": ["explore"] }
+            "url": {
+              "raw": "{{baseUrl}}/explore",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "explore"
+              ]
+            }
           }
         },
         {
@@ -226,11 +494,21 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/recently-viewed?page=1&limit=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["recently-viewed"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recently-viewed"
+              ],
               "query": [
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "20" }
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
               ]
             }
           }
@@ -239,21 +517,48 @@
           "name": "Record Property View",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/recently-viewed/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["recently-viewed", "{{propertyId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/recently-viewed/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "recently-viewed",
+                "{{propertyId}}"
+              ]
+            }
           }
         },
         {
           "name": "Like Property",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/favorites/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["favorites", "{{propertyId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/favorites/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "{{propertyId}}"
+              ]
+            }
           }
         },
         {
           "name": "Unlike Property",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/favorites/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["favorites", "{{propertyId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/favorites/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "{{propertyId}}"
+              ]
+            }
           }
         }
       ]
@@ -265,7 +570,16 @@
           "name": "Get Property by ID",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/properties/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["properties", "{{propertyId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}"
+              ]
+            }
           }
         },
         {
@@ -274,11 +588,23 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/properties/{{propertyId}}/availability?checkIn=2026-09-15&checkOut=2026-09-20",
-              "host": ["{{baseUrl}}"],
-              "path": ["properties", "{{propertyId}}", "availability"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}",
+                "availability"
+              ],
               "query": [
-                { "key": "checkIn", "value": "2026-09-15" },
-                { "key": "checkOut", "value": "2026-09-20" }
+                {
+                  "key": "checkIn",
+                  "value": "2026-09-15"
+                },
+                {
+                  "key": "checkOut",
+                  "value": "2026-09-20"
+                }
               ]
             }
           }
@@ -294,26 +620,94 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/search?query=Arpora&tab=all&page=1&limit=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["search"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "search"
+              ],
               "query": [
-                { "key": "query", "value": "Arpora" },
-                { "key": "tab", "value": "all" },
-                { "key": "city", "value": "", "disabled": true },
-                { "key": "country", "value": "", "disabled": true },
-                { "key": "propertyType", "value": "", "disabled": true },
-                { "key": "category", "value": "", "disabled": true },
-                { "key": "minPrice", "value": "", "disabled": true },
-                { "key": "maxPrice", "value": "", "disabled": true },
-                { "key": "maxGuests", "value": "", "disabled": true },
-                { "key": "bedrooms", "value": "", "disabled": true },
-                { "key": "amenities", "value": "", "disabled": true },
-                { "key": "minRating", "value": "", "disabled": true },
-                { "key": "checkIn", "value": "", "disabled": true },
-                { "key": "checkOut", "value": "", "disabled": true },
-                { "key": "sortBy", "value": "", "disabled": true },
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "20" }
+                {
+                  "key": "query",
+                  "value": "Arpora"
+                },
+                {
+                  "key": "tab",
+                  "value": "all"
+                },
+                {
+                  "key": "city",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "country",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "propertyType",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "maxGuests",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "bedrooms",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "amenities",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "minRating",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "checkIn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "checkOut",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
               ]
             }
           }
@@ -322,7 +716,22 @@
           "name": "Get Suggestions",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/search/suggestions?q=Mia", "host": ["{{baseUrl}}"], "path": ["search", "suggestions"], "query": [{ "key": "q", "value": "Mia" }] }
+            "url": {
+              "raw": "{{baseUrl}}/search/suggestions?q=Mia",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "search",
+                "suggestions"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Mia"
+                }
+              ]
+            }
           }
         }
       ]
@@ -334,11 +743,24 @@
           "name": "Create Booking",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"property\": \"{{propertyId}}\",\n  \"checkIn\": \"2026-09-15\",\n  \"checkOut\": \"2026-09-20\",\n  \"guests\": {\n    \"adults\": 2,\n    \"children\": 1,\n    \"infants\": 0\n  },\n  \"specialRequests\": \"Late check-in please\"\n}"
+              "raw": "{\n  \"property\": \"{{propertyId}}\",\n  \"checkIn\": \"2026-09-15\",\n  \"checkOut\": \"2026-09-20\",\n  \"guests\": {\n    \"adults\": 2,\n    \"children\": 1,\n    \"infants\": 0\n  },\n  \"specialRequests\": \"Late check-in please\",\n  \"rooms\": 1\n}"
             }
           }
         },
@@ -348,12 +770,26 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/bookings?page=1&limit=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings"
+              ],
               "query": [
-                { "key": "page", "value": "1" },
-                { "key": "limit", "value": "20" },
-                { "key": "status", "value": "", "disabled": true }
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                }
               ]
             }
           }
@@ -362,15 +798,39 @@
           "name": "Get Booking by ID",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{bookingId}}"
+              ]
+            }
           }
         },
         {
           "name": "Cancel Booking",
           "request": {
             "method": "PUT",
-            "url": { "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel", "host": ["{{baseUrl}}"], "path": ["bookings", "{{bookingId}}", "cancel"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "{{bookingId}}",
+                "cancel"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reason\": \"Change of plans\"\n}"
@@ -386,7 +846,26 @@
           "name": "Get Reviews for Property",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/reviews/{{propertyId}}?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["reviews", "{{propertyId}}"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] }
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{propertyId}}?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{propertyId}}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
           }
         }
       ]
@@ -398,37 +877,118 @@
           "name": "Get Wishlists",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/wishlists", "host": ["{{baseUrl}}"], "path": ["wishlists"] }
+            "url": {
+              "raw": "{{baseUrl}}/wishlists",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "wishlists"
+              ]
+            }
           }
         },
         {
           "name": "Create Wishlist",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/wishlists", "host": ["{{baseUrl}}"], "path": ["wishlists"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Favorites\"\n}" }
+            "url": {
+              "raw": "{{baseUrl}}/wishlists",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "wishlists"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Favorites\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Rename Wishlist",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/wishlists/{{wishlistId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "wishlists",
+                "{{wishlistId}}"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Goa Weekend Ideas\"\n}"
+            }
           }
         },
         {
           "name": "Add Property to Wishlist",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/wishlists/{{wishlistId}}/properties/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["wishlists", "{{wishlistId}}", "properties", "{{propertyId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/wishlists/{{wishlistId}}/properties/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "wishlists",
+                "{{wishlistId}}",
+                "properties",
+                "{{propertyId}}"
+              ]
+            }
           }
         },
         {
           "name": "Remove Property from Wishlist",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/wishlists/{{wishlistId}}/properties/{{propertyId}}", "host": ["{{baseUrl}}"], "path": ["wishlists", "{{wishlistId}}", "properties", "{{propertyId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/wishlists/{{wishlistId}}/properties/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "wishlists",
+                "{{wishlistId}}",
+                "properties",
+                "{{propertyId}}"
+              ]
+            }
           }
         },
         {
           "name": "Delete Wishlist",
           "request": {
             "method": "DELETE",
-            "url": { "raw": "{{baseUrl}}/wishlists/{{wishlistId}}", "host": ["{{baseUrl}}"], "path": ["wishlists", "{{wishlistId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/wishlists/{{wishlistId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "wishlists",
+                "{{wishlistId}}"
+              ]
+            }
           }
         }
       ]
@@ -440,15 +1000,36 @@
           "name": "Get Conversations",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/conversations", "host": ["{{baseUrl}}"], "path": ["conversations"] }
+            "url": {
+              "raw": "{{baseUrl}}/conversations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversations"
+              ]
+            }
           }
         },
         {
           "name": "Start Conversation",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/conversations", "host": ["{{baseUrl}}"], "path": ["conversations"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/conversations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversations"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"recipientId\": \"HOST_USER_ID\",\n  \"propertyId\": \"{{propertyId}}\",\n  \"message\": \"Hi, I'm interested in your property!\"\n}"
@@ -459,30 +1040,87 @@
           "name": "Get Conversation",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/conversations/{{conversationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversations",
+                "{{conversationId}}"
+              ]
+            }
           }
         },
         {
           "name": "Get Messages",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}/messages?page=1&limit=50", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}", "messages"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "50" }] }
+            "url": {
+              "raw": "{{baseUrl}}/conversations/{{conversationId}}/messages?page=1&limit=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversations",
+                "{{conversationId}}",
+                "messages"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Send Message",
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}/messages", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}", "messages"] },
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Hello! Is this available?\"\n}" }
+            "url": {
+              "raw": "{{baseUrl}}/conversations/{{conversationId}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversations",
+                "{{conversationId}}",
+                "messages"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Hello! Is this available?\"\n}"
+            }
           }
         },
         {
           "name": "Mark as Read",
           "request": {
             "method": "PUT",
-            "url": { "raw": "{{baseUrl}}/conversations/{{conversationId}}/read", "host": ["{{baseUrl}}"], "path": ["conversations", "{{conversationId}}", "read"] }
+            "url": {
+              "raw": "{{baseUrl}}/conversations/{{conversationId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversations",
+                "{{conversationId}}",
+                "read"
+              ]
+            }
           }
         }
       ]
@@ -494,14 +1132,157 @@
           "name": "Get FAQs",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/help/faqs", "host": ["{{baseUrl}}"], "path": ["help", "faqs"] }
+            "url": {
+              "raw": "{{baseUrl}}/help/faqs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "help",
+                "faqs"
+              ]
+            }
           }
         },
         {
           "name": "Get Contact Info",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/help/contact", "host": ["{{baseUrl}}"], "path": ["help", "contact"] }
+            "url": {
+              "raw": "{{baseUrl}}/help/contact",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "help",
+                "contact"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog & Host",
+      "item": [
+        {
+          "name": "List Properties",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/properties?page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Featured Properties",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/properties/featured",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties",
+                "featured"
+              ]
+            }
+          }
+        },
+        {
+          "name": "My Host Properties",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/properties/my-properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "properties",
+                "my-properties"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Bookings for Property",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/property/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "bookings",
+                "property",
+                "{{propertyId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Review Actions",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{propertyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{propertyId}}"
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Wonderful stay\",\n  \"booking\": \"{{bookingId}}\"\n}"
+            }
           }
         }
       ]

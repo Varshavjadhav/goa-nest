@@ -7,6 +7,8 @@ import 'package:goanest/features/home/presentation/view/recently_viewed_screen.d
 import 'package:goanest/features/home/presentation/view/checkout_screen.dart';
 import 'package:goanest/features/home/presentation/view/booking_flow_screen.dart';
 import 'package:goanest/features/home/presentation/view/booking_confirmation_screen.dart';
+import 'package:goanest/features/home/presentation/view/booking_detail_screen.dart';
+import 'package:goanest/features/home/data/model/booking_model.dart';
 import 'package:goanest/features/login/presentation/view/login_screen.dart';
 import 'package:goanest/features/login/presentation/view/registration_screen.dart';
 import 'package:goanest/features/splash/presentaion/screens/splash_screen.dart';
@@ -22,6 +24,7 @@ import 'package:goanest/features/home/domain/usecase/get_wishlists.dart';
 import 'package:goanest/features/home/domain/usecase/search_properties.dart';
 import 'package:goanest/features/home/data/repository/home_repository_impl.dart';
 import 'package:goanest/features/home/presentation/bloc/search_bloc.dart';
+import 'package:goanest/features/home/presentation/bloc/wishlist_event.dart';
 
 import '../../core.dart';
 import '../../utilities/extensions/extensions.dart';
@@ -118,13 +121,32 @@ class AppRouter {
         pageBuilder: (context, state) => appCustomTransitionPage(
           state: state,
           transitionBuilder: slideInOutTransition,
-          child: BlocProvider(
-            create: (_) => PropertyDetailBloc(sl<HomeRepositoryImpl>())
-              ..add(
-                LoadPropertyDetail(state.pathParameters['propertyId'] ?? ''),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => PropertyDetailBloc(sl<HomeRepositoryImpl>())
+                  ..add(
+                    LoadPropertyDetail(
+                      state.pathParameters['propertyId'] ?? '',
+                      checkIn: state.uri.queryParameters['checkIn'],
+                      checkOut: state.uri.queryParameters['checkOut'],
+                    ),
+                  ),
               ),
+              BlocProvider(
+                create: (_) => WishlistBloc(
+                  sl<GetWishlistsUseCase>(),
+                  sl<CreateWishlistUseCase>(),
+                  sl<AddPropertyToWishlistUseCase>(),
+                  sl<RemovePropertyFromWishlistUseCase>(),
+                  sl<HomeRepositoryImpl>(),
+                )..add(LoadWishlists()),
+              ),
+            ],
             child: PropertyDetailScreen(
               propertyId: state.pathParameters['propertyId'] ?? '',
+              checkIn: DateTime.tryParse(state.uri.queryParameters['checkIn'] ?? ''),
+              checkOut: DateTime.tryParse(state.uri.queryParameters['checkOut'] ?? ''),
             ),
           ),
         ),
@@ -143,9 +165,27 @@ class AppRouter {
               state.uri.queryParameters['checkOut'] ?? '',
             ),
             guests: int.tryParse(state.uri.queryParameters['guests'] ?? ''),
+            rooms: int.tryParse(state.uri.queryParameters['rooms'] ?? '') ?? 1,
             total: double.tryParse(state.uri.queryParameters['total'] ?? ''),
+            accommodationAmount: double.tryParse(
+              state.uri.queryParameters['accommodation'] ?? '',
+            ),
+            cleaningFee: double.tryParse(
+              state.uri.queryParameters['cleaningFee'] ?? '',
+            ),
+            serviceFee: double.tryParse(
+              state.uri.queryParameters['serviceFee'] ?? '',
+            ),
+            tax: double.tryParse(state.uri.queryParameters['tax'] ?? ''),
             propertyId: state.pathParameters['propertyId'] ?? '',
             propertyTitle: state.uri.queryParameters['title'] ?? 'Your stay',
+            imageUrl: state.uri.queryParameters['image'] ?? '',
+            rating:
+                double.tryParse(state.uri.queryParameters['rating'] ?? '') ?? 0,
+            reviewCount:
+                int.tryParse(state.uri.queryParameters['reviewCount'] ?? '') ??
+                0,
+            location: state.uri.queryParameters['location'] ?? '',
           ),
         ),
       ),
@@ -158,6 +198,13 @@ class AppRouter {
           child: BookingFlowScreen(
             propertyId: state.pathParameters['propertyId'] ?? '',
             propertyTitle: state.uri.queryParameters['title'] ?? 'Your stay',
+            imageUrl: state.uri.queryParameters['image'] ?? '',
+            rating:
+                double.tryParse(state.uri.queryParameters['rating'] ?? '') ?? 0,
+            reviewCount:
+                int.tryParse(state.uri.queryParameters['reviewCount'] ?? '') ??
+                0,
+            location: state.uri.queryParameters['location'] ?? '',
             nightlyPrice:
                 double.tryParse(
                   state.uri.queryParameters['nightlyPrice'] ?? '',
@@ -171,6 +218,8 @@ class AppRouter {
             ),
             initialGuests:
                 int.tryParse(state.uri.queryParameters['guests'] ?? '') ?? 1,
+            initialRooms:
+                int.tryParse(state.uri.queryParameters['rooms'] ?? '') ?? 1,
             useAvailabilityApi: true,
           ),
         ),
@@ -181,7 +230,22 @@ class AppRouter {
         pageBuilder: (context, state) => appCustomTransitionPage(
           state: state,
           transitionBuilder: slideInOutTransition,
-          child: const BookingConfirmationScreen(),
+          child: BookingConfirmationScreen(
+            booking: state.extra is BookingModel
+                ? state.extra as BookingModel
+                : null,
+          ),
+        ),
+      ),
+      GoRoute(
+        name: 'booking-detail',
+        path: RouteName.bookingDetailView,
+        pageBuilder: (context, state) => appCustomTransitionPage(
+          state: state,
+          transitionBuilder: slideInOutTransition,
+          child: BookingDetailScreen(
+            bookingId: state.pathParameters['bookingId'] ?? '',
+          ),
         ),
       ),
     ],

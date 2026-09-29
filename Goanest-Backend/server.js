@@ -37,20 +37,35 @@ app.get('/health', (req, res) => {
 
 app.use(errorHandler);
 
-const startServer = async () => {
+let server;
+let retryTimer;
+let shuttingDown = false;
+
+const connectDBWithRetry = async () => {
+  if (shuttingDown) return;
+
   try {
     await connectDB();
-    app.listen(env.PORT, '0.0.0.0', () => {
-      console.log(`Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
-    });
   } catch (error) {
-    console.error(`Unable to start server: ${error.message}`);
-    process.exitCode = 1;
+    console.error(`MongoDB unavailable; retrying in 5 seconds: ${error.message}`);
+    retryTimer = setTimeout(connectDBWithRetry, 5000);
   }
 };
 
+const startServer = () => {
+  server = app.listen(env.PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
+    void connectDBWithRetry();
+  });
+};
+
 const shutdown = async (signal) => {
-  console.log(`${signal} received, closing MongoDB connection`);
+  shuttingDown = true;
+  clearTimeout(retryTimer);
+  console.log(`${signal} received, closing server and MongoDB connection`);
+  if (server) {
+    await new Promise((resolve) => server.close(resolve));
+  }
   await mongoose.connection.close();
   process.exit(0);
 };

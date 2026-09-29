@@ -41,6 +41,7 @@ class RegisterState {
     String? passwordError,
     String? message,
     bool clearErrors = false,
+    bool clearMessage = false,
   }) => RegisterState(
     status: status ?? this.status,
     name: name ?? this.name,
@@ -48,10 +49,10 @@ class RegisterState {
     phone: phone ?? this.phone,
     password: password ?? this.password,
     obscurePassword: obscurePassword ?? this.obscurePassword,
-    nameError: clearErrors ? null : nameError ?? nameError,
-    emailError: clearErrors ? null : emailError ?? emailError,
-    phoneError: clearErrors ? null : phoneError ?? phoneError,
-    passwordError: clearErrors ? null : passwordError ?? passwordError,
-    message: message ?? this.message,
+    nameError: clearErrors ? null : nameError ?? this.nameError,
+    emailError: clearErrors ? null : emailError ?? this.emailError,
+    phoneError: clearErrors ? null : phoneError ?? this.phoneError,
+    passwordError: clearErrors ? null : passwordError ?? this.passwordError,
+    message: clearMessage ? null : message ?? this.message,
   );
 }

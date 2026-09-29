@@ -8,7 +8,8 @@ class WishlistLoading extends WishlistState {}
 
 class WishlistLoaded extends WishlistState {
   final List<WishlistModel> wishlists;
-  WishlistLoaded(this.wishlists);
+  final String message;
+  WishlistLoaded(this.wishlists, {this.message = ''});
 }
 
 class WishlistError extends WishlistState {
@@ -26,7 +27,13 @@ class FavoriteUpdated extends WishlistState {
   final String propertyId;
   final bool isLiked;
   final List<WishlistModel> wishlists;
-  FavoriteUpdated(this.propertyId, this.isLiked, this.wishlists);
+  final String message;
+  FavoriteUpdated(
+    this.propertyId,
+    this.isLiked,
+    this.wishlists, {
+    this.message = '',
+  });
 }
 
 class FavoriteError extends WishlistState {

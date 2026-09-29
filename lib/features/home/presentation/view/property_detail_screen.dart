@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 
@@ -11,6 +12,9 @@ import '../../data/model/property_detail_model.dart';
 import '../bloc/property_detail_bloc.dart';
 import '../bloc/property_detail_event.dart';
 import '../bloc/property_detail_state.dart';
+import '../bloc/wishlist_bloc.dart';
+import '../bloc/wishlist_event.dart';
+import '../bloc/wishlist_state.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
   final String propertyId;
@@ -45,9 +49,13 @@ class PropertyDetailScreen extends StatelessWidget {
             ),
             body: _ErrorView(
               message: state.message,
-              onRetry: () => context.read<PropertyDetailBloc>().add(
-                LoadPropertyDetail(propertyId),
-              ),
+                onRetry: () => context.read<PropertyDetailBloc>().add(
+                  LoadPropertyDetail(
+                    propertyId,
+                    checkIn: checkIn == null ? null : _formatIsoDate(checkIn!),
+                    checkOut: checkOut == null ? null : _formatIsoDate(checkOut!),
+                  ),
+                ),
             ),
           );
         }
@@ -111,6 +119,7 @@ class _PropertyDetailContent extends StatelessWidget {
               background: _HeroImage(
                 image: image,
                 imageCount: property.images.length,
+                propertyId: property.id,
               ),
             ),
           ),
@@ -131,6 +140,23 @@ class _PropertyDetailContent extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16.w, 22.h, 16.w, 105.h),
               child: Column(
                 children: [
+                  if (!canBook)
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(bottom: 16.h),
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFEEEE),
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(color: const Color(0xFFF3B6B6)),
+                      ),
+                      child: AppTextWidget.bodyMedium(
+                        text: checkIn != null && checkOut != null
+                            ? 'Not available for ${_shortDate(checkIn!)} – ${_shortDate(checkOut!)}. Choose different dates to continue.'
+                            : 'This property is currently not available to book.',
+                        color: const Color(0xFFB42318),
+                      ),
+                    ),
                   AppTextWidget.headlineLarge(text: property.title),
                   SizedBox(height: 7.h),
                   AppTextWidget.bodyMedium(
@@ -180,12 +206,55 @@ class _PropertyDetailContent extends StatelessWidget {
                   CommonWidgets.divider(height: 40),
                   AppTextWidget.headlineSmall(text: 'Guest reviews'),
                   SizedBox(height: 14.h),
-                  AppTextWidget.bodyMedium(
-                    text: property.totalReviews == 0
-                        ? 'No reviews yet.'
-                        : '${property.rating.toStringAsFixed(2)} average rating from ${property.totalReviews} reviews.',
-                    color: AppColor.textSecondary,
-                  ),
+                  if (detail.reviews.isEmpty)
+                    AppTextWidget.bodyMedium(
+                      text: property.totalReviews == 0
+                          ? 'No reviews yet.'
+                          : '${property.rating.toStringAsFixed(2)} average rating from ${property.totalReviews} reviews.',
+                      color: AppColor.textSecondary,
+                    )
+                  else
+                    for (final review in detail.reviews)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 14.h),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(14.w),
+                          decoration: BoxDecoration(
+                            color: AppColor.scaffoldBackground,
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: AppTextWidget.titleSmall(
+                                      text: review.guestName,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.star_rounded,
+                                    size: 16.sp,
+                                    color: AppColor.goldPlan,
+                                  ),
+                                  AppTextWidget.bodySmall(
+                                    text: review.rating.toStringAsFixed(1),
+                                  ),
+                                ],
+                              ),
+                              if (review.comment.isNotEmpty) ...[
+                                SizedBox(height: 6.h),
+                                AppTextWidget.bodyMedium(
+                                  text: review.comment,
+                                  color: AppColor.textSecondary,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
                   CommonWidgets.divider(height: 40),
                   AppTextWidget.headlineSmall(text: 'Things to know'),
                   SizedBox(height: 14.h),
@@ -230,6 +299,10 @@ class _PropertyDetailContent extends StatelessWidget {
                         queryParameters: {
                           'title': property.title,
                           'nightlyPrice': property.pricePerNight,
+                          if (image != null) 'image': image,
+                          'rating': property.rating.toString(),
+                          'reviewCount': property.totalReviews.toString(),
+                          'location': location,
                           if (checkIn != null) 'checkIn': _isoDate(checkIn!),
                           if (checkOut != null) 'checkOut': _isoDate(checkOut!),
                           if (guests != null) 'guests': guests.toString(),
@@ -271,14 +344,45 @@ class _PropertyDetailContent extends StatelessWidget {
       '${value.day.toString().padLeft(2, '0')}';
 }
 
+String _shortDate(DateTime value) =>
+    '${value.day}/${value.month}/${value.year}';
+
+String _formatIsoDate(DateTime value) =>
+    '${value.year.toString().padLeft(4, '0')}-'
+    '${value.month.toString().padLeft(2, '0')}-'
+    '${value.day.toString().padLeft(2, '0')}';
+
 class _HeroImage extends StatelessWidget {
   final String? image;
   final int imageCount;
+  final String propertyId;
 
-  const _HeroImage({required this.image, required this.imageCount});
+  const _HeroImage({
+    required this.image,
+    required this.imageCount,
+    required this.propertyId,
+  });
 
   @override
-  Widget build(BuildContext context) => Stack(
+  Widget build(BuildContext context) => BlocListener<WishlistBloc, WishlistState>(
+    listenWhen: (_, state) =>
+        (state is FavoriteUpdated && state.propertyId == propertyId) ||
+        (state is FavoriteError && state.propertyId == propertyId),
+    listener: (context, state) {
+      if (state is FavoriteUpdated) {
+        Utils.showSnackBar(
+          state.message.isNotEmpty
+              ? state.message
+              : state.isLiked
+              ? 'Added to your wishlist.'
+              : 'Removed from your wishlist.',
+          result: Result.success,
+        );
+      } else if (state is FavoriteError) {
+        Utils.showSnackBar(state.message, result: Result.error);
+      }
+    },
+    child: Stack(
     fit: StackFit.expand,
     children: [
       if (image == null)
@@ -307,9 +411,30 @@ class _HeroImage extends StatelessWidget {
           children: [
             CommonWidgets.headerButton(icon: Icons.ios_share, onTap: () {}),
             SizedBox(width: 8.w),
-            CommonWidgets.headerButton(
-              icon: Icons.favorite_border,
-              onTap: () {},
+            BlocBuilder<WishlistBloc, WishlistState>(
+              builder: (context, state) {
+                final lists = switch (state) {
+                  WishlistLoaded value => value.wishlists,
+                  FavoriteUpdated value => value.wishlists,
+                  FavoriteError value => value.wishlists,
+                  WishlistActionError value => value.wishlists,
+                  _ => const [],
+                };
+                final liked =
+                    state is FavoriteUpdated && state.propertyId == propertyId
+                    ? state.isLiked
+                    : lists.any(
+                        (list) => list.properties.any(
+                          (item) => item.property?.id == propertyId,
+                        ),
+                      );
+                return CommonWidgets.headerButton(
+                  icon: liked ? Icons.favorite : Icons.favorite_border,
+                  onTap: () => context.read<WishlistBloc>().add(
+                    ToggleFavorite(propertyId, isLiked: liked),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -321,6 +446,7 @@ class _HeroImage extends StatelessWidget {
           child: CommonWidgets.imageCounterBadge(text: '1 / $imageCount'),
         ),
     ],
+    ),
   );
 }
 

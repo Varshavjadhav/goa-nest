@@ -4,7 +4,7 @@ const ApiError = require('../../utils/ApiError');
 const { MESSAGES, BOOKING_STATUS } = require('../../config/constants');
 
 const createBooking = async (guestId, data) => {
-  const { property: propertyId, checkIn, checkOut, guests, specialRequests } = data;
+  const { property: propertyId, checkIn, checkOut, guests, rooms = 1, specialRequests } = data;
 
   const property = await Property.findById(propertyId);
   if (!property) {
@@ -31,21 +31,34 @@ const createBooking = async (guestId, data) => {
     throw ApiError.badRequest(`Maximum ${property.maxGuests} guests allowed`);
   }
 
-  const overlapping = await Booking.countDocuments({
+  const overlappingDates = {
     property: propertyId,
     status: { $in: [BOOKING_STATUS.PENDING, BOOKING_STATUS.CONFIRMED] },
     checkIn: { $lt: checkOutDate },
     checkOut: { $gt: checkInDate },
+  };
+
+  const alreadyBooked = await Booking.exists({
+    ...overlappingDates,
+    guest: guestId,
   });
+  if (alreadyBooked) {
+    throw ApiError.badRequest(
+      'You already have an active booking for this property during the selected dates. Choose different dates or check My Bookings.',
+    );
+  }
+
+  const overlapping = await Booking.countDocuments(overlappingDates);
 
   if (overlapping > 0) {
     throw ApiError.badRequest(MESSAGES.PROPERTY_NOT_AVAILABLE);
   }
 
   const pricePerNight = property.pricePerNight;
-  const totalPrice = nights * pricePerNight;
-  const cleaningFee = Math.round(pricePerNight * 0.05);
-  const serviceFee = Math.round(totalPrice * 0.14);
+  const totalPrice = nights * pricePerNight * rooms;
+  const cleaningFee = Math.round(totalPrice * 0.05);
+  const serviceFee = Math.round(totalPrice * 0.08);
+  const tax = Math.round((totalPrice + cleaningFee + serviceFee) * 0.05);
 
   const booking = await Booking.create({
     property: propertyId,
@@ -57,11 +70,13 @@ const createBooking = async (guestId, data) => {
       children: guests.children || 0,
       infants: guests.infants || 0,
     },
+    rooms,
     nights,
     pricePerNight,
     totalPrice,
     cleaningFee,
     serviceFee,
+    tax,
     specialRequests,
     status: BOOKING_STATUS.CONFIRMED,
   });

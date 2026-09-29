@@ -66,7 +66,7 @@ class SearchQuery {
     'minRating': minRating,
     'checkIn': _date(checkIn),
     'checkOut': _date(checkOut),
-    'flexible': flexibleMonth.isNotEmpty,
+    'flexible': flexibleMonth.isNotEmpty || flexibilityDays > 0,
     'flexibleDuration': flexibleDuration,
     'flexibleMonth': flexibleMonth,
     'flexibilityDays': flexibilityDays,

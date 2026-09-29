@@ -4,13 +4,17 @@ class ApiUrl {
   static const String version = "v1";
 
   static const String configuredBaseUrl = String.fromEnvironment(
-    'http://192.168.31.172:5000/api/v1/',
-    defaultValue: 'http://192.168.31.172:5000/api/v1/',
+    'API_BASE_URL',
+    defaultValue: 'http://127.0.0.1:5001/api/v1/',
   );
   static String get baseUrl => configuredBaseUrl;
 
   static const String register = 'auth/register';
   static const String login = 'auth/login';
+  static const String refreshToken = 'auth/refresh-token';
+  static const String logout = 'auth/logout';
+  static const String helpFaqs = 'help/faqs';
+  static const String helpContact = 'help/contact';
 
   static const String home = 'home';
   static const String explore = 'explore';
@@ -27,4 +31,5 @@ class ApiUrl {
   static const String bookingDetail = 'bookings/{bookingId}';
   static const String cancelBooking = 'bookings/{bookingId}/cancel';
   static const String userProfile = 'user/profile';
+  static const String propertyReviews = 'reviews/{propertyId}';
 }

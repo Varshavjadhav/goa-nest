@@ -131,7 +131,7 @@ const getProperties = async (filters = {}) => {
   return { properties, total, page, limit, pages: Math.ceil(total / limit) };
 };
 
-const checkAvailability = async (propertyId, checkIn, checkOut, guests = 1, rooms = 1) => {
+const checkAvailability = async (propertyId, checkIn, checkOut, guests = 1, rooms = 1, userId = null) => {
   const property = await Property.findById(propertyId);
   if (!property) {
     throw ApiError.notFound(MESSAGES.PROPERTY_NOT_FOUND);
@@ -144,12 +144,16 @@ const checkAvailability = async (propertyId, checkIn, checkOut, guests = 1, room
   }
 
   const Booking = require('../booking/booking.model');
-  const overlapping = await Booking.countDocuments({
+  const overlappingDates = {
     property: propertyId,
     status: { $in: ['pending', 'confirmed'] },
     checkIn: { $lt: checkOutDate },
     checkOut: { $gt: checkInDate },
-  });
+  };
+  const [overlapping, alreadyBooked] = await Promise.all([
+    Booking.countDocuments(overlappingDates),
+    userId ? Booking.exists({ ...overlappingDates, guest: userId }) : null,
+  ]);
 
   const totalGuests = Number(guests) || 1;
   const roomCount = Math.max(Number(rooms) || 1, 1);
@@ -176,7 +180,11 @@ const checkAvailability = async (propertyId, checkIn, checkOut, guests = 1, room
   return {
     available,
     bookingType: property.bookingType || 'instant',
-    message: available ? 'Dates are available.' : MESSAGES.PROPERTY_NOT_AVAILABLE,
+    message: available
+      ? 'Dates are available.'
+      : alreadyBooked
+        ? 'You already have an active booking for this property during the selected dates. Choose different dates or check My Bookings.'
+        : MESSAGES.PROPERTY_NOT_AVAILABLE,
     nights,
     guests: totalGuests,
     rooms: roomCount,

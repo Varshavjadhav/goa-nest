@@ -10,6 +10,7 @@ class ProfileModel {
   final bool isPhoneVerified;
   final String language;
   final String currency;
+  final String message;
 
   const ProfileModel({
     this.id = '',
@@ -23,6 +24,7 @@ class ProfileModel {
     this.isPhoneVerified = false,
     this.language = 'en',
     this.currency = 'USD',
+    this.message = '',
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) => ProfileModel(
@@ -59,7 +61,9 @@ class ProfileModel {
     String? name,
     String? email,
     String? phone,
+    String? bio,
     String? profileImage,
+    String? message,
   }) => ProfileModel(
     id: id,
     name: name ?? this.name,
@@ -72,6 +76,7 @@ class ProfileModel {
     isPhoneVerified: isPhoneVerified,
     language: language,
     currency: currency,
+    message: message ?? this.message,
   );
 
   Map<String, dynamic> toJson() => {

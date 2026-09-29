@@ -10,6 +10,7 @@ import '../widget/profile_widget.dart';
 import '../widget/wishlist_widget.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
+import '../bloc/home_state.dart';
 import '../bloc/recently_viewed_bloc.dart';
 import '../bloc/wishlist_bloc.dart';
 import '../bloc/wishlist_event.dart';
@@ -108,8 +109,22 @@ class _HomeScreenState extends State<HomeScreen> {
             currentIndex: _currentIndex,
             items: _navItems,
             onTap: (index) {
-              if (index == 1 && _currentIndex != 1) {
+              if (index == 0) {
+                final state = providerContext.read<HomeBloc>().state;
+                final activeTabs = state is HomeLoaded
+                    ? state.home.tabs.where((item) => item.active).toList()
+                    : const [];
+                providerContext.read<HomeBloc>().add(
+                  LoadHome(
+                    tab: activeTabs.isEmpty ? 'all' : activeTabs.first.key,
+                  ),
+                );
+              } else if (index == 1) {
                 providerContext.read<WishlistBloc>().add(LoadWishlists());
+              } else if (index == 2) {
+                providerContext.read<BookingsBloc>().add(LoadBookings());
+              } else if (index == 3) {
+                providerContext.read<ProfileBloc>().add(LoadProfile());
               }
               setState(() {
                 _currentIndex = index;

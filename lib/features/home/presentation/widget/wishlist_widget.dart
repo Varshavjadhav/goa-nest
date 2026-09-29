@@ -1,11 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dartz/dartz.dart' show Either;
 import 'package:goanest/core.dart';
+import 'package:goanest/core/data/error/app_exception.dart';
+import 'package:goanest/core/di/injector.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../data/model/home_model.dart';
 import '../../data/model/wishlist_model.dart';
+import '../../data/model/search_model.dart';
+import '../../domain/usecase/search_properties.dart';
 import '../bloc/wishlist_bloc.dart';
 import '../bloc/wishlist_event.dart';
 import '../bloc/wishlist_state.dart';
@@ -16,12 +22,14 @@ class WishlistWidget extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(
     color: AppColor.surface,
     child: BlocListener<WishlistBloc, WishlistState>(
-      listenWhen: (_, state) => state is WishlistActionError,
+      listenWhen: (_, state) =>
+          state is WishlistActionError ||
+          (state is WishlistLoaded && state.message.isNotEmpty),
       listener: (context, state) {
         if (state is WishlistActionError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: AppTextWidget.legacy(state.message)),
-          );
+          Utils.showSnackBar(state.message, result: Result.error);
+        } else if (state is WishlistLoaded && state.message.isNotEmpty) {
+          Utils.showSnackBar(state.message, result: Result.success);
         }
       },
       child: BlocBuilder<WishlistBloc, WishlistState>(
@@ -91,6 +99,7 @@ class _Content extends StatelessWidget {
               _CollectionCard(
                 wishlist: wishlist,
                 onTap: () => _showWishlistDetails(context, wishlist),
+                onAdd: () => _showAddPropertyDialog(context, wishlist),
               ),
             SizedBox(height: 4.h),
             AppTextWidget.legacy(
@@ -109,7 +118,12 @@ class _Content extends StatelessWidget {
 class _CollectionCard extends StatelessWidget {
   final WishlistModel wishlist;
   final VoidCallback onTap;
-  const _CollectionCard({required this.wishlist, required this.onTap});
+  final VoidCallback onAdd;
+  const _CollectionCard({
+    required this.wishlist,
+    required this.onTap,
+    required this.onAdd,
+  });
   @override
   Widget build(BuildContext context) {
     final images = wishlist.properties
@@ -150,9 +164,34 @@ class _CollectionCard extends StatelessWidget {
               style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 2.h),
-            AppTextWidget.legacy(
-              '${wishlist.properties.where((item) => item.property != null).length} saved',
-              style: TextStyle(fontSize: 11.sp, color: AppColor.textQuaternary),
+            Row(
+              children: [
+                Expanded(
+                  child: AppTextWidget.legacy(
+                    '${wishlist.properties.where((item) => item.property != null).length} saved',
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: AppColor.textQuaternary,
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: onAdd,
+                  icon: Icon(Icons.add_rounded, size: 16.sp),
+                  label: AppTextWidget.legacy(
+                    'Add stays',
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    minimumSize: Size(0, 32.h),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -473,33 +512,118 @@ class _AddPropertyDialog extends StatefulWidget {
 }
 
 class _AddPropertyDialogState extends State<_AddPropertyDialog> {
-  final _controller = TextEditingController();
+  late Future<Either<AppException, SearchResultsModel>> _propertiesFuture;
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadProperties();
+  }
+
+  void _loadProperties() {
+    _propertiesFuture = sl<SearchPropertiesUseCase>()(
+      const SearchQuery(limit: 50),
+    );
   }
 
   @override
   Widget build(BuildContext context) => AlertDialog(
     title: const AppTextWidget.legacy('Add property'),
-    content: TextField(
-      controller: _controller,
-      decoration: const InputDecoration(labelText: 'Property ID'),
+    content: SizedBox(
+      width: 420.w,
+      height: 390.h,
+      child: FutureBuilder<Either<AppException, SearchResultsModel>>(
+        future: _propertiesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final result = snapshot.data;
+          if (snapshot.hasError || result == null) {
+            return _PropertyPickerError(onRetry: () => setState(_loadProperties));
+          }
+          return result.fold(
+            (error) => _PropertyPickerError(
+              message: error.message,
+              onRetry: () => setState(_loadProperties),
+            ),
+            (results) => results.items.isEmpty
+                ? const Center(child: AppTextWidget.legacy('No stays available.'))
+                : ListView.separated(
+                    itemCount: results.items.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final property = results.items[index];
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.r),
+                          child: SizedBox(
+                            width: 54.w,
+                            height: 54.w,
+                            child: property.imageUrl.isEmpty
+                                ? const _CollectionImage(url: '')
+                                : Image.network(
+                                    property.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) =>
+                                        const _CollectionImage(url: ''),
+                                  ),
+                          ),
+                        ),
+                        title: AppTextWidget.legacy(
+                          property.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: AppTextWidget.legacy(
+                          '${property.location} · ₹${property.pricePerNight.toStringAsFixed(0)} / night',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: AppColor.textSecondary,
+                          ),
+                        ),
+                        onTap: () => Navigator.pop(context, property.id),
+                      );
+                    },
+                  ),
+          );
+        },
+      ),
     ),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
         child: const AppTextWidget.legacy('Cancel'),
       ),
-      FilledButton(
-        onPressed: () {
-          final value = _controller.text.trim();
-          if (value.isNotEmpty) Navigator.pop(context, value);
-        },
-        child: const AppTextWidget.legacy('Add'),
-      ),
     ],
+  );
+}
+
+class _PropertyPickerError extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _PropertyPickerError({
+    this.message = 'Could not load stays.',
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppTextWidget.legacy(message, textAlign: TextAlign.center),
+        SizedBox(height: 8.h),
+        TextButton(onPressed: onRetry, child: const Text('Try again')),
+      ],
+    ),
   );
 }

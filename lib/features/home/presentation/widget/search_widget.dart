@@ -27,6 +27,19 @@ class _DestinationSelection {
   });
 }
 
+_DestinationSelection _parseDestination(String value) {
+  final parts = value
+      .split(',')
+      .map((part) => part.trim())
+      .where((part) => part.isNotEmpty)
+      .toList();
+  return _DestinationSelection(
+    label: value,
+    city: parts.length > 1 ? parts.first : '',
+    country: '',
+  );
+}
+
 class SearchWidget extends StatefulWidget {
   const SearchWidget({super.key});
   @override
@@ -96,7 +109,7 @@ class _SearchWidgetState extends State<SearchWidget> {
             _SearchBottomBar(
               actionLabel: stage == _SearchStage.dates ? 'Next' : 'Search',
               enabled: stage == _SearchStage.destination
-                  ? destination.isNotEmpty
+                  ? destination.replaceAll(',', '').trim().isNotEmpty
                   : stage == _SearchStage.dates
                   ? flexibleDates
                         ? flexibleMonth != null
@@ -152,11 +165,34 @@ class _SearchWidgetState extends State<SearchWidget> {
           onSelect: (selection) => setState(() {
             destination = selection.label;
             searchQuery = searchQuery.copyWith(
-              query: selection.label,
+              query: selection.city.isEmpty
+                  ? selection.label
+                  : selection.city,
               city: selection.city,
               country: selection.country,
             );
             stage = _SearchStage.dates;
+          }),
+          onTextChanged: (value) => setState(() {
+            final label = value.trim();
+            if (label.replaceAll(',', '').trim().isEmpty) {
+              destination = '';
+              searchQuery = searchQuery.copyWith(
+                query: '',
+                city: '',
+                country: '',
+              );
+            } else {
+              destination = label;
+              final selection = _parseDestination(label);
+              searchQuery = searchQuery.copyWith(
+                query: selection.city.isEmpty
+                    ? selection.label
+                    : selection.city,
+                city: selection.city,
+                country: selection.country,
+              );
+            }
           }),
           onQuickSelect: _searchFromDestination,
           onWhen: () => setState(() => stage = _SearchStage.dates),
@@ -171,11 +207,17 @@ class _SearchWidgetState extends State<SearchWidget> {
           flexibleMonth: flexibleMonth,
           onFlexibleChanged: (value) => setState(() {
             flexibleDates = value;
+            checkIn = null;
+            checkOut = null;
+            flexibilityDays = 0;
             if (value && flexibleMonth == null) {
               final now = DateTime.now();
               flexibleMonth = DateTime(now.year, now.month);
             }
             searchQuery = searchQuery.copyWith(
+              clearCheckIn: true,
+              clearCheckOut: true,
+              flexibilityDays: 0,
               flexibleMonth: value && flexibleMonth != null
                   ? _monthParam(flexibleMonth!)
                   : '',
@@ -270,7 +312,7 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   void _searchFromDestination(_DestinationSelection selection) {
     final nextQuery = searchQuery.copyWith(
-      query: selection.label,
+      query: selection.city.isEmpty ? selection.label : selection.city,
       city: selection.city,
       country: selection.country,
     );
@@ -623,11 +665,13 @@ class _SummaryDivider extends StatelessWidget {
 
 class _DestinationStep extends StatefulWidget {
   final ValueChanged<_DestinationSelection> onSelect;
+  final ValueChanged<String> onTextChanged;
   final ValueChanged<_DestinationSelection> onQuickSelect;
   final VoidCallback onWhen;
   final VoidCallback onWho;
   const _DestinationStep({
     required this.onSelect,
+    required this.onTextChanged,
     required this.onQuickSelect,
     required this.onWhen,
     required this.onWho,
@@ -639,6 +683,12 @@ class _DestinationStep extends StatefulWidget {
 
 class _DestinationStepState extends State<_DestinationStep> {
   final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<SearchBloc>().add(SearchSuggestionsChanged(''));
+  }
 
   @override
   void dispose() {
@@ -675,8 +725,11 @@ class _DestinationStepState extends State<_DestinationStep> {
         SizedBox(height: 24.h),
         TextField(
           controller: _controller,
-          onChanged: (value) =>
-              context.read<SearchBloc>().add(SearchSuggestionsChanged(value)),
+          maxLength: 100,
+          onChanged: (value) {
+            widget.onTextChanged(value);
+            context.read<SearchBloc>().add(SearchSuggestionsChanged(value));
+          },
           onSubmitted: (value) {
             final label = value.trim();
             if (label.isNotEmpty) widget.onSelect(_parseDestination(label));
@@ -703,6 +756,27 @@ class _DestinationStepState extends State<_DestinationStep> {
               return Padding(
                 padding: EdgeInsets.only(top: 12.h),
                 child: const LinearProgressIndicator(),
+              );
+            }
+            if (state is SearchSuggestionsError) {
+              return Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: AppTextWidget.bodySmall(
+                        text: state.message,
+                        color: AppColor.error,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => context.read<SearchBloc>().add(
+                        SearchSuggestionsChanged(_controller.text),
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               );
             }
             if (state is! SearchSuggestionsLoaded ||
@@ -787,7 +861,7 @@ class _DestinationStepState extends State<_DestinationStep> {
             title: item.$1,
             subtitle: item.$2,
             icon: item.$3,
-            onTap: () => widget.onQuickSelect(_parseDestination(item.$1)),
+          onTap: () => widget.onQuickSelect(_parseDestination(item.$1)),
           ),
         SizedBox(height: 8.h),
         _CollapsedSearchRow(
@@ -804,14 +878,6 @@ class _DestinationStepState extends State<_DestinationStep> {
     ),
   );
 
-  static _DestinationSelection _parseDestination(String value) {
-    final parts = value.split(',').map((part) => part.trim()).toList();
-    return _DestinationSelection(
-      label: value,
-      city: parts.first,
-      country: parts.length > 1 ? parts.last : '',
-    );
-  }
 }
 
 class _CollapsedSearchRow extends StatelessWidget {
@@ -1652,7 +1718,12 @@ class _ResultsStepState extends State<_ResultsStep> {
                     ),
                   ),
                   SizedBox(height: 24.h),
-                  for (final item in results.items) _ResultCard(property: item),
+                  for (final item in results.items)
+                    _ResultCard(
+                      property: item,
+                      checkIn: widget.query.checkIn,
+                      checkOut: widget.query.checkOut,
+                    ),
                 ],
               );
             },
@@ -1998,14 +2069,22 @@ class _SearchMessage extends StatelessWidget {
 
 class _ResultCard extends StatelessWidget {
   final ExploreProperty property;
-  const _ResultCard({required this.property});
+  final DateTime? checkIn;
+  final DateTime? checkOut;
+  const _ResultCard({required this.property, this.checkIn, this.checkOut});
+  static String _date(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: property.id.isEmpty
         ? null
-        : () => context.push(
-            RouteName.propertyView.replaceFirst(':propertyId', property.id),
-          ),
+        : () => context.push(Uri(
+            path: RouteName.propertyView.replaceFirst(':propertyId', property.id),
+            queryParameters: {
+              if (checkIn != null) 'checkIn': _date(checkIn!),
+              if (checkOut != null) 'checkOut': _date(checkOut!),
+            },
+          ).toString()),
     child: Padding(
       padding: EdgeInsets.only(bottom: 24.h),
       child: Container(
@@ -2050,6 +2129,22 @@ class _ResultCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (!property.isAvailable)
+                        Positioned(
+                          left: 12.w,
+                          top: 12.h,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 5.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE5484D),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: AppTextWidget.legacy(
+                              'Not available',
+                              style: TextStyle(color: AppColor.white, fontSize: 10.sp, fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                        ),
                       if (property.isLiked)
                         Positioned(
                           left: 12.w,

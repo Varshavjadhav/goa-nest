@@ -42,6 +42,6 @@ class RegisterRepositoryImpl implements RegisterRepository {
     await storage.write(Flags.refreshToken, data.refreshToken);
     await storage.write(Flags.user, data.user);
     await storage.write(Flags.isLoggedIn, true);
-    return Right(data);
+    return Right(data.copyWith(message: response.message));
   }
 }

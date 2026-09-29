@@ -3,7 +3,6 @@ import '../resources/constants/app_colors.dart';
 import '../widgets/app_text_widget.dart';
 import 'enums/enums_types.dart';
 import 'extensions/extensions.dart';
-import 'extensions/provide_theme_extension.dart';
 import 'global.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,7 +13,7 @@ class Utils {
     String message, {
     String? titleText,
     Result result = Result.general,
-    int duration = 1,
+    int duration = 3,
     VoidCallback? onTap,
   }) {
     final messenger = Global.scaffoldMessengerKey.currentState;
@@ -23,9 +22,9 @@ class Utils {
     messenger.clearSnackBars();
 
     Color backgroundColor = getColor(result);
-    Color textColor = (result == Result.general || result == Result.success)
-        ? AppColor.white
-        : Global.navigatorKey.currentContext!.themeExt.background;
+    Color textColor = result == Result.general
+        ? AppColor.textPrimary
+        : AppColor.white;
 
     IconData icon;
     switch (result) {

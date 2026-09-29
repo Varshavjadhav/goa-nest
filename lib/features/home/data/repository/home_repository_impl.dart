@@ -11,6 +11,7 @@ import '../model/favorite_model.dart';
 import '../model/search_model.dart';
 import '../model/profile_model.dart';
 import '../model/booking_model.dart';
+import '../model/review_model.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
@@ -28,16 +29,32 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<AppException, ProfileModel>> updateProfile(
     ProfileUpdateRequest request,
-  ) => remoteDataSource.updateProfile(request).mapEntity((data) => data);
+  ) async {
+    final result = await remoteDataSource.updateProfile(request);
+    return result.fold(Left.new, (response) {
+      final profile = response.data;
+      if (profile == null) return Left(UnknownError());
+      return Right(profile.copyWith(message: response.message));
+    });
+  }
 
   @override
-  Future<Either<AppException, PropertyDetailModel>> getProperty(String id) =>
-      remoteDataSource.getProperty(id).mapEntity((data) => data);
+  Future<Either<AppException, PropertyDetailModel>> getProperty(
+    String id, {String? checkIn, String? checkOut}
+  ) => remoteDataSource.getProperty(id, checkIn: checkIn, checkOut: checkOut)
+      .mapEntity((data) => data);
 
   @override
   Future<Either<AppException, AvailabilityResult>> checkAvailability(
     AvailabilityRequest request,
-  ) => remoteDataSource.checkAvailability(request).mapEntity((data) => data);
+  ) async {
+    final result = await remoteDataSource.checkAvailability(request);
+    return result.fold(Left.new, (response) {
+      final availability = response.data;
+      if (availability == null) return Left(UnknownError());
+      return Right(availability.copyWith(message: response.message));
+    });
+  }
 
   @override
   Future<Either<AppException, BookingCollection>> getBookings({
@@ -47,6 +64,10 @@ class HomeRepositoryImpl implements HomeRepository {
   }) => remoteDataSource
       .getBookings(status: status, page: page, limit: limit)
       .mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, BookingModel>> getBooking(String bookingId) =>
+      remoteDataSource.getBooking(bookingId).mapEntity((data) => data);
 
   @override
   Future<Either<AppException, BookingModel>> createBooking(
@@ -60,6 +81,26 @@ class HomeRepositoryImpl implements HomeRepository {
   ) => remoteDataSource
       .cancelBooking(bookingId, reason)
       .mapEntity((data) => data);
+
+  @override
+  Future<Either<AppException, ReviewModel>> createReview(
+    String propertyId,
+    String bookingId,
+    int rating,
+    String comment,
+  ) async {
+    final result = await remoteDataSource.createReview(
+      propertyId,
+      bookingId,
+      rating,
+      comment,
+    );
+    return result.fold(Left.new, (response) {
+      final review = response.data;
+      if (review == null) return Left(UnknownError());
+      return Right(review.copyWith(message: response.message));
+    });
+  }
 
   @override
   Future<Either<AppException, PropertyCollection>> getRecentlyViewed({
@@ -83,24 +124,46 @@ class HomeRepositoryImpl implements HomeRepository {
       remoteDataSource.getWishlists().mapEntity((data) => data);
 
   @override
-  Future<Either<AppException, WishlistModel>> createWishlist(String name) =>
-      remoteDataSource.createWishlist(name).mapEntity((data) => data);
+  Future<Either<AppException, WishlistModel>> createWishlist(String name) async {
+    final result = await remoteDataSource.createWishlist(name);
+    return result.fold(Left.new, (response) {
+      final wishlist = response.data;
+      if (wishlist == null) return Left(UnknownError());
+      return Right(wishlist.copyWith(message: response.message));
+    });
+  }
 
   @override
   Future<Either<AppException, WishlistModel>> addPropertyToWishlist(
     String wishlistId,
     String propertyId,
-  ) => remoteDataSource
-      .addPropertyToWishlist(wishlistId, propertyId)
-      .mapEntity((data) => data);
+  ) async {
+    final result = await remoteDataSource.addPropertyToWishlist(
+      wishlistId,
+      propertyId,
+    );
+    return result.fold(Left.new, (response) {
+      final wishlist = response.data;
+      if (wishlist == null) return Left(UnknownError());
+      return Right(wishlist.copyWith(message: response.message));
+    });
+  }
 
   @override
   Future<Either<AppException, WishlistModel>> removePropertyFromWishlist(
     String wishlistId,
     String propertyId,
-  ) => remoteDataSource
-      .removePropertyFromWishlist(wishlistId, propertyId)
-      .mapEntity((data) => data);
+  ) async {
+    final result = await remoteDataSource.removePropertyFromWishlist(
+      wishlistId,
+      propertyId,
+    );
+    return result.fold(Left.new, (response) {
+      final wishlist = response.data;
+      if (wishlist == null) return Left(UnknownError());
+      return Right(wishlist.copyWith(message: response.message));
+    });
+  }
 
   @override
   Future<Either<AppException, FavoriteModel>> addFavorite(String id) =>

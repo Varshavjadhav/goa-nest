@@ -2,10 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/core.dart';
 import 'package:goanest/core/di/injector.dart';
+import 'package:goanest/core/data/network/service/base_api_service.dart';
 import 'package:goanest/features/home/data/model/profile_model.dart';
+import 'package:goanest/features/home/presentation/view/profile_information_webview_screen.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/resources/constants/flags.dart';
+import 'package:goanest/resources/constants/url_end_points.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 
 import '../../../../core/services/local_secure_storage/secure_storage_service.dart';
@@ -18,12 +22,14 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocListener<ProfileBloc, ProfileState>(
-    listenWhen: (_, state) => state is ProfileLoaded && state.message != null || state is ProfileError,
+    listenWhen: (_, state) =>
+        state is ProfileLoaded && state.message != null ||
+        state is ProfileError,
     listener: (context, state) {
       if (state is ProfileLoaded && state.message != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: AppTextWidget.legacy(state.message!)));
+        Utils.showSnackBar(state.message!, result: Result.success);
       } else if (state is ProfileError) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: AppTextWidget.legacy(state.message)));
+        Utils.showSnackBar(state.message, result: Result.error);
       }
     },
     child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -55,7 +61,7 @@ class ProfileWidget extends StatelessWidget {
           profile: profile,
           updating: state is ProfileUpdating,
           onEdit: () => _editProfile(context, profile),
-          onLogout: () => _logout(context),
+          onLogout: () => _confirmLogout(context),
         );
       },
     ),
@@ -67,14 +73,23 @@ class _ProfileContent extends StatelessWidget {
   final bool updating;
   final VoidCallback onEdit;
   final VoidCallback onLogout;
-  const _ProfileContent({required this.profile, required this.updating, required this.onEdit, required this.onLogout});
+  const _ProfileContent({
+    required this.profile,
+    required this.updating,
+    required this.onEdit,
+    required this.onLogout,
+  });
 
   @override
   Widget build(BuildContext context) => ColoredBox(
     color: const Color(0xFFF7F7F7),
     child: Stack(
       children: [
-        _ProfileScrollContent(profile: profile, onEdit: onEdit, onLogout: onLogout),
+        _ProfileScrollContent(
+          profile: profile,
+          onEdit: onEdit,
+          onLogout: onLogout,
+        ),
         if (updating)
           const Positioned.fill(
             child: ColoredBox(
@@ -91,7 +106,11 @@ class _ProfileScrollContent extends StatelessWidget {
   final ProfileModel profile;
   final VoidCallback onEdit;
   final VoidCallback onLogout;
-  const _ProfileScrollContent({required this.profile, required this.onEdit, required this.onLogout});
+  const _ProfileScrollContent({
+    required this.profile,
+    required this.onEdit,
+    required this.onLogout,
+  });
 
   @override
   Widget build(BuildContext context) => CustomScrollView(
@@ -103,12 +122,20 @@ class _ProfileScrollContent extends StatelessWidget {
           delegate: SliverChildListDelegate([
             AppTextWidget.legacy(
               'Profile',
-              style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w800, color: AppColor.textPrimary),
+              style: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.w800,
+                color: AppColor.textPrimary,
+              ),
             ),
             SizedBox(height: 5.h),
             AppTextWidget.legacy(
               'Manage your GoaNest account and preferences',
-              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500, color: AppColor.textSecondary),
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColor.textSecondary,
+              ),
             ),
             SizedBox(height: 20.h),
             _ProfileCard(profile: profile, onEdit: onEdit),
@@ -119,7 +146,9 @@ class _ProfileScrollContent extends StatelessWidget {
                 _ActionItem(
                   Icons.person_outline_rounded,
                   'Personal information',
-                  profile.email.isEmpty ? 'Add your email and phone number' : profile.email,
+                  profile.email.isEmpty
+                      ? 'Add your email and phone number'
+                      : profile.email,
                   onTap: onEdit,
                 ),
               ],
@@ -127,27 +156,54 @@ class _ProfileScrollContent extends StatelessWidget {
             _Section(
               title: 'Settings',
               items: [
-                _ActionItem(Icons.language_rounded, 'Language and currency', '${profile.language.toUpperCase()} · ${profile.currency}'),
-                const _ActionItem(Icons.notifications_none_rounded, 'Notifications', 'Manage your notification preferences'),
+                _ActionItem(
+                  Icons.language_rounded,
+                  'Language and currency',
+                  '${profile.language.toUpperCase()} · ${profile.currency}',
+                ),
+                const _ActionItem(
+                  Icons.notifications_none_rounded,
+                  'Notifications',
+                  'Manage your notification preferences',
+                ),
                 _ActionItem(
                   Icons.description_outlined,
                   'Terms & Conditions',
                   'Read the terms of using GoaNest',
-                  onTap: () => _showLegalDocument(context, title: 'Terms & Conditions', body: _termsText),
+                  onTap: () => _openProfileDocument(
+                    context,
+                    ProfileWebDocument.terms,
+                  ),
                 ),
                 _ActionItem(
                   Icons.privacy_tip_outlined,
                   'Privacy Policy',
                   'Learn how your data is handled',
-                  onTap: () => _showLegalDocument(context, title: 'Privacy Policy', body: _privacyText),
+                  onTap: () => _openProfileDocument(
+                    context,
+                    ProfileWebDocument.privacy,
+                  ),
                 ),
               ],
             ),
             _Section(
               title: 'Support',
-              items: const [
-                _ActionItem(Icons.help_outline_rounded, 'Help Center', 'Get help with your reservation'),
-                _ActionItem(Icons.info_outline_rounded, 'About GoaNest', 'App information and support'),
+              items: [
+                _ActionItem(
+                  Icons.help_outline_rounded,
+                  'Help Center',
+                  'Get help with your reservation',
+                  onTap: () => _showHelpCenter(context),
+                ),
+                _ActionItem(
+                  Icons.info_outline_rounded,
+                  'About GoaNest',
+                  'App information and support',
+                  onTap: () => _openProfileDocument(
+                    context,
+                    ProfileWebDocument.about,
+                  ),
+                ),
               ],
             ),
             OutlinedButton(
@@ -157,7 +213,9 @@ class _ProfileScrollContent extends StatelessWidget {
                 backgroundColor: AppColor.white,
                 minimumSize: Size.fromHeight(52.h),
                 side: BorderSide(color: AppColor.error.withValues(alpha: .25)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
                 elevation: 0,
               ),
               child: Row(
@@ -167,7 +225,10 @@ class _ProfileScrollContent extends StatelessWidget {
                   SizedBox(width: 8.w),
                   AppTextWidget.legacy(
                     'Log out',
-                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
@@ -176,7 +237,10 @@ class _ProfileScrollContent extends StatelessWidget {
             Center(
               child: AppTextWidget.legacy(
                 'GoaNest v1.0.0',
-                style: TextStyle(fontSize: 11.sp, color: AppColor.textSecondary),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: AppColor.textSecondary,
+                ),
               ),
             ),
           ]),
@@ -187,20 +251,166 @@ class _ProfileScrollContent extends StatelessWidget {
 }
 
 Future<void> _editProfile(BuildContext context, ProfileModel profile) async {
-  final request = await Navigator.of(
-    context,
-  ).push<ProfileUpdateRequest>(MaterialPageRoute(builder: (_) => EditProfileScreen(profile: profile)));
+  final request = await Navigator.of(context).push<ProfileUpdateRequest>(
+    MaterialPageRoute(builder: (_) => EditProfileScreen(profile: profile)),
+  );
   if (request != null && context.mounted) {
     context.read<ProfileBloc>().add(UpdateProfile(request));
   }
 }
 
+Future<void> _confirmLogout(BuildContext context) async {
+  final shouldLogout = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('Log out?'),
+      content: const Text('Do you really want to log out?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: const Text('No'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          child: const Text('Yes'),
+        ),
+      ],
+    ),
+  );
+
+  if (shouldLogout == true && context.mounted) {
+    await _logout(context);
+  }
+}
+
 Future<void> _logout(BuildContext context) async {
+  var successMessage = 'Logged out successfully';
+  var sessionExpired = false;
+  try {
+    final result = await sl<BaseApiServices>().postApi<dynamic>(
+      ApiUrl.logout,
+      const {},
+      (_) => null,
+    );
+    result.fold((error) {
+      sessionExpired = error.code == 401;
+    }, (response) {
+      if (response.message.isNotEmpty) successMessage = response.message;
+    });
+  } catch (_) {
+    // Local logout must still complete if the server is unavailable.
+  }
   await sl<SecureStorageService>().delete(Flags.token);
   await sl<SecureStorageService>().delete(Flags.refreshToken);
   await sl<SecureStorageService>().delete(Flags.user);
   await sl<SecureStorageService>().write(Flags.isLoggedIn, false);
-  if (context.mounted) context.go(RouteName.loginView);
+  if (context.mounted) {
+    context.go(RouteName.loginView);
+    if (!sessionExpired) {
+      Utils.showSnackBar(successMessage, result: Result.success);
+    }
+  }
+}
+
+Future<void> _showHelpCenter(BuildContext context) async {
+  final api = sl<BaseApiServices>();
+  final faqsResult = await api.getApi<HelpCenterData>(
+    ApiUrl.helpFaqs,
+    const {},
+    HelpCenterData.fromJson,
+    disableTokenValidityCheck: true,
+  );
+  final contactResult = await api.getApi<HelpContactData>(
+    ApiUrl.helpContact,
+    const {},
+    HelpContactData.fromJson,
+    disableTokenValidityCheck: true,
+  );
+  final faqs = faqsResult.fold((_) => null, (response) => response.data);
+  final contact = contactResult.fold((_) => null, (response) => response.data);
+  if (!context.mounted) return;
+  if (faqs == null && contact == null) {
+    Utils.showSnackBar(
+      'Help information is unavailable.',
+      result: Result.error,
+    );
+    return;
+  }
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheetContext) => SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 24.h),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * .78,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              AppTextWidget.headlineSmall(text: 'Help Center'),
+              if (contact != null) ...[
+                SizedBox(height: 8.h),
+                AppTextWidget.bodyMedium(
+                  text: '${contact.email} · ${contact.phone}',
+                ),
+                AppTextWidget.bodySmall(
+                  text: 'Available ${contact.availableHours}',
+                ),
+              ],
+              SizedBox(height: 16.h),
+              for (final faq in faqs?.faqs ?? const <HelpFaq>[]) ...[
+                AppTextWidget.titleMedium(text: faq.question),
+                SizedBox(height: 4.h),
+                AppTextWidget.bodyMedium(
+                  text: faq.answer,
+                  color: AppColor.textSecondary,
+                ),
+                SizedBox(height: 14.h),
+              ],
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class HelpCenterData {
+  final List<HelpFaq> faqs;
+  const HelpCenterData(this.faqs);
+  factory HelpCenterData.fromJson(Map<String, dynamic> json) => HelpCenterData(
+    json['faqs'] is List
+        ? (json['faqs'] as List)
+              .whereType<Map>()
+              .map((item) => HelpFaq.fromJson(Map<String, dynamic>.from(item)))
+              .toList()
+        : const [],
+  );
+}
+
+class HelpFaq {
+  final String question;
+  final String answer;
+  const HelpFaq(this.question, this.answer);
+  factory HelpFaq.fromJson(Map<String, dynamic> json) => HelpFaq(
+    json['question']?.toString() ?? '',
+    json['answer']?.toString() ?? '',
+  );
+}
+
+class HelpContactData {
+  final String email;
+  final String phone;
+  final String availableHours;
+  const HelpContactData(this.email, this.phone, this.availableHours);
+  factory HelpContactData.fromJson(Map<String, dynamic> json) =>
+      HelpContactData(
+        json['email']?.toString() ?? '',
+        json['phone']?.toString() ?? '',
+        json['availableHours']?.toString() ?? '',
+      );
 }
 
 class _ProfileCard extends StatelessWidget {
@@ -221,14 +431,24 @@ class _ProfileCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18.r),
-        boxShadow: [BoxShadow(color: AppColor.primary.withValues(alpha: .25), blurRadius: 16, offset: const Offset(0, 7))],
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.primary.withValues(alpha: .25),
+            blurRadius: 16,
+            offset: const Offset(0, 7),
+          ),
+        ],
       ),
       child: Stack(
         children: [
           Positioned(
             right: -18.w,
             top: -26.h,
-            child: Icon(Icons.person_rounded, size: 110.sp, color: AppColor.white.withValues(alpha: .07)),
+            child: Icon(
+              Icons.person_rounded,
+              size: 110.sp,
+              color: AppColor.white.withValues(alpha: .07),
+            ),
           ),
           Positioned(
             top: 4.h,
@@ -254,7 +474,13 @@ class _ProfileCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColor.white.withValues(alpha: .9),
                     shape: BoxShape.circle,
-                    boxShadow: [BoxShadow(color: AppColor.black.withValues(alpha: .18), blurRadius: 16, offset: const Offset(0, 7))],
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.black.withValues(alpha: .18),
+                        blurRadius: 16,
+                        offset: const Offset(0, 7),
+                      ),
+                    ],
                   ),
                   child: _ProfileAvatar(profile: profile, radius: 28.r),
                 ),
@@ -267,14 +493,24 @@ class _ProfileCard extends StatelessWidget {
                         profile.name.isEmpty ? 'GoaNest guest' : profile.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w800, color: AppColor.white),
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w800,
+                          color: AppColor.white,
+                        ),
                       ),
                       SizedBox(height: 4.h),
                       AppTextWidget.legacy(
-                        profile.email.isEmpty ? 'Email not added' : profile.email,
+                        profile.email.isEmpty
+                            ? 'Email not added'
+                            : profile.email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500, color: AppColor.white.withValues(alpha: .82)),
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.white.withValues(alpha: .82),
+                        ),
                       ),
                     ],
                   ),
@@ -298,12 +534,18 @@ class _ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) => CircleAvatar(
     radius: radius,
     backgroundColor: AppColor.tertiary,
-    backgroundImage: profile.profileImage.isEmpty ? null : NetworkImage(profile.profileImage),
+    backgroundImage: profile.profileImage.isEmpty
+        ? null
+        : NetworkImage(profile.profileImage),
     onBackgroundImageError: profile.profileImage.isEmpty ? null : (_, __) {},
     child: profile.profileImage.isEmpty
         ? AppTextWidget.legacy(
             profile.initials,
-            style: TextStyle(color: AppColor.primary, fontSize: radius * .65, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              color: AppColor.primary,
+              fontSize: radius * .65,
+              fontWeight: FontWeight.w700,
+            ),
           )
         : null,
   );
@@ -322,7 +564,11 @@ class _Section extends StatelessWidget {
       children: [
         AppTextWidget.legacy(
           title,
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: AppColor.textPrimary),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColor.textPrimary,
+          ),
         ),
         SizedBox(height: 10.h),
         Container(
@@ -331,10 +577,20 @@ class _Section extends StatelessWidget {
             border: Border.all(color: AppColor.divider.withValues(alpha: .75)),
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
-              BoxShadow(color: AppColor.black.withValues(alpha: .055), blurRadius: 18, spreadRadius: -4, offset: const Offset(0, 8)),
+              BoxShadow(
+                color: AppColor.black.withValues(alpha: .055),
+                blurRadius: 18,
+                spreadRadius: -4,
+                offset: const Offset(0, 8),
+              ),
             ],
           ),
-          child: Column(children: [for (var i = 0; i < items.length; i++) items[i].build(i != items.length - 1)]),
+          child: Column(
+            children: [
+              for (var i = 0; i < items.length; i++)
+                items[i].build(i != items.length - 1),
+            ],
+          ),
         ),
       ],
     ),
@@ -374,7 +630,11 @@ class _ActionItem {
             style: TextStyle(fontSize: 11.sp, color: AppColor.textSecondary),
           ),
         ),
-        trailing: Icon(Icons.chevron_right_rounded, size: 21.sp, color: AppColor.textSecondary),
+        trailing: Icon(
+          Icons.chevron_right_rounded,
+          size: 21.sp,
+          color: AppColor.textSecondary,
+        ),
       ),
       if (divider) Divider(height: 1, indent: 66.w, endIndent: 14.w),
     ],
@@ -415,12 +675,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _save() {
     final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    if (name.isEmpty || email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: AppTextWidget.legacy('Name and email are required')));
+    final phone = _phoneController.text.trim();
+    final bio = _bioController.text.trim();
+    final message = name.isEmpty
+        ? 'Please enter your name.'
+        : name.length < 2
+        ? 'Name must be at least 2 characters.'
+        : name.length > 50
+        ? 'Name cannot exceed 50 characters.'
+        : phone.length < 7 || phone.length > 20
+        ? 'Phone number must be 7 to 20 characters.'
+        : !RegExp(r'^\+?[0-9\s().-]+$').hasMatch(phone)
+        ? 'Please enter a valid phone number.'
+        : bio.length > 500
+        ? 'Bio cannot exceed 500 characters.'
+        : null;
+    if (message != null) {
+      Utils.showSnackBar(message, result: Result.error);
       return;
     }
-    Navigator.pop(context, ProfileUpdateRequest(name: name, phone: _phoneController.text.trim(), bio: _bioController.text.trim()));
+    Navigator.pop(
+      context,
+      ProfileUpdateRequest(
+        name: name,
+        phone: phone,
+        bio: bio,
+      ),
+    );
   }
 
   @override
@@ -431,7 +712,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       backgroundColor: AppColor.scaffoldBackground,
       foregroundColor: AppColor.textPrimary,
       elevation: 0,
-      actions: [TextButton(onPressed: _save, child: const AppTextWidget.legacy('Save'))],
+      actions: [
+        TextButton(onPressed: _save, child: const AppTextWidget.legacy('Save')),
+      ],
     ),
     body: ListView(
       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
@@ -442,9 +725,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         SizedBox(height: 26.h),
         _EditField(controller: _nameController, label: 'Name'),
         SizedBox(height: 14.h),
-        _EditField(controller: _emailController, label: 'Email', keyboardType: TextInputType.emailAddress, readOnly: true),
+        _EditField(
+          controller: _emailController,
+          label: 'Email',
+          keyboardType: TextInputType.emailAddress,
+          readOnly: true,
+        ),
         SizedBox(height: 14.h),
-        _EditField(controller: _phoneController, label: 'Phone number', keyboardType: TextInputType.phone),
+        _EditField(
+          controller: _phoneController,
+          label: 'Phone number',
+          keyboardType: TextInputType.phone,
+        ),
         SizedBox(height: 14.h),
         _EditField(controller: _bioController, label: 'Bio', maxLines: 3),
         SizedBox(height: 10.h),
@@ -463,7 +755,13 @@ class _EditField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool readOnly;
   final int maxLines;
-  const _EditField({required this.controller, required this.label, this.keyboardType, this.readOnly = false, this.maxLines = 1});
+  const _EditField({
+    required this.controller,
+    required this.label,
+    this.keyboardType,
+    this.readOnly = false,
+    this.maxLines = 1,
+  });
 
   @override
   Widget build(BuildContext context) => TextField(
@@ -480,19 +778,13 @@ class _EditField extends StatelessWidget {
   );
 }
 
-void _showLegalDocument(BuildContext context, {required String title, required String body}) {
-  showDialog<void>(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: AppTextWidget.legacy(title),
-      content: SingleChildScrollView(child: AppTextWidget.legacy(body)),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: const AppTextWidget.legacy('Close'))],
+void _openProfileDocument(
+  BuildContext context,
+  ProfileWebDocument document,
+) {
+  Navigator.of(context).push<void>(
+    MaterialPageRoute<void>(
+      builder: (_) => ProfileInformationWebViewScreen(document: document),
     ),
   );
 }
-
-const _termsText =
-    'By using GoaNest, you agree to provide accurate account information, respect property rules, and use the platform lawfully. Reservations, cancellations, payments, and guest responsibilities are governed by the terms shown during booking.';
-
-const _privacyText =
-    'GoaNest uses your account details to authenticate you, manage reservations, provide search and wishlist features, and improve the service. We do not use your information for purposes unrelated to providing the app experience.';

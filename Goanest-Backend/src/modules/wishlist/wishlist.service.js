@@ -1,4 +1,6 @@
 const Wishlist = require('./wishlist.model');
+const Property = require('../property/property.model');
+const mongoose = require('mongoose');
 const ApiError = require('../../utils/ApiError');
 const { MESSAGES } = require('../../config/constants');
 
@@ -15,6 +17,9 @@ const createWishlist = async (userId, name) => {
 };
 
 const updateWishlist = async (wishlistId, userId, name) => {
+  if (!mongoose.isValidObjectId(wishlistId)) {
+    throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);
+  }
   const wishlist = await Wishlist.findOneAndUpdate(
     { _id: wishlistId, user: userId },
     { name },
@@ -27,6 +32,9 @@ const updateWishlist = async (wishlistId, userId, name) => {
 };
 
 const deleteWishlist = async (wishlistId, userId) => {
+  if (!mongoose.isValidObjectId(wishlistId)) {
+    throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);
+  }
   const wishlist = await Wishlist.findOneAndDelete({ _id: wishlistId, user: userId });
   if (!wishlist) {
     throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);
@@ -35,25 +43,42 @@ const deleteWishlist = async (wishlistId, userId) => {
 };
 
 const addProperty = async (wishlistId, userId, propertyId) => {
+  if (!mongoose.isValidObjectId(wishlistId)) {
+    throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);
+  }
+  if (!mongoose.isValidObjectId(propertyId)) {
+    throw ApiError.notFound(MESSAGES.PROPERTY_NOT_FOUND);
+  }
+
   const wishlist = await Wishlist.findOne({ _id: wishlistId, user: userId });
   if (!wishlist) {
     throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);
   }
 
+  const property = await Property.findOne({ _id: propertyId, isActive: true }).select('_id');
+  if (!property) {
+    throw ApiError.notFound(MESSAGES.PROPERTY_NOT_FOUND);
+  }
+
   const alreadyExists = wishlist.properties.some(
     (p) => p.property.toString() === propertyId
   );
-  if (alreadyExists) {
-    throw ApiError.badRequest(MESSAGES.ALREADY_IN_WISHLIST);
+  if (!alreadyExists) {
+    wishlist.properties.push({ property: propertyId });
+    await wishlist.save();
   }
-
-  wishlist.properties.push({ property: propertyId });
-  await wishlist.save();
 
   return wishlist.populate('properties.property', 'title images pricePerNight location averageRating');
 };
 
 const removeProperty = async (wishlistId, userId, propertyId) => {
+  if (!mongoose.isValidObjectId(wishlistId)) {
+    throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);
+  }
+  if (!mongoose.isValidObjectId(propertyId)) {
+    throw ApiError.notFound(MESSAGES.PROPERTY_NOT_FOUND);
+  }
+
   const wishlist = await Wishlist.findOne({ _id: wishlistId, user: userId });
   if (!wishlist) {
     throw ApiError.notFound(MESSAGES.WISHLIST_NOT_FOUND);

@@ -9,6 +9,7 @@ import 'package:goanest/features/login/presentation/bloc/login_event.dart';
 import 'package:goanest/features/login/presentation/bloc/login_state.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 
@@ -19,11 +20,15 @@ class LoginScreen extends StatelessWidget {
     create: (_) => LoginBloc(sl<GetLoginUseCase>()),
     child: BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        if (state.status == LoginStatus.success) context.go(RouteName.homeView);
-        if (state.status == LoginStatus.failure && state.message != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: AppTextWidget.legacy(state.message!)),
+        if (state.status == LoginStatus.success) {
+          Utils.showSnackBar(
+            state.message ?? 'Login successful',
+            result: Result.success,
           );
+          context.go(RouteName.homeView);
+        } else if (state.status == LoginStatus.failure &&
+            state.message != null) {
+          Utils.showSnackBar(state.message!, result: Result.error);
         }
       },
       child: const _LoginView(),
@@ -124,12 +129,9 @@ class _LoginView extends StatelessWidget {
   }
 
   void _socialSignInUnavailable(BuildContext context, String provider) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: AppTextWidget.legacy(
-          '$provider sign-in is not configured yet.',
-        ),
-      ),
+    Utils.showSnackBar(
+      '$provider sign-in is not configured yet.',
+      result: Result.general,
     );
   }
 }

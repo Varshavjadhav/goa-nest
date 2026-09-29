@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:goanest/app/router/route_name.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 import 'package:goanest/core/di/injector.dart';
@@ -13,44 +14,62 @@ class CheckoutScreen extends StatefulWidget {
   final DateTime? checkIn;
   final DateTime? checkOut;
   final int? guests;
+  final int rooms;
   final double? total;
+  final double? accommodationAmount;
+  final double? cleaningFee;
+  final double? serviceFee;
+  final double? tax;
   final String propertyId;
   final String propertyTitle;
+  final String imageUrl;
+  final double rating;
+  final int reviewCount;
+  final String location;
 
   const CheckoutScreen({
     super.key,
     this.checkIn,
     this.checkOut,
     this.guests,
+    this.rooms = 1,
     this.total,
+    this.accommodationAmount,
+    this.cleaningFee,
+    this.serviceFee,
+    this.tax,
     this.propertyId = '',
     this.propertyTitle = 'Your stay',
+    this.imageUrl = '',
+    this.rating = 0,
+    this.reviewCount = 0,
+    this.location = '',
   });
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  int paymentMethod = 0;
-  bool paymentStarted = false;
+  bool isSubmitting = false;
   @override
   Widget build(BuildContext context) {
     final checkIn = widget.checkIn ?? DateTime.now();
     final checkOut = widget.checkOut ?? checkIn.add(const Duration(days: 1));
     final nights = checkOut.difference(checkIn).inDays.clamp(1, 365);
     final total = widget.total ?? 0;
-    final roomAmount = total * .87;
-    final cleaningFee = total * .05;
-    final serviceFee = total * .08;
+    final roomAmount = widget.accommodationAmount ?? total;
+    final cleaningFee = widget.cleaningFee ?? 0;
+    final serviceFee = widget.serviceFee ?? 0;
+    final tax = widget.tax ?? 0;
     return PopScope(
-      canPop: paymentStarted,
+      canPop: !isSubmitting,
       onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop) await _leaveCheckout(context);
+        if (!didPop && !isSubmitting) await _leaveCheckout(context);
       },
       child: Scaffold(
         backgroundColor: AppColor.scaffoldBackground,
         appBar: CommonWidgets.appBar(
-          title: 'Confirm and pay',
+          title: 'Confirm reservation',
           showBack: false,
           actions: [
             IconButton(
@@ -64,7 +83,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _summaryCard(checkIn, checkOut, total, nights),
+              _summaryCard(
+                checkIn,
+                checkOut,
+                total,
+                nights,
+                roomAmount,
+                cleaningFee,
+                serviceFee,
+                tax,
+              ),
               SizedBox(height: 22.h),
               AppTextWidget.headlineSmall(text: 'Price details'),
               SizedBox(height: 14.h),
@@ -77,6 +105,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   roomAmount,
                   cleaningFee,
                   serviceFee,
+                  tax,
                   total,
                 ),
                 child: AppTextWidget.bodyMedium(
@@ -105,7 +134,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               SizedBox(height: 16.h),
               AppTextWidget.bodyMedium(
                 text:
-                    'You’ll be directed to payment to complete your reservation.',
+                    'Confirm your reservation for the selected dates and guest count.',
                 color: AppColor.textSecondary,
               ),
               SizedBox(height: 14.h),
@@ -134,7 +163,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 width: double.infinity,
                 height: 52.h,
                 child: ElevatedButton(
-                  onPressed: () => _continueToPayment(total, checkIn, checkOut),
+                  onPressed: isSubmitting
+                      ? null
+                      : () => _createBooking(checkIn, checkOut),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColor.primary,
                     foregroundColor: AppColor.white,
@@ -144,12 +175,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       borderRadius: BorderRadius.circular(14.r),
                     ),
                   ),
-                  child: AppTextWidget(
-                    text: 'Continue to payment',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.white,
-                  ),
+                  child: isSubmitting
+                      ? SizedBox(
+                          width: 20.w,
+                          height: 20.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColor.white,
+                          ),
+                        )
+                      : AppTextWidget(
+                          text: 'Confirm reservation',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.white,
+                        ),
                 ),
               ),
             ],
@@ -164,6 +204,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     DateTime checkOut,
     double total,
     int nights,
+    double roomAmount,
+    double cleaningFee,
+    double serviceFee,
+    double tax,
   ) => Container(
     padding: EdgeInsets.all(14.w),
     decoration: BoxDecoration(
@@ -178,18 +222,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.r),
-              child: Image.network(
-                'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=300',
-                width: 92.w,
-                height: 92.w,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 92.w,
-                  height: 92.w,
-                  color: AppColor.greyExtraLight,
-                  child: Icon(Icons.home_outlined, size: 28.sp),
-                ),
-              ),
+              child: widget.imageUrl.isEmpty
+                  ? Container(
+                      width: 92.w,
+                      height: 92.w,
+                      color: AppColor.greyExtraLight,
+                      child: Icon(Icons.home_outlined, size: 28.sp),
+                    )
+                  : Image.network(
+                      widget.imageUrl,
+                      width: 92.w,
+                      height: 92.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 92.w,
+                        height: 92.w,
+                        color: AppColor.greyExtraLight,
+                        child: Icon(Icons.home_outlined, size: 28.sp),
+                      ),
+                    ),
             ),
             SizedBox(width: 14.w),
             Expanded(
@@ -206,13 +257,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     children: [
                       Icon(Icons.star_rounded, size: 17.sp),
                       SizedBox(width: 4.w),
-                      AppTextWidget.bodyMedium(text: '5.0 (6)'),
+                      AppTextWidget.bodyMedium(
+                        text: widget.rating > 0
+                            ? '${widget.rating.toStringAsFixed(1)} (${widget.reviewCount})'
+                            : 'No reviews yet',
+                      ),
                       SizedBox(width: 12.w),
                       Icon(Icons.workspace_premium_outlined, size: 17.sp),
                       SizedBox(width: 4.w),
                       Flexible(
                         child: AppTextWidget.bodyMedium(
-                          text: 'Guest favourite',
+                          text: widget.location.isEmpty
+                              ? 'GoaNest stay'
+                              : widget.location,
                           maxLines: 1,
                           textOverflow: TextOverflow.ellipsis,
                         ),
@@ -240,7 +297,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _changeRow(
           'Total price',
           '₹${total.toStringAsFixed(2)} including taxes INR',
-          () => _showPriceDetails(total * .87, total * .05, total * .08, total),
+          () => _showPriceDetails(
+            roomAmount,
+            cleaningFee,
+            serviceFee,
+            tax,
+            total,
+          ),
         ),
         Divider(height: 24.h),
         Align(
@@ -252,12 +315,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               SizedBox(height: 5.h),
               AppTextWidget.bodyMedium(
                 text:
-                    'Cancel before ${_shortDate(checkIn.subtract(const Duration(days: 1)))} for a full refund.',
+                    'Cancellation terms depend on the host’s policy. Review the property details before confirming.',
               ),
               SizedBox(height: 4.h),
               AppTextWidget.bodyMedium(
-                text: 'Full policy',
-                textDecoration: TextDecoration.underline,
+                text: 'View property details for house rules.',
               ),
             ],
           ),
@@ -297,6 +359,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     double roomAmount,
     double cleaningFee,
     double serviceFee,
+    double tax,
     double total,
   ) => showModalBottomSheet<void>(
     context: context,
@@ -333,6 +396,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               label: 'Service fee',
               value: '₹${serviceFee.toStringAsFixed(2)}',
             ),
+            CommonWidgets.priceRow(
+              label: 'Taxes',
+              value: '₹${tax.toStringAsFixed(2)}',
+            ),
             CommonWidgets.divider(height: 24),
             CommonWidgets.priceRow(
               label: 'Total INR',
@@ -350,124 +417,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     ),
   );
 
-  Future<void> _continueToPayment(
-    double total,
-    DateTime checkIn,
-    DateTime checkOut,
-  ) async {
-    setState(() => paymentStarted = true);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: AppTextWidget.legacy('Opening secure payment...'),
-      ),
-    );
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColor.white,
-      builder: (_) => StatefulBuilder(
-        builder: (context, setSheetState) => Padding(
-          padding: EdgeInsets.fromLTRB(18.w, 18.h, 18.w, 28.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppTextWidget.headlineSmall(text: 'Choose a payment method'),
-              SizedBox(height: 14.h),
-              _PaymentOption(
-                icon: Icons.credit_card,
-                title: 'Credit or debit card',
-                subtitle: 'Visa, Mastercard, RuPay',
-                selected: paymentMethod == 0,
-                onTap: () => setSheetState(() => paymentMethod = 0),
-                child: const _CardFields(),
-              ),
-              _PaymentOption(
-                icon: Icons.account_balance_wallet_outlined,
-                title: 'UPI',
-                subtitle: 'Google Pay, PhonePe, Paytm',
-                selected: paymentMethod == 1,
-                onTap: () => setSheetState(() => paymentMethod = 1),
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _createBooking(checkIn, checkOut);
-                  },
-                  child: AppTextWidget(
-                    text: 'Pay ₹${total.round()}',
-                    color: AppColor.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (mounted) setState(() => paymentStarted = false);
-  }
-
   Future<void> _createBooking(DateTime checkIn, DateTime checkOut) async {
+    setState(() => isSubmitting = true);
     final result = await sl<CreateBookingUseCase>()(
       CreateBookingRequest(
         propertyId: widget.propertyId,
         checkIn: checkIn,
         checkOut: checkOut,
         adults: widget.guests ?? 1,
+        rooms: widget.rooms,
       ),
     );
     if (!mounted) return;
+    setState(() => isSubmitting = false);
     result.fold(
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: AppTextWidget.legacy(failure.message),
-          backgroundColor: AppColor.error,
-        ),
+      (failure) => Utils.showSnackBar(
+        failure.message,
+        result: Result.error,
       ),
-      (_) => context.push(
+      (booking) => context.push(
         RouteName.bookingConfirmationView.replaceFirst(
           ':propertyId',
-          widget.propertyId.isEmpty ? 'property' : widget.propertyId,
+          booking.propertyId.isEmpty ? widget.propertyId : booking.propertyId,
         ),
+        extra: booking,
       ),
     );
-  }
-
-  Future<bool> _confirmExit() async {
-    if (paymentStarted) return true;
-    final leave = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: AppTextWidget.titleLarge(text: 'Continue payment?'),
-        content: AppTextWidget.bodyMedium(
-          text:
-              'Your reservation is not paid yet. Do you want to continue payment?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: AppTextWidget.bodyMedium(text: 'Leave'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: AppTextWidget.bodyMedium(
-              text: 'Continue payment',
-              color: AppColor.white,
-            ),
-          ),
-        ],
-      ),
-    );
-    return leave ?? false;
   }
 
   Future<void> _leaveCheckout(BuildContext context) async {
-    if (await _confirmExit() && context.mounted) context.pop();
+    if (context.mounted) context.pop();
   }
 
   static String _shortDate(DateTime value) =>
@@ -487,104 +466,4 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     'Nov',
     'Dec',
   ][month - 1];
-}
-
-class _PaymentOption extends StatelessWidget {
-  final IconData icon;
-  final String title, subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-  final Widget? child;
-  const _PaymentOption({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-    this.child,
-  });
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(9.r),
-    child: Container(
-      margin: EdgeInsets.only(bottom: 10.h),
-      padding: EdgeInsets.all(13.p),
-      decoration: BoxDecoration(
-        color: AppColor.white,
-        border: Border.all(
-          color: selected ? AppColor.primary : AppColor.divider,
-          width: selected ? 1.5 : 1,
-        ),
-        borderRadius: BorderRadius.circular(9.r),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 22.sp),
-              SizedBox(width: 13.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppTextWidget(
-                      text: title,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    SizedBox(height: 3.h),
-                    AppTextWidget.labelMedium(
-                      text: subtitle,
-                      color: AppColor.textQuaternary,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                selected ? Icons.radio_button_checked : Icons.radio_button_off,
-                color: selected ? AppColor.primary : AppColor.greyMedium,
-                size: 20.sp,
-              ),
-            ],
-          ),
-          if (selected && child != null)
-            Padding(
-              padding: EdgeInsets.only(top: 13.h),
-              child: child!,
-            ),
-        ],
-      ),
-    ),
-  );
-}
-
-class _CardFields extends StatelessWidget {
-  const _CardFields();
-  @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      TextField(decoration: CommonWidgets.inputDecoration(hint: 'Card number')),
-      SizedBox(height: 8.h),
-      Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: CommonWidgets.inputDecoration(
-                hint: 'Expiration date',
-              ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: TextField(
-              decoration: CommonWidgets.inputDecoration(hint: 'CVV'),
-            ),
-          ),
-        ],
-      ),
-      SizedBox(height: 8.h),
-      TextField(decoration: CommonWidgets.inputDecoration(hint: 'ZIP code')),
-    ],
-  );
 }

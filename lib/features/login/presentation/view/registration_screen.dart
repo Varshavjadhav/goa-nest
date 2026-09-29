@@ -9,6 +9,7 @@ import 'package:goanest/features/login/presentation/bloc/register_event.dart';
 import 'package:goanest/features/login/presentation/bloc/register_state.dart';
 import 'package:goanest/resources/constants/app_colors.dart';
 import 'package:goanest/utilities/extensions/extensions.dart';
+import 'package:goanest/utilities/utils.dart';
 import 'package:goanest/widgets/app_text_widget.dart';
 import 'package:goanest/widgets/common_widgets.dart';
 
@@ -21,12 +22,14 @@ class RegistrationScreen extends StatelessWidget {
     child: BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state.status == RegisterStatus.success) {
+          Utils.showSnackBar(
+            state.message ?? 'Registration successful',
+            result: Result.success,
+          );
           context.go(RouteName.homeView);
         } else if (state.status == RegisterStatus.failure &&
             state.message != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: AppTextWidget.legacy(state.message!)),
-          );
+          Utils.showSnackBar(state.message!, result: Result.error);
         }
       },
       child: const _RegistrationView(),
@@ -179,11 +182,8 @@ class _RegistrationView extends StatelessWidget {
   void _googleSignInUnavailable(
     BuildContext context, [
     String provider = 'Google',
-  ]) => ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: AppTextWidget.legacy(
-        '$provider sign-in needs an OAuth endpoint and platform configuration.',
-      ),
-    ),
+  ]) => Utils.showSnackBar(
+    '$provider sign-in needs an OAuth endpoint and platform configuration.',
+    result: Result.general,
   );
 }

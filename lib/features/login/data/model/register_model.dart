@@ -5,6 +5,7 @@ class RegisterResponse {
   final String phone;
   final String accessToken;
   final String refreshToken;
+  final String message;
 
   const RegisterResponse({
     required this.user,
@@ -13,6 +14,7 @@ class RegisterResponse {
     required this.phone,
     required this.accessToken,
     required this.refreshToken,
+    this.message = '',
   });
 
   factory RegisterResponse.fromJson(Map<String, dynamic> json) {
@@ -33,4 +35,14 @@ class RegisterResponse {
       refreshToken: json['refreshToken']?.toString() ?? '',
     );
   }
+
+  RegisterResponse copyWith({String? message}) => RegisterResponse(
+    user: user,
+    name: name,
+    email: email,
+    phone: phone,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    message: message ?? this.message,
+  );
 }

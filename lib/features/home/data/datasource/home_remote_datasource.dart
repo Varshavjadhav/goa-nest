@@ -12,6 +12,7 @@ import '../model/property_detail_model.dart';
 import '../model/search_model.dart';
 import '../model/wishlist_model.dart';
 import '../model/booking_model.dart';
+import '../model/review_model.dart';
 
 class HomeRemoteDataSource {
   final BaseApiServices apiService;
@@ -44,10 +45,14 @@ class HomeRemoteDataSource {
   );
 
   Future<Either<AppException, BaseResponseModel<PropertyDetailModel>>>
-  getProperty(String propertyId) => apiService.getApi(
+  getProperty(String propertyId, {String? checkIn, String? checkOut}) => apiService.getApi(
     ApiUrl.propertyDetail.replaceAll('{propertyId}', propertyId),
     const {},
     PropertyDetailModel.fromJson,
+    queryParams: {
+      if (checkIn != null) 'checkIn': checkIn,
+      if (checkOut != null) 'checkOut': checkOut,
+    },
   );
 
   Future<Either<AppException, BaseResponseModel<AvailabilityResult>>>
@@ -71,6 +76,14 @@ class HomeRemoteDataSource {
         },
       );
 
+  Future<Either<AppException, BaseResponseModel<BookingModel>>> getBooking(
+    String bookingId,
+  ) => apiService.getApi(
+    ApiUrl.bookingDetail.replaceAll('{bookingId}', bookingId),
+    const {},
+    BookingModel.fromResponseJson,
+  );
+
   Future<Either<AppException, BaseResponseModel<BookingModel>>> createBooking(
     CreateBookingRequest request,
   ) => apiService.postApi(
@@ -88,6 +101,18 @@ class HomeRemoteDataSource {
     const {},
     BookingModel.fromResponseJson,
     body: {'reason': reason},
+  );
+
+  Future<Either<AppException, BaseResponseModel<ReviewModel>>> createReview(
+    String propertyId,
+    String bookingId,
+    int rating,
+    String comment,
+  ) => apiService.postApi(
+    ApiUrl.propertyReviews.replaceAll('{propertyId}', propertyId),
+    const {},
+    ReviewModel.fromResponseJson,
+    body: {'booking': bookingId, 'rating': rating, 'comment': comment},
   );
 
   Future<Either<AppException, BaseResponseModel<PropertyCollection>>>
