@@ -1,16 +1,24 @@
 const mongoose = require('mongoose');
 const env = require('./env');
 
+let connectionPromise;
+
 const connectDB = async () => {
   if (mongoose.connection.readyState === 1) return mongoose.connection;
 
-  const conn = await mongoose.connect(env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 5000,
-    connectTimeoutMS: 5000,
-  });
+  if (!connectionPromise) {
+    connectionPromise = mongoose.connect(env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    }).then((conn) => {
+      console.log(`MongoDB connected: ${conn.connection.host}/${conn.connection.name}`);
+      return conn.connection;
+    }).finally(() => {
+      connectionPromise = null;
+    });
+  }
 
-  console.log(`MongoDB connected: ${conn.connection.host}/${conn.connection.name}`);
-  return conn.connection;
+  return connectionPromise;
 };
 
 mongoose.connection.on('disconnected', () => {

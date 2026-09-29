@@ -13,6 +13,8 @@ const rateLimiter = require('./src/middlewares/rateLimiter');
 
 const app = express();
 
+// Vercel forwards requests through one trusted proxy hop.
+app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({ origin: '*', credentials: true }));
 app.use(morgan('dev'));
@@ -20,6 +22,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(rateLimiter);
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error(`MongoDB connection failed: ${error.message}`);
+    res.status(503).json({
+      success: false,
+      message: 'Database is currently unavailable',
+    });
+  }
+});
 
 app.use('/api/v1', routes);
 
@@ -38,40 +52,20 @@ app.get('/health', (req, res) => {
 app.use(errorHandler);
 
 let server;
-let retryTimer;
-let shuttingDown = false;
-
-const connectDBWithRetry = async () => {
-  if (shuttingDown) return;
-
-  try {
-    await connectDB();
-  } catch (error) {
-    console.error(`MongoDB unavailable; retrying in 5 seconds: ${error.message}`);
-    retryTimer = setTimeout(connectDBWithRetry, 5000);
-  }
-};
-
-const startServer = () => {
+if (require.main === module) {
   server = app.listen(env.PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
-    void connectDBWithRetry();
   });
-};
 
-const shutdown = async (signal) => {
-  shuttingDown = true;
-  clearTimeout(retryTimer);
-  console.log(`${signal} received, closing server and MongoDB connection`);
-  if (server) {
-    await new Promise((resolve) => server.close(resolve));
-  }
-  await mongoose.connection.close();
-  process.exit(0);
-};
+  const shutdown = async (signal) => {
+    console.log(`${signal} received, closing server and MongoDB connection`);
+    if (server) await new Promise((resolve) => server.close(resolve));
+    await mongoose.connection.close();
+    process.exit(0);
+  };
 
-process.once('SIGINT', shutdown);
-process.once('SIGTERM', shutdown);
-startServer();
+  process.once('SIGINT', shutdown);
+  process.once('SIGTERM', shutdown);
+}
 
 module.exports = app;
