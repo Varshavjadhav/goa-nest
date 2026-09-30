@@ -1,9 +1,17 @@
 const Property = require('./property.model');
+const User = require('../user/user.model');
 const ApiError = require('../../utils/ApiError');
 const { MESSAGES } = require('../../config/constants');
 
-const createProperty = async (hostId, data) => {
-  const property = await Property.create({ ...data, host: hostId });
+const createProperty = async (hostId, data, isAdmin = false) => {
+  const { hostId: assignedHostId, ...propertyData } = data;
+  if (isAdmin && assignedHostId && !(await User.exists({ _id: assignedHostId, role: 'host' }))) {
+    throw ApiError.badRequest('Choose an existing host for this property');
+  }
+  const property = await Property.create({
+    ...propertyData,
+    host: isAdmin && assignedHostId ? assignedHostId : hostId,
+  });
   return property;
 };
 
@@ -19,17 +27,24 @@ const getPropertyById = async (propertyId) => {
   return property;
 };
 
-const updateProperty = async (propertyId, hostId, updateData) => {
-  const property = await Property.findOne({ _id: propertyId, host: hostId });
+const updateProperty = async (propertyId, hostId, updateData, isAdmin = false) => {
+  const property = await Property.findOne(isAdmin ? { _id: propertyId } : { _id: propertyId, host: hostId });
   if (!property) {
     throw ApiError.notFound(MESSAGES.PROPERTY_NOT_FOUND);
+  }
+
+  if (isAdmin && updateData.hostId) {
+    if (!(await User.exists({ _id: updateData.hostId, role: 'host' }))) {
+      throw ApiError.badRequest('Choose an existing host for this property');
+    }
+    property.host = updateData.hostId;
   }
 
   const allowedFields = [
     'title', 'description', 'propertyType', 'category', 'location',
     'pricePerNight', 'maxGuests', 'bedrooms', 'beds', 'bathrooms',
     'amenities', 'images', 'houseRules', 'checkInTime', 'checkOutTime',
-    'minimumNights', 'maximumNights', 'isActive',
+    'minimumNights', 'maximumNights', 'isActive', 'isFeatured',
   ];
 
   for (const field of allowedFields) {
@@ -42,8 +57,8 @@ const updateProperty = async (propertyId, hostId, updateData) => {
   return property;
 };
 
-const deleteProperty = async (propertyId, hostId) => {
-  const property = await Property.findOneAndDelete({ _id: propertyId, host: hostId });
+const deleteProperty = async (propertyId, hostId, isAdmin = false) => {
+  const property = await Property.findOneAndDelete(isAdmin ? { _id: propertyId } : { _id: propertyId, host: hostId });
   if (!property) {
     throw ApiError.notFound(MESSAGES.PROPERTY_NOT_FOUND);
   }

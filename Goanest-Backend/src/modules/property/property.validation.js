@@ -58,6 +58,10 @@ const createProperty = Joi.object({
   minimumNights: Joi.number().min(1).default(1),
   maximumNights: Joi.number().min(1).default(365),
   bookingType: Joi.string().valid('instant', 'request').default('instant'),
+  // Admin property creation can publish or save a listing as a draft.
+  isActive: Joi.boolean().default(true),
+  isFeatured: Joi.boolean().default(false),
+  hostId: Joi.string().hex().length(24),
 });
 
 const updateProperty = Joi.object({
@@ -94,6 +98,8 @@ const updateProperty = Joi.object({
   maximumNights: Joi.number().min(1),
   bookingType: Joi.string().valid('instant', 'request'),
   isActive: Joi.boolean(),
+  isFeatured: Joi.boolean(),
+  hostId: Joi.string().hex().length(24),
 });
 
 module.exports = { createProperty, updateProperty };

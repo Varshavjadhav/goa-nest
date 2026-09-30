@@ -5,9 +5,9 @@ String get storageUrl => "https://com.app/storage/app/public/";
 class ApiUrl {
   static const String version = "v1";
 
-  // Debug builds use ADB reverse forwarding (adb reverse tcp:5001 tcp:5001),
-  // which routes device localhost to the development server on the computer.
-  static const String developmentBaseUrl = 'http://127.0.0.1:5001/api/v1/';
+  // Use the development computer's LAN address so physical devices can reach
+  // the backend running on port 5001 over the same Wi-Fi network.
+  static const String developmentBaseUrl = 'http://192.168.31.105:5001/api/v1/';
   static const String productionBaseUrl = 'https://goa-nest.vercel.app/api/v1/';
 
   // API_BASE_URL can override either default, for example with --dart-define.

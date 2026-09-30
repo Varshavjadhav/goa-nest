@@ -22,6 +22,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(rateLimiter);
+
+// Keep health checks independent from the database guard so they can report
+// whether the API is reachable even while MongoDB is starting or unavailable.
+const healthHandler = async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB();
+    } catch (error) {
+      console.error(`MongoDB health check failed: ${error.message}`);
+    }
+  }
+  const isDatabaseReady = mongoose.connection.readyState === 1;
+  res.status(isDatabaseReady ? 200 : 503).json({
+    status: isDatabaseReady ? 'ok' : 'degraded',
+    database: isDatabaseReady ? 'connected' : 'disconnected',
+  });
+};
+app.get('/health', healthHandler);
+app.get('/api/v1/health', healthHandler);
+
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -39,14 +59,6 @@ app.use('/api/v1', routes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Goanest Backend API is running', version: '1.0.0' });
-});
-
-app.get('/health', (req, res) => {
-  const isDatabaseReady = mongoose.connection.readyState === 1;
-  res.status(isDatabaseReady ? 200 : 503).json({
-    status: isDatabaseReady ? 'ok' : 'degraded',
-    database: isDatabaseReady ? 'connected' : 'disconnected',
-  });
 });
 
 app.use(errorHandler);

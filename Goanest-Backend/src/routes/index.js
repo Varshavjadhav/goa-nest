@@ -14,6 +14,7 @@ const homeRoutes = require('../modules/home/home.routes');
 const favoriteRoutes = require('../modules/favorite/favorite.routes');
 const recentlyViewedRoutes = require('../modules/recentlyViewed/recentlyViewed.routes');
 const exploreRoutes = require('../modules/explore/explore.routes');
+const adminRoutes = require('../modules/admin/admin.routes');
 const propertyController = require('../modules/property/property.controller');
 const optionalAuth = require('../middlewares/optionalAuth');
 
@@ -31,6 +32,7 @@ router.use('/home', homeRoutes);
 router.use('/favorites', favoriteRoutes);
 router.use('/recently-viewed', recentlyViewedRoutes);
 router.use('/explore', exploreRoutes);
+router.use('/admin', adminRoutes);
 router.post('/availability/check', optionalAuth, propertyController.checkAvailabilityPost);
 
 module.exports = router;

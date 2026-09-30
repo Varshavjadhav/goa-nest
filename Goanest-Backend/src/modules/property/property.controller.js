@@ -7,7 +7,7 @@ const favoriteService = require('../favorite/favorite.service');
 const reviewService = require('../review/review.service');
 
 const createProperty = asyncHandler(async (req, res) => {
-  const property = await propertyService.createProperty(req.user, req.body);
+  const property = await propertyService.createProperty(req.user, req.body, req.userRole === 'admin');
   return ApiResponse.success(res, MESSAGES.PROPERTY_CREATED, { property }, 201);
 });
 
@@ -47,12 +47,12 @@ const getProperty = asyncHandler(async (req, res) => {
 });
 
 const updateProperty = asyncHandler(async (req, res) => {
-  const property = await propertyService.updateProperty(req.params.id, req.user, req.body);
+  const property = await propertyService.updateProperty(req.params.id, req.user, req.body, req.userRole === 'admin');
   return ApiResponse.success(res, MESSAGES.PROPERTY_UPDATED, { property });
 });
 
 const deleteProperty = asyncHandler(async (req, res) => {
-  await propertyService.deleteProperty(req.params.id, req.user);
+  await propertyService.deleteProperty(req.params.id, req.user, req.userRole === 'admin');
   return ApiResponse.success(res, MESSAGES.PROPERTY_DELETED);
 });
 

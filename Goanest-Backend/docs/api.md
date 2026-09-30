@@ -1,6 +1,6 @@
 # Goanest API Documentation
 
-**Base URL:** `http://localhost:5000/api/v1`
+**Base URL:** `http://localhost:5001/api/v1`
 
 **Authentication:** Bearer token in `Authorization` header
 ```
@@ -71,6 +71,8 @@ Login with email and password.
   "password": "password123"
 }
 ```
+
+Admin console access uses this same login endpoint. The returned user must have `role: "admin"`; admin accounts are provisioned with `ADMIN_EMAIL` and `ADMIN_PASSWORD` using `npm run seed:admin` from `Goanest-Backend`.
 
 **Response (200):**
 ```json
@@ -774,3 +776,24 @@ Get contact information.
 
 ## User Roles
 `user` (guest), `host`, `admin`
+
+## Admin console endpoints
+
+Every `/admin` endpoint requires an access token for an `admin` user.
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/admin/overview` | Dashboard counts, revenue, booking statuses, and recent bookings |
+| GET | `/admin/properties` | Search and paginate all properties, including unpublished listings |
+| GET | `/admin/bookings` | Paginate bookings; optional `status` filter |
+| PATCH | `/admin/bookings/:id/status` | Update booking status (`pending`, `confirmed`, `completed`, `cancelled`) |
+| GET | `/admin/users` | Search and paginate guests and hosts; optional `role` filter |
+| PATCH | `/admin/users/:id/status` | Set `{ "isActive": true|false }` |
+| GET | `/admin/categories` | List active and archived discovery categories |
+| POST | `/admin/categories` | Create a discovery category |
+| PUT | `/admin/categories/:id` | Update a category |
+| DELETE | `/admin/categories/:id` | Archive a category without breaking listing references |
+| GET | `/admin/reviews` | Paginate guest reviews |
+| DELETE | `/admin/reviews/:id` | Remove a review and recalculate its listing rating |
+
+The console creates and edits listings through the existing `/properties` endpoints. Admins may assign a listing to an existing host and update any listing.

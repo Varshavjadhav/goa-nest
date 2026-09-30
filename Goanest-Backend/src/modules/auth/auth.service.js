@@ -26,7 +26,7 @@ const register = async ({ name, email, phone, password }) => {
 
 const login = async ({ email, password }) => {
   const user = await User.findOne({ email }).select('+password');
-  if (!user) {
+  if (!user || !user.isActive) {
     throw ApiError.unauthorized(MESSAGES.INVALID_CREDENTIALS);
   }
 
@@ -48,7 +48,7 @@ const refreshAccessToken = async (token) => {
   const decoded = verifyRefreshToken(token);
 
   const user = await User.findById(decoded.userId).select('+refreshToken');
-  if (!user || user.refreshToken !== token) {
+  if (!user || !user.isActive || user.refreshToken !== token) {
     throw ApiError.unauthorized(MESSAGES.INVALID_TOKEN);
   }
 
